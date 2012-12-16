@@ -1,0 +1,14 @@
+body {
+            padding-top: 15px;
+            padding-bottom: 40px;
+        }
+
+        @media handheld, only screen and (min-width: 1600px) {
+            .sidebar-nav-fixed {
+                padding: 9px 0;
+                position:fixed;
+                left:20px;
+                top:15px;
+                width:250px;
+            }
+        }

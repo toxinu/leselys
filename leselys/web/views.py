@@ -28,8 +28,8 @@ def get(feed_id):
 
 @app.route('/api/read/<entry_id>')
 def read(entry_id):
-	reader.read(entry_id)
-	return jsonify(success=True)
+	entry = reader.read(entry_id)
+	return jsonify(success=True, content=entry)
 
 @app.route('/api/refresh')
 def refresh():
