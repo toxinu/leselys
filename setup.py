@@ -25,19 +25,19 @@ if sys.argv[-1] == 'publish':
 	sys.exit()
 
 setup(
-	name			= 'Leselys',
-	version			= get_version(),
-	description 	= '## Set description',
-	long_description= open('README.rst').read() + '\n\n' + open('HISTORY.rst').read(), 
-	license 		= open('LICENSE').read(),
-	author 			= 'socketubs',
-	author_email 	= '## Set email',
-	url 			= '## Set url',
-	keywords 		= '## Set keywords',
-	packages 		= ['leselys','leselys.web'],
-	scripts 		= ['scripts/leselys','scripts/leselys-web'],
-	install_requires= ['docopt==0.5.0','flask==0.9','Flask-PyMongo','feedparser'],
-	classifiers		= (
+	name='Leselys',
+	version=get_version(),
+	description='Minimal RSS Reader',
+	long_description=open('README.rst').read() + '\n\n' + open('HISTORY.rst').read(), 
+	license=open('LICENSE').read(),
+	author='socketubs',
+	author_email='geoffrey@lehee.name',
+	url='https://github.com/socketubs/leselys',
+	keywords='## Set keywords',
+	packages=['leselys','leselys.web'],
+	scripts=['scripts/leselys','scripts/leselys-web'],
+	install_requires=['docopt==0.5.0','flask==0.9','Flask-PyMongo','feedparser','sofart'],
+	classifiers=(
 		'Intended Audience :: Developers',
 		'Natural Language :: English',
 		'License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)',
