@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Leselys</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/bootstrap-responsive.min.css') }}" rel="stylesheet">
+
+    <style type="text/css">
+        body {
+            padding-top: 20px;
+            padding-bottom: 40px;
+        }
+        .sidebar-nav-fixed {
+            padding: 9px 0;
+            position:fixed;
+            left:20px;
+            top:15px;
+            width:250px;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="container-fluid">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <br>
+                <div class="row-fluid">
+                    <div class="span12">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            <a class="close" href="/">&times;</a>{{ message }}
+                        </div>
+                    {% endfor %}
+                     </div>
+                 </div>
+            {% endif %}
+        {% endwith %}
+         <div class="row-fluid">
+            <div class="span2">
+                <ul id="menu" class="nav nav-list sidebar-nav-fixed">
+                    <li class="divider"></li>
+                    <center>
+                        <li>
+                            <a href="/"><i class="icon-home"></i></a>
+                            <a href="#"><i class="icon-refresh"></i></a>
+                            <a href="#" id="add"><i class="icon-plus-sign"></i></a>
+                            <a href="#"><i class="icon-wrench"></i></a>
+                            <a href="#"><i class="icon-question-sign"></i></a>
+                        </li>
+                    </center>
+                    <li class="divider"></li>
+                    <li id="listSubscriptions" class="nav-header">Subscriptions</li>
+                    {% for subscription in subscriptions %}
+                        <li><a onClick="viewSubscription(&quot;{{ subscription }}&quot;)" href="#">{{ subscription }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div id="content" class="span10" data-spy="scroll" data-target="#menu">
+                {% block body %}{% endblock %}
+            </div>
+        </div>
+    </div>
+
+    <script src="http://code.jquery.com/jquery-1.8.3.min.js"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/leselys.js') }}"></script>
+</body>
+</html>
