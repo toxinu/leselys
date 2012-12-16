@@ -8,7 +8,7 @@ function addSubscription() {
     $("ul#menu").append(loader);
     $.post('/api/add', {url: url}, function(data) {
         if (data.success == true) {
-            loader.html('<li><a onClick="viewSubscription(&quot;' + data.feed_id + '&quot;)" href="#' + data.feed_id + '">' + data.title + '</a></li>');
+            $(loader).html('<a onClick="viewSubscription(&quot;' + data.feed_id + '&quot;)" href="#' + data.feed_id + '">' + data.title + '</a>');
         } else {
             $(loader).remove();
         }
