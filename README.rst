@@ -19,4 +19,4 @@ Usage
 
 	leselys-web serve --port 5050 --host 0.0.0.0
 
-.. _me: http://rsp.socketubs.net:5050/
+.. _me: http://leselys-heroku.herokuapp.com
