@@ -7,7 +7,7 @@ function addSubscription() {
     var i = $("ul#menu li#loadSubscription");
     $.post('/api/add', {url: url}, function(data) {
         if (data.success == true) {
-            i.html("<li><a onClick=\"viewSubscription(&quot;" + data.id + "&quot;)\" href=\"#" + data.id + "\">" + data.title + "</a></li>");
+            i.html('<li><a onClick="viewSubscription(&quot;' + data.id + '&quot;)" href="#' + data.id + '">' + data.title + '</a></li>');
         }
     });
     $('#add').popover('hide')
@@ -17,18 +17,17 @@ function viewSubscription(feedId) {
     $.getJSON('/api/get/' + feedId, function(data) {
         $('#content').html('<div class="accordion" id="accordion2">');
         $.each(data.content, function(i,item){
-            var header =  '<i class="icon-calendar"></i> ' + item.published + ' | <a href="' + item.link + '" target="_blank"><i class="icon-share-alt"></i></a>';
             var content = '<div class="accordion-group">                                                                                            \
     <div class="accordion-heading">                                                                                                                 \
-        <a class="accordion-toggle" data-toggle="collapse" onClick="readEntry(&quot;' + item._id + '&quot;,&quot;' + feedId + '&quot;)" data-parent="#accordion2" href="#' + feedId + '_' + item._id + '">' + item.title + '</a>  \
+        <a class="accordion-toggle" data-toggle="collapse" onClick="readEntry(&quot;' + item._id + '&quot)" data-parent="#accordion2" href="#' + item._id + '">' + item.title + '</a>  \
     </div>                                                                                                                                          \
-    <div id="' + feedId + '_' + item._id + '" class="accordion-body collapse">                                                                      \
-        <div class="accordion-inner">' + header + "<hr>" + item.description + '</div>                                                               \
+    <div id="' + item._id + '" class="accordion-body collapse">                                                                                     \
+        <div class="accordion-inner" id="' + item._id + '"></div>                                                                                   \
     </div>                                                                                                                                          \
 </div>';
             $("#content").append(content);
             if (item.read == false) {
-                $('#content a[href=#' + feedId + '_' + item._id + ']').css('font-weight', 'bold');
+                $('#content a[href=#' + item._id + ']').css('font-weight', 'bold');
             }
         });
         $('#content').append('</div>');
@@ -47,9 +46,18 @@ function refreshSubscriptions() {
 
 }
 
-function readEntry(entryId, feedId) {
-    $.get('/api/read/' + entryId, function(data) {});
-    $('a[href=#' + feedId + '_' + entryId + ']').css('font-weight', 'normal');
+function readEntry(entryId) {
+    if ($('a[href=#' + entryId + ']').data('loaded') == true) {
+        return true;
+    }
+    $.getJSON('/api/read/' + entryId, function(data) {
+        var header =  '<i class="icon-calendar"></i> ' + data.content.published + ' | <a href="' + data.content.link + '" target="_blank"><i class="icon-share-alt"></i></a>';
+        var content = "<div class=\"accordion-inner\"" + header + "<hr>" + data.content.description + "</div>";
+        $('#content #' + entryId).html(content);
+
+    });
+
+    $('a[href=#' + entryId + ']').css('font-weight', 'normal').data('loaded', true);
 }
 
 $(document).ready(function(){

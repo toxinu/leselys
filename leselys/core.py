@@ -5,5 +5,8 @@ from sofart import Database
 
 db = Database('/tmp/lesesys.db')
 
+if not db.settings.find_one():
+	db.settings.save({'acceptable_elements': []})
+
 from leselys.reader import Reader
 reader = Reader()
