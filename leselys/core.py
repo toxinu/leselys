@@ -3,7 +3,7 @@
 from leselys.logger import stream_logger
 from sofart import Database
 
-db = Database('/tmp/lesesys.db')
+db = Database('/tmp/lesesys.db', mode="single")
 
 if not db.settings.find_one():
 	db.settings.save({'acceptable_elements': []})

@@ -6,9 +6,13 @@ import time
 
 from leselys.core import db
 
-acceptable_elements = db.settings.find_one().get('acceptable_elements', False)
-if not acceptable_elements:
-	acceptable_elements = ["object","embed","iframe"]
+if not db.settings.find_one().get('acceptable_elements', False):
+	settings = db.settings.find_one()
+	settings['acceptable_elements'] = ["object","embed","iframe"]
+	db.settings.remove(settings['_id'])
+	db.settings.save(settings)
+
+acceptable_elements = db.settings.find_one().get('acceptable_elements', [])
 
 for element in acceptable_elements:
 	feedparser._HTMLSanitizer.acceptable_elements.add(element)
@@ -49,11 +53,13 @@ class Reader(object):
 		feed_id = db.subscriptions.find_one({'title':title})
 		if not feed_id:
 			feed_id = db.subscriptions.save({'url':url, 'title': title, 'last_update': r.feed.updated, 'read': False})
+		else:
+			return {'success':False}
 
 		retriever = Retriever(title=title, data=r['entries'])
 		retriever.start()
 
-		return title, feed_id
+		return {'success':True,'title':title,'feed_id':feed_id}
 
 	def delete(self, title):
 		try:

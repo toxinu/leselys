@@ -19,7 +19,9 @@ def home():
 
 @app.route('/api/add', methods=['POST'])
 def add():
-	title, feed_id = reader.add(request.form['url'])
+	return jsonify(reader.add(request.form['url']))
+	if not r['success']:
+		return jsonify(success=False)
 	return jsonify(success=True, id=feed_id, title=title)
 
 @app.route('/api/get/<feed_id>')
@@ -35,3 +37,13 @@ def read(entry_id):
 def refresh():
 	reader.refreshAll()
 	return true
+
+@app.route('/api/settings/<setting>/<value>')
+def change_settings(setting, value):
+	pass
+
+@app.route('/settings')
+def settings():
+	_settings = db.settings.find_one()
+	del _settings['_id']
+	return render_template('settings.html', settings=_settings)
