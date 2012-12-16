@@ -38,7 +38,11 @@ class Retriever(threading.Thread):
 				description = entrie['content'][0]['value']
 			except KeyError:
 				description = entrie['summary']
-			published = entrie['published']
+
+			if not entrie.get('published', False):
+				published = entrie['updated']
+			else:
+				published = entrie['published']
 
 			_id = db.entries.save({'title':title,'link':link,'description':description,'published':published,'feed_id':feed_id,'read':False})
 
@@ -47,8 +51,9 @@ class Reader(object):
 		pass
 
 	def add(self, url):
+		url = url.strip()
 		r = feedparser.parse(url)
-		title = r['feed']['title']
+		title = r.feed['title']
 		
 		feed_id = db.subscriptions.find_one({'title':title})
 		if not feed_id:
