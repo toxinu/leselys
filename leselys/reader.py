@@ -52,7 +52,7 @@ class Reader(object):
 		
 		feed_id = db.subscriptions.find_one({'title':title})
 		if not feed_id:
-			if r.feed.update:
+			if r.feed.get('update', False):
 				feed_id = db.subscriptions.save({'url':url, 'title': title, 'last_update': r.feed.updated, 'read': False})
 			else:
 				feed_id = db.subscriptions.save({'url':url, 'title': title, 'last_update': None, 'read': False})
