@@ -3,9 +3,9 @@
 import os
 import feedparser
 
-from leselys.core import db
 from leselys.core import reader
 from leselys.web import app
+from leselys.web import mongo
 
 from flask import render_template, jsonify, g, request
 
@@ -25,11 +25,9 @@ def add():
 @app.route('/api/get/<name>')
 def get(name):
 	content = reader.get(name)
-	print(content)
 	return jsonify(content=reader.get(name))
 
-@app.route('/dump')
-def dump():
-	for r in db.subscriptions.find():
-		print(r)
-	return 'dumped'
+@app.route('/api/refresh')
+def refresh():
+	reader.refreshAll()
+	return true

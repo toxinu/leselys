@@ -3,9 +3,12 @@
 import os
 
 from leselys.logger import stream_logger
-from sofart import Database
+from pymongo import MongoClient
 
-db = Database('/tmp/leselys.db', mode='single')
+MONGO_URI = os.environ.get('MONGO_URI', 'localhost')
+
+connection = MongoClient(MONGO_URI)
+db = connection['leselys']
 
 from leselys.reader import Reader
 reader = Reader()
