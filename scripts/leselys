@@ -1,0 +1,24 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+import os
+import leselys
+
+from docopt import docopt
+from leselys.cli import Cli
+
+doc = """Leselys, ## Set description.
+
+Usage:
+  leselys -h | --help
+  leselys -v | --version
+
+Options:
+  -h --help           Show help
+  -v --version        Show version
+"""
+
+if __name__ == '__main__':
+	args = docopt(doc, version=leselys.__version__)
+	cli = Cli(**args)
+	cli.start()
