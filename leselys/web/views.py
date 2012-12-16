@@ -4,8 +4,8 @@ import os
 import feedparser
 
 from leselys.core import reader
+from leselys.core import db
 from leselys.web import app
-from leselys.web import mongo
 
 from flask import render_template, jsonify, g, request
 
@@ -19,13 +19,17 @@ def home():
 
 @app.route('/api/add', methods=['POST'])
 def add():
-	title = reader.add(request.form['url'])
-	return jsonify(success=True, name=title)
+	title, feed_id = reader.add(request.form['url'])
+	return jsonify(success=True, id=feed_id, title=title)
 
-@app.route('/api/get/<name>')
-def get(name):
-	content = reader.get(name)
-	return jsonify(content=reader.get(name))
+@app.route('/api/get/<feed_id>')
+def get(feed_id):
+	return jsonify(content=reader.get(feed_id))
+
+@app.route('/api/read/<entry_id>')
+def read(entry_id):
+	reader.read(entry_id)
+	return jsonify(success=True)
 
 @app.route('/api/refresh')
 def refresh():

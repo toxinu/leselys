@@ -26,7 +26,7 @@ class Retriever(threading.Thread):
 			description = entrie['description']
 			published = entrie['published']
 
-			_id = db.entries.save({'title':title,'link':link,'description':description,'published':published,'feed_id':feed_id})
+			_id = db.entries.save({'title':title,'link':link,'description':description,'published':published,'feed_id':feed_id, 'read':False})
 
 class Reader(object):
 	def __init__(self):
@@ -36,13 +36,14 @@ class Reader(object):
 		r = feedparser.parse(url)
 		title = r['feed']['title']
 		
-		if not db.subscriptions.find_one({'title':title}):
-			db.subscriptions.save({'url':url, 'title': title, 'last_update': r.updated})
+		feed_id = db.subscriptions.find_one({'title':title})
+		if not feed_id:
+			feed_id = db.subscriptions.save({'url':url, 'title': title, 'last_update': r.updated, 'read': False})
 
 		retriever = Retriever(title=title, data=r['entries'])
 		retriever.start()
 
-		return title
+		return title, feed_id
 
 	def delete(self, title):
 		try:
@@ -51,24 +52,18 @@ class Reader(object):
 		except:
 			pass
 
-	def get(self, title):
-		feed_id = db.subscriptions.find_one({'title': title})['_id']
+	def get(self, feed_id):
 
 		res = []
 		for entrie in db.entries.find({'feed_id':feed_id}):
-			title = entrie['title']
-			link = entrie['link']
-			description = entrie['description']
-			published = entrie['published']
-
-			res.append({'title':title,'link':link,'description':description,'published':published})
+			res.append(entrie)
 
 		return res
 
 	def get_subscriptions(self):
 		subscriptions = []
 		for sub in db.subscriptions.find():
-			subscriptions.append(sub['title'])
+			subscriptions.append({'title':sub['title'],'id':sub['_id']})
 		return subscriptions
 
 	def refreshAll(self):
@@ -83,3 +78,9 @@ class Reader(object):
 				print('UP TO DATE')
 			
 			#self.get(subscription['title'])
+
+	def read(self, entry_id):
+		entry = db.entries.find_one({'_id': entry_id})
+		db.entries.remove(entry_id)
+		entry['read'] = True
+		db.entries.save(entry)

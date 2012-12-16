@@ -9,16 +9,20 @@
     <link href="{{ url_for('static', filename='css/bootstrap-responsive.min.css') }}" rel="stylesheet">
 
     <style type="text/css">
+
         body {
-            padding-top: 20px;
+            padding-top: 15px;
             padding-bottom: 40px;
         }
-        .sidebar-nav-fixed {
-            padding: 9px 0;
-            position:fixed;
-            left:20px;
-            top:15px;
-            width:250px;
+
+        @media handheld, only screen and (min-width: 1600px) {
+            .sidebar-nav-fixed {
+                padding: 9px 0;
+                position:fixed;
+                left:20px;
+                top:15px;
+                width:250px;
+            }
         }
     </style>
 
@@ -56,11 +60,11 @@
                     <li class="divider"></li>
                     <li id="listSubscriptions" class="nav-header">Subscriptions</li>
                     {% for subscription in subscriptions %}
-                        <li><a onClick="viewSubscription(&quot;{{ subscription }}&quot;)" href="#">{{ subscription }}</a></li>
+                        <li><a onClick="viewSubscription(&quot;{{ subscription.id }}&quot;)" href="#{{ subscription.id }}">{{ subscription.title }}</a></li>
                     {% endfor %}
                 </ul>
             </div>
-            <div id="content" class="span10" data-spy="scroll" data-target="#menu">
+            <div id="content" class="span10">
                 {% block body %}{% endblock %}
             </div>
         </div>
