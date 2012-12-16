@@ -3,11 +3,14 @@ function addSubscription() {
     if (url == '') {
         return false;
     }
-    $("ul#menu").append("<li id=\"loadSubscription\">Loading...</li>");
-    var i = $("ul#menu li#loadSubscription");
+
+    var loader = $('<li><i class="icon-tasks"></i> Loading...</li>');
+    $("ul#menu").append(loader);
     $.post('/api/add', {url: url}, function(data) {
         if (data.success == true) {
-            i.html('<li><a onClick="viewSubscription(&quot;' + data.id + '&quot;)" href="#' + data.id + '">' + data.title + '</a></li>');
+            loader.html('<li><a onClick="viewSubscription(&quot;' + data.feed_id + '&quot;)" href="#' + data.feed_id + '">' + data.title + '</a></li>');
+        } else {
+            $(loader).remove();
         }
     });
     $('#add').popover('hide')
