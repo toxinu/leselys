@@ -28,6 +28,13 @@ function viewSubscription(name) {
     });
 }
 
+function refreshSubscriptions() {
+    $.get('/api/refresh'), function(data) {
+        
+    }
+
+}
+
 $(document).ready(function(){
     var add_content = '<form><fieldset><center>                                      \
     <input id="urlSubscription" type="text" class="input-medium" placeholder="Url…"> \
