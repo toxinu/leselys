@@ -36,7 +36,7 @@ setup(
 	keywords='## Set keywords',
 	packages=['leselys','leselys.web'],
 	scripts=['scripts/leselys','scripts/leselys-web'],
-	install_requires=['docopt==0.5.0','flask==0.9','sofart','feedparser'],
+	install_requires=['docopt==0.5.0','flask==0.9','sofart','feedparser','requests'],
     include_package_data=True,
 	classifiers=(
 		'Intended Audience :: Developers',
