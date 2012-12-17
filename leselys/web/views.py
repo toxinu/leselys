@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 # coding: utf-8
-import os
-import feedparser
 
 from leselys.core import reader
 from leselys.core import db
@@ -20,9 +18,6 @@ def home():
 @app.route('/api/add', methods=['POST'])
 def add():
 	return jsonify(reader.add(request.form['url']))
-	if not r['success']:
-		return jsonify(success=False)
-	return jsonify(success=True, id=feed_id, title=title)
 
 @app.route('/api/get/<feed_id>')
 def get(feed_id):

@@ -14,7 +14,7 @@ from leselys.logger import stream_logger
 doc = """Leselys-web is a Web Interface for Leselys.
 
 Usage:
-  leselys-web serve [--host=<address>] [--port=<port>] [--debug]
+  leselys-web serve [--host=<address>] [--port=<port>] [--debug] [--populate]
   leselys-web -h | --help
   leselys-web -v | --version
 
@@ -22,6 +22,7 @@ Options:
   --host=<address>    Address to bind webserver on [default: 127.0.0.1]
   --port=<port>       Port to listen for webserver [default: 5000]
   --debug             Enable Debug mode for Flask [default: false]
+  --populate          Populate database before first request [default: false]
   -h --help           Show help
   -v --version        Show version
 
@@ -32,5 +33,19 @@ if __name__ == '__main__':
     debug = args.get('--debug')
     address = args.get('--host')
     port = args.get('--port')
+    populate = args.get('--populate')
+
+    if populate:
+      FEEDS = [ 'http://socketubs.net/feed.xml','http://ozkatz.github.com/feeds/all.atom.xml',
+                'http://xkcd.com/rss.xml','http://feeds2.feedburner.com/IndependentGaming',
+                'http://feeds.feedburner.com/RockPaperShotgun']
+
+      @app.before_first_request
+      def populate_db():
+        app.logger.info('Please wait, Im populating your database with some feeds...')
+        from leselys.core import reader
+        for feed in FEEDS:
+          app.logger.info('Add: %s' % feed)
+          reader.add(feed)
 
     app.run(host=address, port=int(port), debug=debug)
