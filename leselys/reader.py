@@ -62,12 +62,12 @@ class Reader(object):
 			else:
 				feed_id = db.subscriptions.save({'url':url, 'title': title, 'last_update': None, 'read': False})
 		else:
-			return {'success':False}
+			return {'success':False, 'output':'Feed already exists'}
 
 		retriever = Retriever(title=title, data=r['entries'])
 		retriever.start()
 
-		return {'success':True,'title':title,'feed_id':feed_id}
+		return {'success':True,'title':title,'feed_id':feed_id,'output':'Feed added'}
 
 	def delete(self, title):
 		try:
