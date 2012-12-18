@@ -6,6 +6,9 @@ import time
 
 from leselys.core import db
 
+####################################################################################
+# Set defaults settings
+####################################################################################
 if not db.settings.find_one().get('acceptable_elements', False):
 	settings = db.settings.find_one()
 	settings['acceptable_elements'] = ["object","embed","iframe"]
@@ -17,6 +20,9 @@ acceptable_elements = db.settings.find_one().get('acceptable_elements', [])
 for element in acceptable_elements:
 	feedparser._HTMLSanitizer.acceptable_elements.add(element)
 
+####################################################################################
+# Retriever object
+####################################################################################
 class Retriever(threading.Thread):
 	def __init__(self, title, data=None):
 		threading.Thread.__init__(self)
@@ -46,6 +52,9 @@ class Retriever(threading.Thread):
 
 			_id = db.entries.save({'title':title,'link':link,'description':description,'published':published,'feed_id':feed_id,'read':False})
 
+####################################################################################
+# Reader object
+####################################################################################
 class Reader(object):
 	def __init__(self):
 		pass
@@ -90,6 +99,9 @@ class Reader(object):
 			subscriptions.append({'title':sub['title'],'id':sub['_id']})
 		return subscriptions
 
+	def get_unread(self, feed_id):
+		return len(db.entries.find({'feed_id':feed_id,'read':False}))
+
 	def refreshAll(self):
 		for subscription in db.subscriptions.find():
 			r = feedparser.parse(subscription['url'])
@@ -101,8 +113,6 @@ class Reader(object):
 			else:
 				print('UP TO DATE')
 			
-			#self.get(subscription['title'])
-
 	def read(self, entry_id):
 		entry = db.entries.find_one({'_id': entry_id})
 		db.entries.remove(entry_id)

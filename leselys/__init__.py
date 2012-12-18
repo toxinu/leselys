@@ -8,3 +8,4 @@ __license__ = ''
 __copyright__ = 'Copyright 2012 Geoffrey Lehée'
 
 from leselys import core
+
