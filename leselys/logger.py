@@ -14,3 +14,4 @@ def get_stream_logger(name='leselys-cli'):
 	return stream_logger
 
 stream_logger 	= get_stream_logger()
+

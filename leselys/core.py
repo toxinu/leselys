@@ -10,3 +10,4 @@ if not db.settings.find_one():
 
 from leselys.reader import Reader
 reader = Reader()
+

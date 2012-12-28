@@ -7,7 +7,9 @@ import datetime
 
 from leselys.core import db
 
+####################################################################################
 # Set defaults settings
+####################################################################################
 if not db.settings.find_one().get('acceptable_elements', False):
 	settings = db.settings.find_one()
 	settings['acceptable_elements'] = ["object","embed","iframe"]
@@ -46,6 +48,9 @@ def get_dicttime(parsed_date):
 			'hour': parsed_date[3],
 			'min': parsed_date[4]}
 
+####################################################################################
+# Retriever object
+####################################################################################
 class Retriever(threading.Thread):
 	""" The Retriever object have to retrieve all feeds asynchronously and return it to
 	the Reader when a new subscription arrived """
@@ -59,7 +64,7 @@ class Retriever(threading.Thread):
 		feed = db.subscriptions.find_one({'title': self.title})
 		feed_id = feed['_id']
 
-		if self.data is None:			
+		if self.data is None:
 			url = feed['url']
 			self.data = feedparser.parse(url)['entries']
 
@@ -118,6 +123,9 @@ class Refresher(threading.Thread):
 				db.entries.save(entry)
 				readed.pop(entry['_id'])
 
+####################################################################################
+# Reader object
+####################################################################################
 class Reader(object):
 	""" The Reader object is the subscriptions manager, it handle all new feed, read/unread
 	state and refresh feeds"""
@@ -131,7 +139,7 @@ class Reader(object):
 			return {'success': False, 'output':'Bad feed'}
 
 		title = r.feed['title']
-		
+
 		feed_id = db.subscriptions.find_one({'title':title})
 		if not feed_id:
 			feed_update = get_dicttime(r.feed.updated_parsed)
@@ -187,6 +195,9 @@ class Reader(object):
 	def get_entry(self, entry_id):
 		entry = db.entries.find_one({'_id': entry_id})
 		return entry['content']
+
+	def get_unread(self, feed_id):
+		return len(db.entries.find({'feed_id':feed_id,'read':False}))
 
 	def read(self, entry_id):
 		entry = db.entries.find_one({'_id': entry_id})
