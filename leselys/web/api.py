@@ -5,6 +5,7 @@ from leselys.core import reader
 from leselys.web import app
 
 from flask import jsonify
+from flask import request
 
 #######################################################################
 # API
@@ -28,7 +29,7 @@ def read(entry_id):
 # [WIP]: Refresh all feeds
 @app.route('/api/refresh')
 def refresh():
-	reader.refreshAll()
+	reader.refresh_all()
 	return true
 
 # [WIP]: Set settings
