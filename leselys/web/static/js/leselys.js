@@ -10,7 +10,11 @@ function addSubscription() {
         if (data.success == true) {
             $(loader).html('<a onClick="viewSubscription(&quot;' + data.feed_id + '&quot;)" href="#' + data.feed_id + '">' + data.title + '</a>');
         } else {
-            $(loader).remove();
+            $(loader).html('<li><i class="icon-exclamation-sign"></i> Error: ' + data.output +'</li>');
+            var clearLoader = function() {
+                $(loader).remove();
+            }
+            setTimeout(clearLoader, 5000);
         }
     });
     $('#add').popover('hide')
@@ -54,7 +58,7 @@ function readEntry(entryId) {
         return true;
     }
     $.getJSON('/api/read/' + entryId, function(data) {
-        var header =  '<i class="icon-calendar"></i> ' + data.content.published + ' | <a href="' + data.content.link + '" target="_blank"><i class="icon-share-alt"></i></a>';
+        var header =  '<i class="icon-calendar"></i> ' + data.content.last_update + ' | <a href="' + data.content.link + '" target="_blank"><i class="icon-share-alt"></i></a>';
         var content = "<div class=\"accordion-inner\"" + header + "<hr>" + data.content.description + "</div>";
         $('#content #' + entryId).html(content);
 
