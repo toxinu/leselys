@@ -5,8 +5,11 @@ from leselys.core import reader
 from leselys.core import db
 from leselys.web import app
 
-from flask import render_template, jsonify, g, request
+from flask import render_template
+from flask import jsonify
+from flask import request
 
+# Each template context have the subscriptions list
 @app.context_processor
 def get_subscriptions():
 	return dict(subscriptions=reader.get_subscriptions())
@@ -28,10 +31,15 @@ def read(entry_id):
 	entry = reader.read(entry_id)
 	return jsonify(success=True, content=entry)
 
+@app.route('/api/unread/<entry_id>')
+def unread(entry_id):
+	entry = reader.unread(entry_id)
+	return jsonify(success=True)
+
 @app.route('/api/refresh')
 def refresh():
-	reader.refreshAll()
-	return true
+	reader.refresh_all()
+	return jsonify(success=True)
 
 @app.route('/api/settings/<setting>/<value>')
 def change_settings(setting, value):
