@@ -30,7 +30,7 @@ def read(entry_id):
 @app.route('/api/refresh')
 def refresh():
 	reader.refresh_all()
-	return true
+	return jsonify(success=True)
 
 # [WIP]: Set settings
 @app.route('/api/settings/<setting>/<value>')

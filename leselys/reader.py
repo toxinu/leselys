@@ -2,10 +2,11 @@
 # coding: utf-8
 import feedparser
 import threading
-import time
-import datetime
 
 from leselys.core import db
+from leselys.helpers import u
+from leselys.helpers import get_datetime
+from leselys.helpers import get_dicttime
 
 ####################################################################################
 # Set defaults settings
@@ -16,37 +17,11 @@ if not db.settings.find_one().get('acceptable_elements', False):
 	db.settings.remove(settings['_id'])
 	db.settings.save(settings)
 
-# Acceptable elements are special tag that you can disable in entrie rendering
+# Acceptable elements are special tag that you can disable in entries rendering
 acceptable_elements = db.settings.find_one().get('acceptable_elements', [])
 
 for element in acceptable_elements:
 	feedparser._HTMLSanitizer.acceptable_elements.add(element)
-
-# Date helpers
-def get_datetime(unparsed_date):
-	if isinstance(unparsed_date, dict):
-		return datetime.datetime(
-						unparsed_date['year'],
-						unparsed_date['month'],
-						unparsed_date['day'],
-						unparsed_date['hour'],
-						unparsed_date['min']
-					)
-	else:
-		return datetime.datetime(
-						unparsed_date[0],
-						unparsed_date[1],
-						unparsed_date[2],
-						unparsed_date[3],
-						unparsed_date[4]
-					)
-
-def get_dicttime(parsed_date):
-	return {'year': parsed_date[0],
-			'month': parsed_date[1],
-			'day': parsed_date[2],
-			'hour': parsed_date[3],
-			'min': parsed_date[4]}
 
 ####################################################################################
 # Retriever object
@@ -62,7 +37,7 @@ class Retriever(threading.Thread):
 
 	def run(self):
 		feed = db.subscriptions.find_one({'title': self.title})
-		feed_id = feed['_id']
+		feed_id = u(feed['_id'])
 
 		if self.data is None:
 			url = feed['url']
@@ -97,27 +72,27 @@ class Refresher(threading.Thread):
 	""" The Refresher object have to retrieve all new entries asynchronously """
 
 	def __init__(self, feed_id, data=None):
-		threading.Thread.__init__(self, data=None)
-		self.feed_id = feed_id
+		threading.Thread.__init__(self)
+		self.feed_id = u(feed_id)
 		self.data = data
 
 	def run(self):
-		feed = db.subscriptions.find_one({'_id': feed_id})
 		if self.data is None:
+			feed = db.subscriptions.find_one({'_id': self.feed_id})
 			self.data = feedparser.parse(feed['url'])
 
 		readed = []
 		for entry in db.entries.find({'feed_id':self.feed_id}):
 			if entry['read']:
-				readed.apppend(entry['_id'])
-				db.entries.remove(entry['_id'])
+				readed.append(entry['title'])
+			db.entries.remove(entry['_id'])
 
-		retriever = Retriever(title=self.data['title'], data=self.data)
+		retriever = Retriever(title=self.data.feed['title'], data=self.data.entries)
 		retriever.start()
 		retriever.join()
 
 		for entry in db.entries.find({'feed_id':self.feed_id}):
-			if entry['_id'] in readed:
+			if entry['title'] in readed:
 				entry['read'] = True
 				db.entries.remove(entry['_id'])
 				db.entries.save(entry)
@@ -143,8 +118,6 @@ class Reader(object):
 		feed_id = db.subscriptions.find_one({'title':title})
 		if not feed_id:
 			feed_update = get_dicttime(r.feed.updated_parsed)
-			print(feed_update)
-
 			feed_id = db.subscriptions.save({'url':url, 'title': title, 'last_update': feed_update, 'read': False})
 		else:
 			return {'success':False, 'output':'Feed already exists'}
@@ -162,11 +135,9 @@ class Reader(object):
 			pass
 
 	def get(self, feed_id):
-
 		res = []
-		for entrie in db.entries.find({'feed_id':feed_id}):
-			res.append({"title":entrie['title'],"_id":entrie['_id'],"read":entrie['read']})
-
+		for entry in db.entries.find({'feed_id':feed_id}):
+			res.append({"title":entry['title'],"_id":entry['_id'],"read":entry['read']})
 		return res
 
 	def get_subscriptions(self):
@@ -180,15 +151,10 @@ class Reader(object):
 			r = feedparser.parse(subscription['url'])
 
 			local_update = get_datetime(subscription['last_update'])
-			remote_update = get_datetime(r.updated_parsed)
+			remote_update = get_datetime(r.feed.updated_parsed)
 
-			print('========')
-			print(local_update)
-			print(r.updated_parsed)
-			print(r.updated)
-			print(remote_update)
-			print('========')
 			if remote_update > local_update:
+				print('Update feed: %s' % subscription['title'])
 				refresher = Refresher(subscription['_id'], r)
 				refresher.start()
 
@@ -201,7 +167,7 @@ class Reader(object):
 
 	def read(self, entry_id):
 		entry = db.entries.find_one({'_id': entry_id})
-		db.entries.remove(entry_id)
+		db.entries.remove(entry['_id'])
 		entry['read'] = True
 		db.entries.save(entry)
 		return entry
