@@ -58,9 +58,14 @@ function readEntry(entryId) {
         return true;
     }
     $.getJSON('/api/read/' + entryId, function(data) {
-        var header =  '<i class="icon-calendar"></i> ' + data.content.last_update + ' | <a href="' + data.content.link + '" target="_blank"><i class="icon-share-alt"></i></a>';
-        var content = "<div class=\"accordion-inner\"" + header + "<hr>" + data.content.description + "</div>";
+        var published = data.content.last_update['year'] + '-' + data.content.last_update['month'] +
+                        '-' + data.content.last_update['day'];
+        var header =  '<p><span class="label">' + published + '</span> | <a href="' + data.content.link + '" target="_blank">External link</a></p>';
+        var content = '<div class="accordion-inner"' + header + data.content.description + "</div>";
         $('#content #' + entryId).html(content);
+        var feed_id = data.content.feed_id;
+        //$.getJSON('/api/')
+        //$("a[href=#" + feed_id + " li ul#menu").
 
     });
 
