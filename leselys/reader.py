@@ -143,7 +143,7 @@ class Reader(object):
 	def get_subscriptions(self):
 		subscriptions = []
 		for sub in db.subscriptions.find():
-			subscriptions.append({'title':sub['title'],'id':sub['_id']})
+			subscriptions.append({'title':sub['title'],'id':sub['_id'], 'counter':self.get_unread(sub['_id'])})
 		return subscriptions
 
 	def refresh_all(self):
@@ -163,11 +163,17 @@ class Reader(object):
 		return entry['content']
 
 	def get_unread(self, feed_id):
-		return len(db.entries.find({'feed_id':feed_id,'read':False}))
+		res = 0
+		for i in db.entries.find({'feed_id':feed_id, 'read':False}):
+			res += 1
+		return res
 
 	def read(self, entry_id):
+		state = False
 		entry = db.entries.find_one({'_id': entry_id})
 		db.entries.remove(entry['_id'])
+		if entry['read']:
+			state = False
 		entry['read'] = True
 		db.entries.save(entry)
 		return entry
