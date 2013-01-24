@@ -26,7 +26,12 @@ def read(entry_id):
 	entry = reader.read(entry_id)
 	return jsonify(success=True, content=entry)
 
-# [WIP]: Refresh all feeds
+# Return number of unreaded entries
+@app.route('/api/unread/<feed_id>')
+def count_unread(feed_id):
+	return jsonify(count=reader.get_unread(feed_id))
+
+# Refresh all feeds
 @app.route('/api/refresh')
 def refresh():
 	reader.refresh_all()
@@ -36,4 +41,3 @@ def refresh():
 @app.route('/api/settings/<setting>/<value>')
 def change_settings(setting, value):
 	pass
-

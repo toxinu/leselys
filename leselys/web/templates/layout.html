@@ -44,7 +44,11 @@
                     <li class="divider"></li>
                     <li id="listSubscriptions" class="nav-header">Subscriptions</li>
                     {% for subscription in subscriptions %}
-                        <li><a onClick="viewSubscription(&quot;{{ subscription.id }}&quot;)" href="#{{ subscription.id }}">{{ subscription.title }}</a></li>
+                        {% if subscription.counter > 0 %}
+                            <li><a onClick="viewSubscription(&quot;{{ subscription.id }}&quot;)" href="#{{ subscription.id }}">{{ subscription.title }} <span class="badge badge-inverse">{{ subscription.counter }}</span></a></li>
+                        {% else %}
+                            <li><a onClick="viewSubscription(&quot;{{ subscription.id }}&quot;)" href="#{{ subscription.id }}">{{ subscription.title }}</a></li>
+                        {% endif %}
                     {% endfor %}
                 </ul>
             </div>
