@@ -9,7 +9,7 @@ try:
 	from setuptools import setup
 except ImportError:
 	from distutils.core import setup
-	
+
 def get_version():
     VERSIONFILE = 'leselys/__init__.py'
     initfile_lines = open(VERSIONFILE, 'rt').readlines()
@@ -25,10 +25,10 @@ if sys.argv[-1] == 'publish':
 	sys.exit()
 
 setup(
-	name='Leselys',
+	name='leselys',
 	version=get_version(),
 	description='Minimal RSS Reader',
-	long_description=open('README.rst').read() + '\n\n' + open('HISTORY.rst').read(), 
+	long_description=open('README.rst').read() + '\n\n' + open('HISTORY.rst').read(),
 	license=open('LICENSE').read(),
 	author='socketubs',
 	author_email='geoffrey@lehee.name',
