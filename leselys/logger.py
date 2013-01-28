@@ -1,10 +1,7 @@
-#!/usr/bin/env python
 # coding: utf-8
-
-import os
 import logging
 
-def get_stream_logger(name='leselys-cli'):
+def get_stream_logger(name='leselys'):
 	stream_logger = logging.getLogger(name)
 	ch = logging.StreamHandler()
 	stream_logger.setLevel(logging.INFO)
@@ -14,4 +11,3 @@ def get_stream_logger(name='leselys-cli'):
 	return stream_logger
 
 stream_logger 	= get_stream_logger()
-

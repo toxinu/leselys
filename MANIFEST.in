@@ -1,4 +1,4 @@
 include README.rst
 include HISTORY.rst
 include LICENSE
-recursive-include leselys/web *
+recursive-include leselys *

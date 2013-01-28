@@ -1,11 +1,11 @@
-#!/usr/bin/env python
 # coding: utf-8
-
-from leselys.core import reader
-from leselys.web import app
+import leselys
 
 from flask import jsonify
 from flask import request
+
+reader = leselys.core.reader
+app = leselys.core.app
 
 #######################################################################
 # API

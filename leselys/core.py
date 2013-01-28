@@ -1,13 +1,33 @@
-#!/usr/bin/env python
 # coding: utf-8
-from leselys.logger import stream_logger
+import os
+
 from sofart import Database
+from flask import Flask
 
-db = Database('/tmp/lesesys.db', mode="single")
+from leselys.logger import stream_logger
 
-if not db.settings.find_one():
-	db.settings.save({'acceptable_elements': []})
+class Core(object):
+	def __init__(self, path, mode, host, port, debug):
 
-from leselys.reader import Reader
-reader = Reader()
+		self.path = path
+		self.mode = mode
+		self.host = host
+		self.port = int(port)
+		self.debug = debug
 
+	def run(self):
+		self.db = Database(self.path, mode=self.mode)
+		if not self.db.settings.find_one():
+			self.db.settings.save({'acceptable_elements': []})
+
+		from leselys.reader import Reader
+		self.reader = Reader()
+
+		SECRET_KEY = os.urandom(24)
+		self.app = Flask(__name__)
+		self.app.config.from_object(__name__)
+		self.app.config.from_envvar('FLASKR_SETTINGS', silent=True)
+
+		from leselys import views
+		from leselys import api
+		self.app.run(host=self.host, port=int(self.port), debug=self.debug)

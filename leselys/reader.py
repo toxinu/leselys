@@ -1,12 +1,13 @@
-#!/usr/bin/env python
 # coding: utf-8
 import feedparser
 import threading
+import leselys
 
-from leselys.core import db
 from leselys.helpers import u
 from leselys.helpers import get_datetime
 from leselys.helpers import get_dicttime
+
+db = leselys.core.db
 
 ####################################################################################
 # Set defaults settings
@@ -117,7 +118,16 @@ class Reader(object):
 
 		feed_id = db.subscriptions.find_one({'title':title})
 		if not feed_id:
-			feed_update = get_dicttime(r.feed.updated_parsed)
+			if r.feed.get('updated_parsed'):
+				feed_update = get_dicttime(r.feed.updated_parsed)
+			elif r.get('updated_parsed'):
+				feed_update = get_dicttime(r.updated_parsed)
+			elif r.feed.get('published_parsed'):
+				feed_update = get_dicttime(r.feed.published_parsed)
+			elif r.get('published_parsed'):
+				feed_update = get_dicttime(r.published_parsed)
+			else:
+				return {'success':False, 'output':'Parsing error'}
 			feed_id = db.subscriptions.save({'url':url, 'title': title, 'last_update': feed_update, 'read': False})
 		else:
 			return {'success':False, 'output':'Feed already exists'}
@@ -151,7 +161,10 @@ class Reader(object):
 			r = feedparser.parse(subscription['url'])
 
 			local_update = get_datetime(subscription['last_update'])
-			remote_update = get_datetime(r.feed.updated_parsed)
+			if r.feed.get('updated_parser'):
+				remote_update = get_datetime(r.feed.updated_parsed)
+			else:
+				remote_update = get_datetime(r.feed.published_parsed)
 
 			if remote_update > local_update:
 				print('Update feed: %s' % subscription['title'])

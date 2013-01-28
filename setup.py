@@ -25,7 +25,7 @@ if sys.argv[-1] == 'publish':
 	sys.exit()
 
 setup(
-	name='Leselys',
+	name='leselys',
 	version=get_version(),
 	description='Minimal RSS Reader',
 	long_description=open('README.rst').read() + '\n\n' + open('HISTORY.rst').read(),
@@ -34,8 +34,8 @@ setup(
 	author_email='geoffrey@lehee.name',
 	url='https://github.com/socketubs/leselys',
 	keywords='## Set keywords',
-	packages=['leselys','leselys.web'],
-	scripts=['scripts/leselys','scripts/leselys-web'],
+	packages=['leselys'],
+	scripts=['scripts/leselys'],
 	install_requires=['docopt==0.5.0','flask==0.9','sofart','feedparser'],
 	include_package_data=True,
 	classifiers=(

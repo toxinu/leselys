@@ -1,11 +1,17 @@
-#!/usr/bin/env python
 # coding: utf-8
 
-__title__ = 'Leselys'
-__version__ = '0.1.3'
+__title__ = 'leselys'
+__version__ = '0.1.4'
 __author__ = 'Geoffrey Lehée'
 __license__ = ''
-__copyright__ = 'Copyright 2012 Geoffrey Lehée'
+__copyright__ = 'Copyright 2013 Geoffrey Lehée'
 
-from leselys import core
+from leselys.core import Core
 
+defaults = {'host': '127.0.0.1',
+			'port': 5000,
+			'path': '/tmp/leselys.db',
+			'mode': 'multi',
+			'debug': False}
+
+core = Core(**defaults)
