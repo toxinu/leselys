@@ -1,16 +1,15 @@
-#!/usr/bin/env python
 # coding: utf-8
-
-from leselys.core import reader
-from leselys.core import db
-from leselys.web import app
+import leselys
 
 from flask import render_template
 from flask import jsonify
 from flask import request
 
-# Each template context have the subscriptions list
+db = leselys.core.db
+app = leselys.core.app
+reader = leselys.core.reader
 
+# Each template context have the subscriptions list
 # Context which return subscriptions list to every template
 @app.context_processor
 def get_subscriptions():
@@ -30,4 +29,3 @@ def settings():
 	_settings = db.settings.find_one()
 	del _settings['_id']
 	return render_template('settings.html', settings=_settings)
-

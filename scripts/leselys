@@ -1,24 +1,32 @@
 #!/usr/bin/env python
 # coding: utf-8
-
-import os
-import leselys
-
 from docopt import docopt
-from leselys.cli import Cli
+from leselys import core
 
-doc = """Leselys, ## Set description.
+doc = """Leselys-web is a Web Interface for Leselys.
 
 Usage:
-  leselys -h | --help
-  leselys -v | --version
+  leselys-web serve [--host=<address>] [--port=<port>] [--debug] [--db-path=<path>] [--db-mode=<mode>]
+  leselys-web -h | --help
+  leselys-web -v | --version
 
 Options:
+  --host=<address>    Address to bind webserver on [default: 127.0.0.1]
+  --port=<port>       Port to listen for webserver [default: 5000]
+  --db-path=<path>    Path to database [default: /tmp/leselys.db]
+  --db-mode=<mode>    Database mode, single (in memory) or multi [default: multi]
+  --debug             Enable Debug mode for Flask [default: false]
   -h --help           Show help
   -v --version        Show version
+
 """
 
 if __name__ == '__main__':
-	args = docopt(doc, version=leselys.__version__)
-	cli = Cli(**args)
-	cli.start()
+    args = docopt(doc, version='0.1')
+
+    core.host = args.get('--host')
+    core.port = args.get('--port')
+    core.path = args.get('--db-path')
+    core.mode = args.get('--db-mode')
+    core.debug = args.get('--debug')
+    core.run()
