@@ -4,15 +4,21 @@ function addSubscription() {
         return false;
     }
 
+    // Clear help message if no subscriptions
+    if ($("ul#menu li#helper").length) {
+      $("ul#menu li#helper").remove();
+      $("ul#menu li#listSubscriptions").show();
+    }
     var loader = $('<li><i class="icon-tasks"></i> Loading...</li>');
     $("ul#menu").append(loader);
     $.post('/api/add', {url: url}, function(data) {
         if (data.success == true) {
-            $(loader).html('<a onClick="viewSubscription(&quot;' + data.feed_id + '&quot;)" href="#' + data.feed_id + '">' + data.title + '</a>');
+          $(loader).hide();
+          $(loader).html('<a onClick="viewSubscription(&quot;' + data.feed_id + '&quot;)" href="#' + data.feed_id + '">' + data.title + ' <span id="unread-counter" class="badge badge-inverse">' + data.counter  + '</span></a>').fadeIn();
         } else {
             $(loader).html('<li><i class="icon-exclamation-sign"></i> Error: ' + data.output +'</li>');
             var clearLoader = function() {
-                $(loader).remove();
+              $(loader).fadeOut();
             }
             setTimeout(clearLoader, 5000);
         }
@@ -47,10 +53,14 @@ function viewSubscription(feedId) {
 }
 
 function refreshSubscriptions() {
-    $.get('/api/refresh'), function(data) {
-
-    }
-
+  $.getJSON('/api/refresh', function(data) {
+    $.each(data.content, function(i,feed) {
+      var feed_title = feed[0];
+      var feed_id = feed[1];
+      var feed_counter = feed[2];
+      $("#menu a[href=#" + feed_id + "] span.badge").html(feed_counter);
+    });
+  });
 }
 
 function readEntry(entryId) {
@@ -63,10 +73,11 @@ function readEntry(entryId) {
         var header =  '<p><span class="label">' + published + '</span> | <a href="' + data.content.link + '" target="_blank">External link</a></p>';
         var content = '<div class="accordion-inner"' + header + data.content.description + "</div>";
         $('#content #' + entryId).html(content);
-        var feed_id = data.content.feed_id;
-        //$.getJSON('/api/')
-        //$("a[href=#" + feed_id + " li ul#menu").
-
+        if (data.content.last_read_state == false) {
+          var feed_id = data.content.feed_id;
+          var counter = $("#menu a[href=#" + feed_id + "] span.badge").html() - 1;
+          $("#menu a[href=#" + feed_id + "] span.badge").html(counter);
+        }
     });
 
     $('a[href=#' + entryId + ']').css('font-weight', 'normal').data('loaded', true);
