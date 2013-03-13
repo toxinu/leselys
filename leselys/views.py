@@ -9,7 +9,7 @@ db = leselys.core.db
 app = leselys.core.app
 reader = leselys.core.reader
 
-# Each template context have the subscriptions list
+# Each template context have the subscriptions list
 # Context which return subscriptions list to every template
 @app.context_processor
 def get_subscriptions():

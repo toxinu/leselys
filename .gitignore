@@ -36,3 +36,5 @@ nosetests.xml
 
 leselys.db
 tests
+venv
+virtualenv
