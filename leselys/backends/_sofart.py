@@ -11,6 +11,8 @@ class Backend(object):
         self.db.settings.save({key: value})
 
     def get_setting(self, key):
+        if not self.db.settings.find_one():
+            return False
         if not self.db.settings.find_one().get(key, False):
             return False
         else:
@@ -24,7 +26,7 @@ class Backend(object):
         return settings
 
     def add_feed(self, content):
-        self.db.feeds.save(content)
+        return self.db.feeds.save(content)
 
     def remove_feed(self, _id):
         self.db.feeds.remove(_id)
