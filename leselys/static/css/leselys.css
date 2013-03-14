@@ -1,3 +1,6 @@
+.sidenav-affix {
+    width: 13%;
+  }
 body {
   padding-top: 15px;
   padding-bottom: 40px;
@@ -5,11 +8,6 @@ body {
 }
 li {
   font-size:13px;
-}
-@media handheld, only screen and (max-width: 1566px) {
-  .sidenav-affix {
-    width: 13%;
-  }
 }
 @media handheld, only screen and (max-width: 900px) {
   .sidenav-affix {

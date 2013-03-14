@@ -11,7 +11,6 @@
   <link href="{{ url_for('static', filename='css/bootstrap-responsive.min.css') }}" rel="stylesheet">
   <link href="{{ url_for('static', filename='css/leselys.css') }}" rel="stylesheet">
 </head>
-
 <body>
   <div class="container-fluid">
     {% with messages = get_flashed_messages(with_categories=true) %}
@@ -63,6 +62,24 @@
         {% block body %}{% endblock %}
       </div>
     </div>
+
+    <!-- Template add subscription -->
+    <form id="template-add-subscription" style="display: none">
+      <fieldset>
+        <center>
+          <input id="urlSubscription" type="text" class="input-medium" placeholder="Url…">
+          <button type="submit" class="btn" onClick="addSubscription()">Submit</button>
+        </center>
+      </fieldset>
+    </form>
+
+    <!-- Template story -->
+    <div id="template-story" class="accordion-inner" style="display: none">
+      <p>
+        <span class="label"></span> | <a href="" target="_blank">External link</a>
+      </p>
+    </div>
+    <!-- -->
   </div>
 
   <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
