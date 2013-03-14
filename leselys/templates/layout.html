@@ -7,8 +7,8 @@
   <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}" type="image/x-icon"/>
   <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}" type="image/x-icon"/>
   <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
-  <link href="{{ url_for('static', filename='css/bootstrap-responsive.min.css') }}" rel="stylesheet">
   <link href="{{ url_for('static', filename='css/journal.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/bootstrap-responsive.min.css') }}" rel="stylesheet">
   <link href="{{ url_for('static', filename='css/leselys.css') }}" rel="stylesheet">
 </head>
 
@@ -30,32 +30,34 @@
     {% endwith %}
     <div class="row-fluid">
       <div class="span2">
-        <ul id="menu" class="nav nav-list sidebar-nav-fixed" data-spy="affix">
-          <li class="divider"></li>
-             <center>
-               <li>
-                 <a href="/"><i class="icon-home"></i></a>
-                 <a href="#" onClick="refreshSubscriptions()"><i class="icon-refresh"></i></a>
-                 <a href="#" id="add"><i class="icon-plus-sign"></i></a>
-                 <a href="/settings"><i class="icon-wrench"></i></a>
-                 <a href="https://github.com/socketubs/leselys" target="_blank"><i class="icon-question-sign"></i></a>
-               </li>
-             </center>
-          <li class="divider"></li>
-            {% if not subscriptions %}
-              <li style="display:none" id="listSubscriptions" class="nav-header">Subscriptions</li>
-              <li id="helper"><center><em>Add your first subscription with the little cross icon.</em></center></li>
-            {% else %}
-              <li id="listSubscriptions" class="nav-header">Subscriptions</li>
-              {% for subscription in subscriptions %}
-                {% if subscription.counter > 0 %}
-                  <li><a onClick="viewSubscription(&quot;{{ subscription.id }}&quot;)" href="#{{ subscription.id }}">{{ subscription.title }} <span id="unread-counter" class="badge badge-inverse">{{ subscription.counter }}</span></a></li>
-                {% else %}
-                  <li><a onClick="viewSubscription(&quot;{{ subscription.id }}&quot;)" href="#{{ subscription.id }}">{{ subscription.title }}</a></li>
-                {% endif %}
-              {% endfor %}
-            {% endif %}
-        </ul>
+        <div class="sidebar-nav">
+          <ul id="menu" class="nav nav-list sidenav-affix" data-spy="affix">
+            <li class="divider"></li>
+               <center>
+                 <li>
+                   <a href="/"><i class="icon-home"></i></a>
+                   <a href="#" onClick="refreshSubscriptions()"><i class="icon-refresh"></i></a>
+                   <a href="#" id="add"><i class="icon-plus-sign"></i></a>
+                   <a href="/settings"><i class="icon-wrench"></i></a>
+                   <a href="https://github.com/socketubs/leselys" target="_blank"><i class="icon-question-sign"></i></a>
+                 </li>
+               </center>
+            <li class="divider"></li>
+              {% if not subscriptions %}
+                <li style="display:none" id="listSubscriptions" class="nav-header">Subscriptions</li>
+                <li id="helper"><center><em>Add your first subscription with the little cross icon.</em></center></li>
+              {% else %}
+                <li id="listSubscriptions" class="nav-header">Subscriptions</li>
+                {% for subscription in subscriptions %}
+                  {% if subscription.counter > 0 %}
+                    <li><a onClick="viewSubscription(&quot;{{ subscription.id }}&quot;)" href="#{{ subscription.id }}">{{ subscription.title }} <span id="unread-counter" class="badge badge-inverse">{{ subscription.counter }}</span></a></li>
+                  {% else %}
+                    <li><a onClick="viewSubscription(&quot;{{ subscription.id }}&quot;)" href="#{{ subscription.id }}">{{ subscription.title }}</a></li>
+                  {% endif %}
+                {% endfor %}
+              {% endif %}
+          </ul>
+        </div>
       </div>
       <div id="content" class="span10">
         {% block body %}{% endblock %}

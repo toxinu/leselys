@@ -76,7 +76,11 @@ function readEntry(entryId) {
         if (data.content.last_read_state == false) {
           var feed_id = data.content.feed_id;
           var counter = $("#menu a[href=#" + feed_id + "] span.badge").html() - 1;
-          $("#menu a[href=#" + feed_id + "] span.badge").html(counter);
+          if (counter == 0) {
+            $("#menu a[href=#" + feed_id + "] span.badge").remove();
+          } else {
+            $("#menu a[href=#" + feed_id + "] span.badge").html(counter);
+          }
         }
     });
 

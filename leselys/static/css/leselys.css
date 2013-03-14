@@ -1,19 +1,25 @@
-.sidebar-nav-fixed {
-  width:12%;
-}
 body {
   padding-top: 15px;
   padding-bottom: 40px;
+  margin-left: -8px;
 }
 li {
   font-size:13px;
 }
-@media handheld, only screen and (min-width: 1600px) {
-  .sidebar-nav-fixed {
-    padding: 9px 0;
-    position:fixed;
-    left:20px;
-    top:15px;
-    width:250px;
+@media handheld, only screen and (max-width: 1566px) {
+  .sidenav-affix {
+    width: 13%;
+  }
+}
+@media handheld, only screen and (max-width: 900px) {
+  .sidenav-affix {
+    width: 12%;
+  }
+}
+@media handheld, only screen and (max-width: 768px) {
+  .sidenav-affix {
+    position: static;
+    width: auto;
+    top: 0;
   }
 }

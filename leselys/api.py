@@ -15,6 +15,11 @@ app = leselys.core.app
 def add():
 	return jsonify(reader.add(request.form['url']))
 
+# Remove feed
+@app.route('/api/remove/<feed_id>', methods=['DELETE'])
+def remove(feed_id):
+	return jsonify(reader.delete(feed_id))
+
 # Return list of entries for given feed_id
 @app.route('/api/get/<feed_id>')
 def get(feed_id):
