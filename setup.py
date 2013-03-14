@@ -35,7 +35,7 @@ setup(
 	url='https://github.com/socketubs/leselys',
 	keywords='## Set keywords',
 	packages=['leselys'],
-	scripts=['scripts/leselys'],
+	scripts=['scripts/leselys', 'scripts/echo_leselys_conf'],
 	install_requires=['docopt==0.5.0','flask==0.9','sofart','feedparser'],
 	include_package_data=True,
 	classifiers=(
