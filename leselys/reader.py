@@ -142,12 +142,13 @@ class Reader(object):
             'output': 'Feed added',
             'counter': len(r['entries'])}
 
-    def delete(self, title):
-        try:
-            _id = db.subscriptions.find_one({'title':title})['_id']
-            db.remove(_id)
-        except:
-            pass
+    def delete(self, feed_id):
+        if not db.subscriptions.find_one({'_id': feed_id}):
+            return {'success': False, "output": "Feed not found"}
+        db.subscriptions.remove(feed_id)
+        for entrie in db.entries.find({'feed_id': feed_id}):
+            db.entries.remove(entrie['_id'])
+        return {"success": True, "output": "Feed removed"}
 
     def get(self, feed_id):
         res = []
