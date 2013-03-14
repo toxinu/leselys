@@ -55,6 +55,7 @@ if __name__ == '__main__':
     backend_settings = {}
     for item in config.items('backend'):
         backend_settings[item[0]] = item[1]
+    del backend_settings['type']
     backend = _load_backend(config.get('backend', 'type'))
 
     core.host = core.host or args.get('--host')
