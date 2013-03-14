@@ -1,0 +1,14 @@
+#!/usr/bin/env python
+
+config = """[webserver]
+host = 0.0.0.0
+port = 5000
+debug = false
+
+[backend]
+type = sofart
+path = /tmp/leselys.db
+mode = multi"""
+
+print(config)
+exit(0)
