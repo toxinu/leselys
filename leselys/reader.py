@@ -7,19 +7,16 @@ from leselys.helpers import u
 from leselys.helpers import get_datetime
 from leselys.helpers import get_dicttime
 
-db = leselys.core.db
+backend = leselys.core.backend
 
 ####################################################################################
 # Set defaults settings
 ####################################################################################
-if not db.settings.find_one().get('acceptable_elements', False):
-    settings = db.settings.find_one()
-    settings['acceptable_elements'] = ["object","embed","iframe"]
-    db.settings.remove(settings['_id'])
-    db.settings.save(settings)
+if not backend.get_setting('acceptable_elements'):
+    backend.set_setting('acceptable_elements', ["object", "embed", "iframe"])
 
 # Acceptable elements are special tag that you can disable in entries rendering
-acceptable_elements = db.settings.find_one().get('acceptable_elements', [])
+acceptable_elements = backend.get_setting('acceptable_elements')
 
 for element in acceptable_elements:
     feedparser._HTMLSanitizer.acceptable_elements.add(element)
@@ -37,7 +34,7 @@ class Retriever(threading.Thread):
         self.data = data
 
     def run(self):
-        feed = db.subscriptions.find_one({'title': self.title})
+        feed = backend.get_feed_by_title(self.title)
         feed_id = u(feed['_id'])
 
         if self.data is None:
@@ -59,7 +56,7 @@ class Retriever(threading.Thread):
             else:
                 published = None
 
-            _id = db.entries.save({
+            _id = backend.add_story({
                     'entry_id': entry_id,
                     'title':title,
                     'link':link,
@@ -79,25 +76,24 @@ class Refresher(threading.Thread):
 
     def run(self):
         if self.data is None:
-            feed = db.subscriptions.find_one({'_id': self.feed_id})
+            feed = backend.get_feed_by_id(self.feed_id)
             self.data = feedparser.parse(feed['url'])
 
         readed = []
-        for entry in db.entries.find({'feed_id':self.feed_id}):
+        for entry in backend.get_stories(self.feed_id):
             if entry['read']:
                 readed.append(entry['title'])
-            db.entries.remove(entry['_id'])
+            backend.remove_story(entry['_id'])
 
         retriever = Retriever(title=self.data.feed['title'], data=self.data.entries)
         retriever.start()
         retriever.join()
 
         for entry in readed:
-            if db.entries.find_one({'title':entry}):
-                entry = db.entries.find_one({'title':entry})
+            if backend.get_story_by_title(entry):
+                entry = backend.get_story_by_title(entry)
                 entry['read'] = True
-                db.entries.remove(entry['_id'])
-                db.entries.save(entry)
+                backend.update_story(entry['_id'], entry)
 
 ####################################################################################
 # Reader object
@@ -116,7 +112,7 @@ class Reader(object):
 
         title = r.feed['title']
 
-        feed_id = db.subscriptions.find_one({'title':title})
+        feed_id = backend.get_feed_by_title(title)
         if not feed_id:
             if r.feed.get('updated_parsed'):
                 feed_update = get_dicttime(r.feed.updated_parsed)
@@ -128,7 +124,7 @@ class Reader(object):
                 feed_update = get_dicttime(r.published_parsed)
             else:
                 return {'success':False, 'output':'Parsing error'}
-            feed_id = db.subscriptions.save({'url':url, 'title': title, 'last_update': feed_update, 'read': False})
+            feed_id = backend.add_feed({'url':url, 'title': title, 'last_update': feed_update, 'read': False})
         else:
             return {'success':False, 'output':'Feed already exists'}
 
@@ -143,28 +139,26 @@ class Reader(object):
             'counter': len(r['entries'])}
 
     def delete(self, feed_id):
-        if not db.subscriptions.find_one({'_id': feed_id}):
+        if not backend.get_feed_by_id(feed_id):
             return {'success': False, "output": "Feed not found"}
-        db.subscriptions.remove(feed_id)
-        for entrie in db.entries.find({'feed_id': feed_id}):
-            db.entries.remove(entrie['_id'])
+        backend.remove_feed(feed_id)
         return {"success": True, "output": "Feed removed"}
 
     def get(self, feed_id):
         res = []
-        for entry in db.entries.find({'feed_id':feed_id}):
+        for entry in backend.get_stories(feed_id):
             res.append({"title":entry['title'],"_id":entry['_id'],"read":entry['read']})
         return res
 
     def get_subscriptions(self):
-        subscriptions = []
-        for sub in db.subscriptions.find():
-            subscriptions.append({'title':sub['title'],'id':sub['_id'], 'counter':self.get_unread(sub['_id'])})
-        return subscriptions
+        feeds = []
+        for feed in backend.get_feeds():
+            feeds.append({'title':feed['title'],'id':feed['_id'], 'counter':self.get_unread(feed['_id'])})
+        return feeds
 
     def refresh_all(self):
         feeds_id = []
-        for subscription in db.subscriptions.find():
+        for subscription in backend.get_feeds():
             r = feedparser.parse(subscription['url'])
 
             local_update = get_datetime(subscription['last_update'])
@@ -181,33 +175,28 @@ class Reader(object):
                 refresher.join()
 
         res = []
-        for subscription in feeds_id:
-            subscription = db.subscriptions.find_one({'_id': subscription})
-            res.append((subscription['title'], subscription['_id'], self.get_unread(subscription['_id'])))
+        for feed in feeds_id:
+            feed = backend.get_feed_by_id(subscription)
+            res.append((feed['title'], feed['_id'], self.get_unread(feed['_id'])))
         return res
 
     def get_unread(self, feed_id):
-        res = 0
-        for i in db.entries.find({'feed_id':feed_id, 'read':False}):
-            res += 1
-        return res
+        return len(backend.get_feed_unread(feed_id))
 
     def read(self, entry_id):
         """
         Return entry content, set it at readed state and give
         previous read state for counter
         """
-        entry = db.entries.find_one({'_id': entry_id})
-        db.entries.remove(entry['_id'])
+        entry = backend.get_story_by_id(entry_id)
         # Save read state before update it for javascript counter in UI
         entry['last_read_state'] = entry['read']
         entry['read'] = True
-        db.entries.save(entry)
+        backend.update_story(entry['_id'], entry)
         return entry
 
-    def unread(self, entry_id):
-        entry = db.entries.find_one({'_id': entry_id})
-        db.entries.remove(entry_id)
-        entry['read'] = False
-        db.entries.save(entry)
+    def unread(self, story_id):
+        story = backend.get_story_by_id(story_id)
+        story['read'] = False
+        backend.update_story(story['_id'], story)
         return True

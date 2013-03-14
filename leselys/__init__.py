@@ -10,8 +10,6 @@ from leselys.core import Core
 
 defaults = {'host': '127.0.0.1',
 			'port': 5000,
-			'path': '/tmp/leselys.db',
-			'mode': 'multi',
 			'debug': False}
 
 core = Core(**defaults)

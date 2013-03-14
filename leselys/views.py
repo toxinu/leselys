@@ -5,7 +5,7 @@ from flask import render_template
 from flask import jsonify
 from flask import request
 
-db = leselys.core.db
+backend = leselys.core.backend
 app = leselys.core.app
 reader = leselys.core.reader
 
@@ -26,6 +26,5 @@ def home():
 # Settings
 @app.route('/settings')
 def settings():
-	_settings = db.settings.find_one()
-	del _settings['_id']
+	_settings = backend.get_settings()
 	return render_template('settings.html', settings=_settings)
