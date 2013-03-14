@@ -15,4 +15,7 @@ Usage
 
 ::
 
-	leselys-web serve --port 5050 --host 0.0.0.0
+  echo_leselys_conf > leselys.ini
+	leselys-web serve --config leselys.ini
+
+Open your brower at ``http://localhost:5000``.
