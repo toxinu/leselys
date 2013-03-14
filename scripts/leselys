@@ -3,18 +3,22 @@
 from docopt import docopt
 from leselys import core
 
+from leselys.backends import _load_backend
+
+import ConfigParser
+
+config = ConfigParser.ConfigParser()
 doc = """Leselys-web is a Web Interface for Leselys.
 
 Usage:
-  leselys-web serve [--host=<address>] [--port=<port>] [--debug] [--db-path=<path>] [--db-mode=<mode>]
+  leselys-web serve --config=<path> [--host=<address>] [--port=<port>] [--debug]
   leselys-web -h | --help
   leselys-web -v | --version
 
 Options:
   --host=<address>    Address to bind webserver on [default: 127.0.0.1]
   --port=<port>       Port to listen for webserver [default: 5000]
-  --db-path=<path>    Path to database [default: /tmp/leselys.db]
-  --db-mode=<mode>    Database mode, single (in memory) or multi [default: multi]
+  --config=<path>     Path to configuration file
   --debug             Enable Debug mode for Flask [default: false]
   -h --help           Show help
   -v --version        Show version
@@ -23,10 +27,40 @@ Options:
 
 if __name__ == '__main__':
     args = docopt(doc, version='0.1')
+    config.read(args.get('--config'))
 
-    core.host = args.get('--host')
-    core.port = args.get('--port')
-    core.path = args.get('--db-path')
-    core.mode = args.get('--db-mode')
-    core.debug = args.get('--debug')
+    # Defaults
+    core.host = '127.0.0.1'
+    core.port = 5000
+    core.debug = False
+
+    if not config.has_section('backend'):
+        print('Missing backend section in configuration file')
+        exit(1)
+    if not config.get('backend', 'type'):
+        print('Missing type setting in backend section in configuration file')
+        exit(1)
+
+    if config.has_section('webserver') and config.get('webserver', 'host'):
+        core.host = config.get('webserver', 'host')
+    if config.has_section('webserver') and config.get('webserver', 'port'):
+        core.port = config.get('webserver', 'port')
+    if config.has_section('webserver') and config.get('webserver', 'debug'):
+        if config.get('webserver', 'debug') in ['True', 'true']:
+            core.debug = True
+        else:
+            core.debug = False
+
+    # Create backend
+    backend_settings = {}
+    for item in config.items('backend'):
+        backend_settings[item[0]] = item[1]
+    backend = _load_backend(config.get('backend', 'type'))
+
+    core.host = core.host or args.get('--host')
+    core.port = core.port or args.get('--port')
+    core.debug = core.debug or args.get('--debug')
+    core.backend = backend
+    core.backend_settings = backend_settings
+
     core.run()
