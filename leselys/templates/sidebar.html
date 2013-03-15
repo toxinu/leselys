@@ -13,16 +13,17 @@
     <li class="divider"></li>
     {% if not subscriptions %}
       <li style="display:none" id="listSubscriptions" class="nav-header">Subscriptions</li>
-      <li id="helper"><center><em>Add your first subscription with the little cross icon.</em></center></li>
+      <li id="empty-feed-list"><center><em>Add your first subscription with the little cross icon.</em></center></li>
     {% else %}
       <li id="listSubscriptions" class="nav-header">Subscriptions</li>
       {% for subscription in subscriptions %}
         {% if subscription.counter > 0 %}
-          <li><a onClick="viewSubscription(&quot;{{ subscription.id }}&quot;)" href="/#{{ subscription.id }}">{{ subscription.title }} <span id="unread-counter" class="badge badge-inverse">{{ subscription.counter }}</span></a></li>
+          <li id="{{ subscription.id }}"><a onClick="viewSubscription(&quot;{{ subscription.id }}&quot;)" href="/#{{ subscription.id }}">{{ subscription.title }} <span id="unread-counter" class="badge badge-inverse">{{ subscription.counter }}</span></a></li>
         {% else %}
-          <li><a onClick="viewSubscription(&quot;{{ subscription.id }}&quot;)" href="/#{{ subscription.id }}">{{ subscription.title }}</a></li>
+          <li id="{{ subscription.id }}"><a onClick="viewSubscription(&quot;{{ subscription.id }}&quot;)" href="/#{{ subscription.id }}">{{ subscription.title }}</a></li>
         {% endif %}
       {% endfor %}
+      <li id="empty-feed-list" style="display: none"><center><em>Add your first subscription with the little cross icon.</em></center></li>
     {% endif %}
   </ul>
 </div>
