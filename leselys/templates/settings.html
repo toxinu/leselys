@@ -33,9 +33,14 @@
         </div>
         <div class="tab-pane" id="feeds">
           <ul>
+          {% if subscriptions %}
             {% for feed in subscriptions %}
-            <li>{{ feed.title }} (<a onClick="delSubscription(&quot;{{ feed.id }}&quot;)" href="#">delete</a>)</li>
+              <li id="{{ feed.id }}">{{ feed.title }} (<a onClick="delSubscription(&quot;{{ feed.id }}&quot;)" href="#">delete</a>)</li>
             {% endfor %}
+            <span id="empty-feed-list" style="display: none"><em>No subscriptions...</em></span>
+          {% else %}
+            <span id="empty-feed-list"><em>No subscriptions...</em></span>
+          {% endif %}
           </ul>
         </div>
       </div>

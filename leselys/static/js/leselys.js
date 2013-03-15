@@ -5,8 +5,8 @@ function addSubscription() {
   }
 
   // Clear help message if no subscriptions
-  if ($("ul#menu li#helper").length) {
-    $("ul#menu li#helper").remove();
+  if ($("ul#menu li#empty-feed-list").length) {
+    $("ul#menu li#empty-feed-list").hide();
     $("ul#menu li#listSubscriptions").show();
   }
   var loader = $('<li><i class="icon-tasks"></i> Loading...</li>');
@@ -15,6 +15,15 @@ function addSubscription() {
     if (data.success == true) {
       $(loader).hide();
       $(loader).html('<a onClick="viewSubscription(&quot;' + data.feed_id + '&quot;)" href="/#' + data.feed_id + '">' + data.title + ' <span id="unread-counter" class="badge badge-inverse">' + data.counter  + '</span></a>').fadeIn();
+      $(loader).attr('id', data.feed_id);
+      // Add new feed in settings/feeds if opened
+      if ($('#settings.tab-pane').length > 0) {
+        // Remove message if feeds list is empty
+        if ($('#feeds.tab-pane #empty-feed-list').length > 0) {
+          $('#feeds.tab-pane #empty-feed-list').hide();
+        }
+        $('#feeds.tab-pane ul').append('<li id="' +  data.feed_id + '">' + data.title + ' <a onClick="delSubscription(&quot;' + data.feed_id + '&quot;);" href="#">(delete)</a></li>');
+      }
     } else {
       $(loader).html('<li><i class="icon-exclamation-sign"></i> Error: ' + data.output +'</li>');
       var clearLoader = function() {
@@ -31,6 +40,16 @@ function delSubscription(feedId) {
     url: '/api/remove/' + feedId,
     type: 'DELETE',
     success: function(result) {
+      $('#feeds ul li#' + feedId).remove();
+      $('ul#menu li#' + feedId).remove();
+      if ($('#feeds ul li').length < 1) {
+        $('#feeds.tab-pane #empty-feed-list').show();
+      }
+      console.log($('ul#menu li').length);
+      if ($('ul#menu li').length < 6) {
+        $('ul#menu li#listSubscriptions.nav-header').hide();
+        $('ul#menu li#empty-feed-list').show();
+      }
     }
   });
 }

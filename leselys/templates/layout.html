@@ -29,6 +29,18 @@
     {% endwith %}
     {% block body %}{% endblock %}
   </div>
+  
+  <!-- Template add subscription -->
+  <form id="template-add-subscription" style="display: none">
+    <fieldset>
+      <center>
+        <input id="urlSubscription" type="text" class="input-medium" placeholder="Url…">
+        <button type="submit" class="btn" onClick="addSubscription()">Submit</button>
+      </center>
+    </fieldset>
+  </form>
+  <!-- -->
+
   <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
   <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
   <script src="{{ url_for('static', filename='js/leselys.js') }}"></script>
