@@ -35,6 +35,22 @@ function addSubscription() {
   $('#add').popover('hide')
 }
 
+function viewSettings() {
+  $.get('/settings', function(content) {
+    var content = $(content).find('#content');
+    $('#content').html(content);
+    window.history.pushState(document.title,document.title,"/settings");
+  });
+}
+
+function viewHome() {
+  $.get('/', function(content) {
+    var content = $(content).find('#content');
+    $('#content').html(content);
+    window.history.pushState(document.title,document.title,"/");
+  });
+}
+
 function delSubscription(feedId) {
   $.ajax({
     url: '/api/remove/' + feedId,
