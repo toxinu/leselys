@@ -38,3 +38,4 @@ leselys.db
 tests
 venv
 virtualenv
+config.ini
