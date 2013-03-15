@@ -2,18 +2,20 @@
 # coding: utf-8
 from docopt import docopt
 from leselys import core
+from leselys import accounts
 
 from leselys.backends import _load_backend
 
 import ConfigParser
 
 config = ConfigParser.ConfigParser()
-doc = """Leselys-web is a Web Interface for Leselys.
+doc = """Leselys is a Web Interface for Leselys.
 
 Usage:
-  leselys-web serve --config=<path> [--host=<address>] [--port=<port>] [--debug]
-  leselys-web -h | --help
-  leselys-web -v | --version
+  leselys serve --config=<path> [--host=<address>] [--port=<port>] [--debug]
+  leselys (adduser|deluser|passwd) --config=<path>
+  leselys -h | --help
+  leselys -v | --version
 
 Options:
   --host=<address>    Address to bind webserver on [default: 127.0.0.1]
@@ -29,10 +31,25 @@ if __name__ == '__main__':
     args = docopt(doc, version='0.1')
     config.read(args.get('--config'))
 
-    # Defaults
-    core.host = '127.0.0.1'
-    core.port = 5000
-    core.debug = False
+    if args.get('serve'):
+        # Defaults
+        core.host = '127.0.0.1'
+        core.port = 5000
+        core.debug = False
+
+        if config.has_section('webserver') and config.get('webserver', 'host'):
+            core.host = config.get('webserver', 'host')
+        if config.has_section('webserver') and config.get('webserver', 'port'):
+            core.port = config.get('webserver', 'port')
+        if config.has_section('webserver') and config.get('webserver', 'debug'):
+            if config.get('webserver', 'debug') in ['True', 'true']:
+                core.debug = True
+            else:
+                core.debug = False
+        core.host = core.host or args.get('--host')
+        core.port = core.port or args.get('--port')
+        core.debug = core.debug or args.get('--debug')
+
 
     if not config.has_section('backend'):
         print('Missing backend section in configuration file')
@@ -41,27 +58,22 @@ if __name__ == '__main__':
         print('Missing type setting in backend section in configuration file')
         exit(1)
 
-    if config.has_section('webserver') and config.get('webserver', 'host'):
-        core.host = config.get('webserver', 'host')
-    if config.has_section('webserver') and config.get('webserver', 'port'):
-        core.port = config.get('webserver', 'port')
-    if config.has_section('webserver') and config.get('webserver', 'debug'):
-        if config.get('webserver', 'debug') in ['True', 'true']:
-            core.debug = True
-        else:
-            core.debug = False
-
     # Create backend
     backend_settings = {}
     for item in config.items('backend'):
         backend_settings[item[0]] = item[1]
     del backend_settings['type']
-    backend = _load_backend(config.get('backend', 'type'))
 
-    core.host = core.host or args.get('--host')
-    core.port = core.port or args.get('--port')
-    core.debug = core.debug or args.get('--debug')
-    core.backend = backend
+    backend_module = _load_backend(config.get('backend', 'type'))
+    core.backend = backend_module
     core.backend_settings = backend_settings
+    core.load_backend()
 
-    core.run()
+    if args.get('serve'):
+        core.run()
+    if args.get('adduser'):
+        accounts.add_user(core.backend)
+    if args.get('deluser'):
+        accounts.del_user(core.backend)
+    if args.get('passwd'):
+        accounts.update_password(core.backend)

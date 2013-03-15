@@ -5,24 +5,40 @@
     {% include 'sidebar.html' %}
   </div>
   <div id="content" class="span10">
-    <div class="well">
-    	<form class="form-inline">
-        <fieldset>
-        <legend>Settings</legend>
-        {% for setting, value in settings.items() %}
-        	{% if setting == "acceptable_elements" %}
-        		<label>Acceptable elements</label>
-		        <input type="text" value="{{ ','.join(value) }}">
-      	  {% else %}
-  	      	<label>{{ setting|title }}</label>
-	  	      <input type="text" placeholder="{{ value }}">
-        	{% endif %}
-    	{% endfor %}
-	    <br />
-  	  <br />
-        <button type="submit" class="btn btn-info">Save</button>
-        </fieldset>
-        </form>
+    <div class="tabbable">
+      <ul class="nav nav-tabs">
+        <li class="active"><a href="#settings" data-toggle="tab">Settings</a></li>
+        <li><a href="#feeds" data-toggle="tab">Feeds</a></li>
+      </ul>
+
+      <div class="tab-content">
+        <div class="tab-pane active" id="settings">
+        	<form class="form-inline">
+            <fieldset>
+            <legend>Settings</legend>
+            {% for setting, value in settings.items() %}
+            	{% if setting == "acceptable_elements" %}
+            		<label>Acceptable elements</label>
+		            <input type="text" value="{{ ','.join(value) }}">
+          	  {% else %}
+  	          	<label>{{ setting|title }}</label>
+	  	          <input type="text" placeholder="{{ value }}">
+            	{% endif %}
+        	  {% endfor %}
+	          <br />
+  	        <br />
+            <button type="submit" class="btn btn-info">Save</button>
+            </fieldset>
+          </form>
+        </div>
+        <div class="tab-pane" id="feeds">
+          <ul>
+            {% for feed in subscriptions %}
+            <li>{{ feed.title }} (<a onClick="delSubscription(&quot;{{ feed.id }}&quot;)" href="#">delete</a>)</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
     </div>
   </div>
 </div>

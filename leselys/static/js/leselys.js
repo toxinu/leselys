@@ -14,7 +14,7 @@ function addSubscription() {
   $.post('/api/add', {url: url}, function(data) {
     if (data.success == true) {
       $(loader).hide();
-      $(loader).html('<a onClick="viewSubscription(&quot;' + data.feed_id + '&quot;)" href="#' + data.feed_id + '">' + data.title + ' <span id="unread-counter" class="badge badge-inverse">' + data.counter  + '</span></a>').fadeIn();
+      $(loader).html('<a onClick="viewSubscription(&quot;' + data.feed_id + '&quot;)" href="/#' + data.feed_id + '">' + data.title + ' <span id="unread-counter" class="badge badge-inverse">' + data.counter  + '</span></a>').fadeIn();
     } else {
       $(loader).html('<li><i class="icon-exclamation-sign"></i> Error: ' + data.output +'</li>');
       var clearLoader = function() {
@@ -24,6 +24,15 @@ function addSubscription() {
     }
   });
   $('#add').popover('hide')
+}
+
+function delSubscription(feedId) {
+  $.ajax({
+    url: '/api/remove/' + feedId,
+    type: 'DELETE',
+    success: function(result) {
+    }
+  });
 }
 
 function viewSubscription(feedId) {

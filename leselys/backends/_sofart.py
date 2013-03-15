@@ -7,6 +7,29 @@ class Backend(object):
         self.mode = kwargs['mode']
         self.db = Database(self.path, self.mode)
 
+    def get_users(self):
+        res = []
+        for user in self.db.users.find():
+            res.append(user['username'])
+        return res
+
+    def add_user(self, username, password):
+        return str(self.db.users.save({'username': username, 'password': password}))
+
+    def remove_user(self, username):
+        user = self.db.users.find_one({'username': username})
+        if user:
+            self.db.users.remove(user['_id'])
+
+    def get_password(self, username):
+        user = self.db.users.find_one({'username': username})
+        if user:
+            return user['password']
+        return None
+
+    def set_password(self, username, password):
+        return self.db.users.save({'username': username, 'password': password})
+
     def set_setting(self, key, value):
         self.db.settings.save({key: value})
 
