@@ -1,22 +1,29 @@
 {% extends "layout.html" %}
 {% block body %}	
-<div class="well">
-	<form class="form-inline">
-    <fieldset>
-    <legend>Settings</legend>
-    {% for setting, value in settings.items() %}
-    	{% if setting == "acceptable_elements" %}
-    		<label>Acceptable elements</label>
-		    <input type="text" value="{{ ','.join(value) }}">
-    	{% else %}
-	    	<label>{{ setting|title }}</label>
-		    <input type="text" placeholder="{{ value }}">
-    	{% endif %}
-	{% endfor %}
-	<br />
-	<br />
-    <button type="submit" class="btn btn-info">Save</button>
-    </fieldset>
-    </form>
+<div class="row-fluid">
+  <div class="span2">
+    {% include 'sidebar.html' %}
+  </div>
+  <div id="content" class="span10">
+    <div class="well">
+    	<form class="form-inline">
+        <fieldset>
+        <legend>Settings</legend>
+        {% for setting, value in settings.items() %}
+        	{% if setting == "acceptable_elements" %}
+        		<label>Acceptable elements</label>
+		        <input type="text" value="{{ ','.join(value) }}">
+      	  {% else %}
+  	      	<label>{{ setting|title }}</label>
+	  	      <input type="text" placeholder="{{ value }}">
+        	{% endif %}
+    	{% endfor %}
+	    <br />
+  	  <br />
+        <button type="submit" class="btn btn-info">Save</button>
+        </fieldset>
+        </form>
+    </div>
+  </div>
 </div>
 {% endblock %}

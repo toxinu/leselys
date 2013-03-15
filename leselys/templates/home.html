@@ -1,12 +1,35 @@
 {% extends "layout.html" %}
 {% block body %}	
-<div class="hero-unit">
-	<h1>Hi,</h1>
-	<p>I'm Leselys, your very elegant RSS reader.</p>
-	<p>
-		<a href="https://github.com/socketubs/leselys" target="_blank" class="btn btn-primary btn-large">
-			Learn more
-		</a>
-	</p>
+<div class="row-fluid">
+  <div class="span2">
+    {% include 'sidebar.html' %}
+  </div>
+  <div id="content" class="span10">
+    <div class="hero-unit">
+    	<h1>Hi,</h1>
+	      <p>I'm Leselys, your very elegant RSS reader.</p>
+      	<p><a href="https://github.com/socketubs/leselys" target="_blank" class="btn btn-primary btn-large">
+			Learn more</a></p>
+    </div>
+  </div>
 </div>
+
+<!-- Template add subscription -->
+  <form id="template-add-subscription" style="display: none">
+    <fieldset>
+      <center>
+        <input id="urlSubscription" type="text" class="input-medium" placeholder="Url…">
+        <button type="submit" class="btn" onClick="addSubscription()">Submit</button>
+      </center>
+    </fieldset>
+  </form>
+<!-- -->
+
+<!-- Template story -->
+  <div id="template-story" class="accordion-inner" style="display: none">
+    <p>
+      <span class="label"></span> | <a href="" target="_blank">External link</a>
+    </p>
+  </div>
+<!-- -->
 {% endblock %}
