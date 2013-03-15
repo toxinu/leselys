@@ -76,6 +76,7 @@ class Refresher(threading.Thread):
 
     def run(self):
         if self.data is None:
+            print(self.feed_id)
             feed = backend.get_feed_by_id(self.feed_id)
             self.data = feedparser.parse(feed['url'])
 
@@ -164,8 +165,14 @@ class Reader(object):
             local_update = get_datetime(subscription['last_update'])
             if r.feed.get('updated_parsed'):
                 remote_update = get_datetime(r.feed.updated_parsed)
-            else:
+            elif r.get('updated_parsed'):
+                remote_update = get_datetime(r.updated_parsed)
+            elif r.feed.get('published_parsed'):
                 remote_update = get_datetime(r.feed.published_parsed)
+            elif r.get('published_parsed'):
+                remote_update = get_datetime(r.published_parsed)
+            else:
+                return {'success': False, 'output': 'Feed parsing error'}
 
             if remote_update > local_update:
                 feeds_id.append(subscription['_id'])
@@ -176,7 +183,7 @@ class Reader(object):
 
         res = []
         for feed in feeds_id:
-            feed = backend.get_feed_by_id(subscription)
+            feed = backend.get_feed_by_id(feed)
             res.append((feed['title'], feed['_id'], self.get_unread(feed['_id'])))
         return res
 
