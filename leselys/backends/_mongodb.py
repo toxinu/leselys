@@ -6,10 +6,35 @@ class Backend(object):
     def __init__(self, **kwargs):
         self.database = kwargs.get('database') or 'leselys'
 
-        del kwargs['database']
+        if kwargs.get('database'):
+            del kwargs['database']
         self.connection = MongoClient(**kwargs)
 
         self.db = self.connection[self.database]
+
+    def get_users(self):
+        res = []
+        for user in self.db.users.find():
+            res.append(user['username'])
+        return res
+
+    def add_user(self, username, password):
+        return str(self.db.users.save({'username': username, 'password': password}))
+
+    def remove_user(self, username):
+        user = self.db.users.find_one({'username': username})
+        if user:
+            self.db.users.remove(user['_id'])
+
+    def get_password(self, username):
+        user = self.db.users.find_one({'username': username})
+        if user:
+            return user['password']
+        return None
+
+    def set_password(self, username, password):
+        self.remove_user(username)
+        return str(self.db.users.save({'username': username, 'password': password}))
 
     def set_setting(self, key, value):
         return str(self.db.settings.save({key: value}))
@@ -35,7 +60,7 @@ class Backend(object):
         return str(self.db.feeds.save(content))
 
     def remove_feed(self, _id):
-        self.db.feeds.remove(_id)
+        self.db.feeds.remove(ObjectId(_id))
         for entry in self.db.stories.find({'feed_id': _id}):
             self.db.stories.remove(entry['_id'])
 

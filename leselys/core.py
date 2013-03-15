@@ -2,6 +2,7 @@
 import os
 
 from flask import Flask
+from werkzeug.contrib.cache import SimpleCache
 from leselys.logger import stream_logger
 
 class Core(object):
@@ -12,16 +13,17 @@ class Core(object):
         self.backend = None
         self.backend_settings = None
 
-    def run(self):
+    def load_backend(self):
         self.backend = self.backend.Backend(**self.backend_settings)
+
+    def run(self):
 
         from leselys.reader import Reader
         self.reader = Reader()
 
-        SECRET_KEY = os.urandom(24)
         self.app = Flask(__name__)
-        self.app.config.from_object(__name__)
-        self.app.config.from_envvar('FLASKR_SETTINGS', silent=True)
+        self.app.config['SECRET_KEY'] = os.urandom(24)
+        self.cache = SimpleCache()
 
         from leselys import views
         from leselys import api
