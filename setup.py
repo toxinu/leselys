@@ -27,7 +27,7 @@ if sys.argv[-1] == 'publish':
 setup(
 	name='leselys',
 	version=get_version(),
-	description='Minimal RSS Reader',
+	description="I'm Leselys, your very elegant RSS reader.",
 	long_description=open('README.rst').read(),
 	license=open('LICENSE').read(),
 	author='socketubs',
