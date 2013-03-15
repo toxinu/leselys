@@ -9,3 +9,4 @@ debug = false
 type = mongodb
 host = ${MONGOHQ_URL}
 EOL
+leselys --config heroku.ini
