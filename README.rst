@@ -23,6 +23,8 @@ Usage
 
 Open your brower at ``http://localhost:5000``.
 
+Import your Google Reader OPML file right now!
+
 License
 -------
 
