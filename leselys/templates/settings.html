@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% block body %}	
+{% block body %}
 <div class="row-fluid">
   <div class="span2">
     {% include 'sidebar.html' %}
@@ -9,6 +9,7 @@
       <ul class="nav nav-tabs">
         <li class="active"><a href="#settings" data-toggle="tab">Settings</a></li>
         <li><a href="#feeds" data-toggle="tab">Feeds</a></li>
+        <li><a href="#import-export" data-toggle="tab">Import/Export</a></li>
       </ul>
 
       <div class="tab-content">
@@ -43,8 +44,37 @@
           {% endif %}
           </ul>
         </div>
+        <div class="tab-pane" id="import-export">
+          <div class="form-inline">
+            <legend>Import</legend>
+              <div style="position:relative;">
+                <a id="OPMLButton" class='btn' href='javascript:;'>
+                  Choose OPML File here
+                  <input id="OPMLFile" type="file" style='position:absolute;z-index:2;top:0;left:0;filter: alpha(opacity=0);-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";opacity:0;background-color:transparent;color:transparent;' name="files[]" size="40"  onchange='$("#upload-file-info").html($(this).val());' multiple />
+                </a>
+                <output id="list"></output>
+                &nbsp;
+                <span class='label label-info' id="upload-file-info"></span>
+                <br /><br />
+                <button id="OPMLSubmit" type="submit" class="btn btn-info">Upload</button>
+              </div>
+          </div>
+          <br />
+          <div class="form-inline">
+              <legend>Export</legend>
+              <div style="position:relative;">
+                <button type="submit" class="btn btn-info">Download</button>
+              </div>
+          </div> 
+        </div>
       </div>
     </div>
   </div>
 </div>
+
+<script type="text/javascript">
+  $(document).ready(function(){
+    document.getElementById('OPMLSubmit').addEventListener('click', handleOPMLImport, false);
+  });
+</script>
 {% endblock %}

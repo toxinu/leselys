@@ -25,20 +25,17 @@ def get_subscriptions():
 #######################################################################
 # VIEWS
 #######################################################################
-# Home
 @app.route('/')
 @login_required
 def home():
     return render_template('home.html')
 
-# Settings
 @app.route('/settings')
 @login_required
 def settings():
 	_settings = backend.get_settings()
 	return render_template('settings.html', settings=_settings)
 
-# Login
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -49,9 +46,9 @@ def login():
         password_md5 = m.hexdigest()
 
         if username not in backend.get_users():
-            flash('Invalid credentials 1', 'error')
+            flash('Invalid credentials', 'error')
         elif backend.get_password(username) != password_md5:
-            flash('Invalid credentials 2', 'error')
+            flash('Invalid credentials', 'error')
         else:
             session['logged_in'] = True
             return redirect(url_for('home'))
@@ -60,5 +57,4 @@ def login():
 @app.route('/logout')
 def logout():
     session.pop('logged_in', None)
-    flash('You were logged out', 'success')
     return redirect(url_for('login'))

@@ -3,9 +3,16 @@ import leselys
 
 from flask import jsonify
 from flask import request
+from flask import flash
+
+from threading import Thread
 
 from leselys.helpers import login_required
 from leselys.helpers import cached
+from leselys.helpers import retrieve_feeds_from_opml
+
+
+from flask import render_template
 
 reader = leselys.core.reader
 app = leselys.core.app
@@ -52,6 +59,18 @@ def count_unread(feed_id):
 def refresh():
 	result = reader.refresh_all()
 	return jsonify(success=True, content=result)
+
+# Upload opml
+@app.route('/api/import/opml', methods=['POST'])
+@login_required
+@cached(10)
+def import_opml():
+	file = request.form['file']
+	for feed in retrieve_feeds_from_opml(file):
+		print(feed)
+		t = Thread(target=reader.add, args=(feed['url'],))
+		t.start()
+	return jsonify(success=True, output='Imported file is processing...')
 
 # [WIP]: Set settings
 @app.route('/api/settings/<setting>/<value>')

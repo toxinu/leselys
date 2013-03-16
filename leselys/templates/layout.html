@@ -10,23 +10,11 @@
   <link href="{{ url_for('static', filename='css/journal.min.css') }}" rel="stylesheet">
   <link href="{{ url_for('static', filename='css/bootstrap-responsive.min.css') }}" rel="stylesheet">
   <link href="{{ url_for('static', filename='css/leselys.css') }}" rel="stylesheet">
+  <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+  <script src="{{ url_for('static', filename='js/leselys.js') }}"></script>
 </head>
 <body>
   <div class="container-fluid">
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <br>
-        <div class="row-fluid">
-          <div class="span12">
-            {% for category, message in messages %}
-              <div class="alert alert-{{ category }}">
-                <a class="close" data-dismiss="alert" href="#">&times;</a>{{ message }}
-              </div>
-            {% endfor %}
-          </div>
-        </div>
-      {% endif %}
-    {% endwith %}
     {% block body %}{% endblock %}
   </div>
   
@@ -41,8 +29,6 @@
   </form>
   <!-- -->
 
-  <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
   <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/leselys.js') }}"></script>
 </body>
 </html>

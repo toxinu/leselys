@@ -8,9 +8,20 @@
         <a href="#" id="add"><i class="icon-plus-sign"></i></a>
         <a href="#settings" onclick="viewSettings()"><i class="icon-wrench"></i></a>
         <a href="https://github.com/socketubs/leselys" target="_blank"><i class="icon-question-sign"></i></a>
+        <a href="/logout"><i class="icon-off"></i></a>
       </li>
     </center>
     <li class="divider"></li>
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+              <a class="close" data-dismiss="alert" href="#">&times;</a>{{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
     {% if not subscriptions %}
       <li style="display:none" id="listSubscriptions" class="nav-header">Subscriptions</li>
       <li id="empty-feed-list"><center><em>Add your first subscription with the little cross icon.</em></center></li>
