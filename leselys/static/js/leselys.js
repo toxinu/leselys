@@ -40,6 +40,7 @@ function handleOPMLImport(evt) {
     return false;
   }
   if (importer) {
+    console.log('NO!')
     return false;
   }
   // Check if browser is FileRead object compatible
@@ -47,45 +48,57 @@ function handleOPMLImport(evt) {
     // Great success! All the File APIs are supported.
   } else {
     alert('The File APIs are not fully supported in this browser.');
+    return false;
   }
 
   // Retrieve file from form
+  importer = true;
   var file = document.getElementById('OPMLFile').files[0]
-  console.log(file);
-  if (!file) {
-    return false
-  }
+  if (!file) { return false }
   var reader = new FileReader();
 
   reader.onload = (function(OPMLFile) {
     return function(e) {
       $.post('/api/import/opml', { file: e.target.result }, function(data) {
         if (data.success == true) {
-          importer = true;
+          importer = false;
           $('#OPMLSubmit').html('Importing, reload page later...');
           $('#OPMLSubmit').addClass('disabled');
         }
       });
     }
   })(file);
-
   reader.readAsText(file);
 }
 
 function viewSettings() {
   $.get('/settings', function(body) {
+    if ($(body).find('.form-signin').length > 0) {
+      window.location = "/login";
+    }
     var content = $(body).find('#content');
+    var sidebar = $(body).find('#menu')
     $('#content').html(content.html());
-    eval($(body).find('script').html());
-    window.history.pushState(document.title,document.title,"/settings");
+    $('#menu').html(sidebar.html());
+    if (importer) {
+      $('#OPMLSubmit').html('Last import not finished...');
+      $('#OPMLSubmit').addClass('disabled');
+      return false;
+    }
+    document.getElementById('OPMLSubmit').addEventListener('click', handleOPMLImport, false);
   });
 }
 
 function viewHome() {
-  $.get('/', function(content) {
-    var content = $(content).find('#content');
+  $.get('/', function(body) {
+    if ($(body).find('.form-signin').length > 0) {
+      window.location = "/login";
+    }
+    var content = $(body).find('#content');
+    var sidebar = $(body).find('#menu')
     $('#content').html(content.html());
-    window.history.pushState(document.title,document.title,"/");
+    $('#menu').html(sidebar.html());
+    //window.history.pushState(document.title,document.title,"/");
   });
 }
 
@@ -94,16 +107,20 @@ function delSubscription(feedId) {
     url: '/api/remove/' + feedId,
     type: 'DELETE',
     success: function(result) {
-      $('#feeds ul li#' + feedId).remove();
-      $('ul#menu li#' + feedId).remove();
-      if ($('#feeds ul li').length < 1) {
-        $('#feeds.tab-pane #empty-feed-list').show();
-      }
-      console.log($('ul#menu li').length);
-      if ($('ul#menu li').length < 6) {
-        $('ul#menu li#listSubscriptions.nav-header').hide();
-        $('ul#menu li#empty-feed-list').show();
-      }
+      $('#feeds ul li#' + feedId).fadeOut(300, function() {
+        $(this).remove();
+        if ($('#feeds ul li').length < 1) {
+          $('#feeds.tab-pane #empty-feed-list').fadeIn(200);
+        }
+      });
+      $('ul#menu li#' + feedId).fadeOut(300, function() {
+        $(this).remove();
+        if ($('ul#menu li').length < 6) {
+          $('ul#menu li#listSubscriptions.nav-header').fadeOut(200);
+          $('ul#menu li#empty-feed-list').fadeIn(200);
+        }
+      });
+      //$('ul#menu li#' + feedId).remove();  
     }
   });
 }
