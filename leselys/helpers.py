@@ -11,6 +11,8 @@ from flask import request
 from flask import session
 from flask import url_for
 
+from leselys.externals import opml
+
 # Unicode python 2-3
 if sys.version < '3':
   import codecs
@@ -73,3 +75,16 @@ def cached(timeout=5 * 60, key='view/%s'):
             return rv
         return decorated_function
     return decorator
+
+def retrieve_feeds_from_opml(opml_raw):
+    result = []
+    feeds = opml.from_string(opml_raw.encode("ascii", "ignore"))
+    for outline in feeds:
+        if len(outline) > 0:
+            for feed in outline:
+                if feed.type == 'rss':
+                    result.append({'title': feed.text, 'url': feed.xmlUrl})
+        else:
+            if outline.type == 'rss':
+                result.append({'title': outline.text, 'url': outline.xmlUrl})
+    return result

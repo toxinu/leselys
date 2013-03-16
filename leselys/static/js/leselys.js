@@ -35,10 +35,48 @@ function addSubscription() {
   $('#add').popover('hide')
 }
 
+function handleOPMLImport(evt) {
+  if ($('#import-export #upload-file-info').html() == "") {
+    return false;
+  }
+  if (importer) {
+    return false;
+  }
+  // Check if browser is FileRead object compatible
+  if (window.File && window.FileReader && window.FileList && window.Blob) {
+    // Great success! All the File APIs are supported.
+  } else {
+    alert('The File APIs are not fully supported in this browser.');
+  }
+
+  // Retrieve file from form
+  var file = document.getElementById('OPMLFile').files[0]
+  console.log(file);
+  if (!file) {
+    return false
+  }
+  var reader = new FileReader();
+
+  reader.onload = (function(OPMLFile) {
+    return function(e) {
+      $.post('/api/import/opml', { file: e.target.result }, function(data) {
+        if (data.success == true) {
+          importer = true;
+          $('#OPMLSubmit').html('Importing, reload page later...');
+          $('#OPMLSubmit').addClass('disabled');
+        }
+      });
+    }
+  })(file);
+
+  reader.readAsText(file);
+}
+
 function viewSettings() {
-  $.get('/settings', function(content) {
-    var content = $(content).find('#content');
-    $('#content').html(content);
+  $.get('/settings', function(body) {
+    var content = $(body).find('#content');
+    $('#content').html(content.html());
+    eval($(body).find('script').html());
     window.history.pushState(document.title,document.title,"/settings");
   });
 }
@@ -46,7 +84,7 @@ function viewSettings() {
 function viewHome() {
   $.get('/', function(content) {
     var content = $(content).find('#content');
-    $('#content').html(content);
+    $('#content').html(content.html());
     window.history.pushState(document.title,document.title,"/");
   });
 }
@@ -151,6 +189,7 @@ $(document).ready(function(){
   // Globals
   requests = new Array();
   refresher = new Array();
+  importer = false;
   // Add subscription pop up
   var add_subscription = $('#template-add-subscription').clone();
   add_subscription.removeAttr('id');
