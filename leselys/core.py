@@ -1,6 +1,7 @@
 # coding: utf-8
 import os
 
+from itsdangerous import TimestampSigner
 from flask import Flask
 from werkzeug.contrib.cache import SimpleCache
 from leselys.logger import stream_logger
@@ -23,6 +24,7 @@ class Core(object):
 
         self.app = Flask(__name__)
         self.app.config['SECRET_KEY'] = os.urandom(24)
+        self.signer = TimestampSigner(self.app.config['SECRET_KEY'])
         self.cache = SimpleCache()
 
         from leselys import views

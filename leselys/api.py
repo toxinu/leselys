@@ -67,7 +67,6 @@ def refresh():
 def import_opml():
 	file = request.form['file']
 	for feed in retrieve_feeds_from_opml(file):
-		print(feed)
 		t = Thread(target=reader.add, args=(feed['url'],))
 		t.start()
 	return jsonify(success=True, output='Imported file is processing...')
