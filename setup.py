@@ -36,7 +36,7 @@ setup(
 	keywords='rss reader greader',
 	packages=['leselys'],
 	scripts=['scripts/leselys', 'scripts/echo_leselys_conf'],
-	install_requires=['docopt==0.5.0','flask==0.9','pymongo','feedparser'],
+	install_requires=['docopt==0.5.0','flask==0.9','pymongo','feedparser','lxml'],
 	include_package_data=True,
 	classifiers=(
 		'Intended Audience :: Developers',
