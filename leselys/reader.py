@@ -45,7 +45,6 @@ class Retriever(threading.Thread):
         for entry in self.data:
             title = entry['title']
             link = entry['link']
-            print('Add -> %s' % title)
             try:
                 description = entry['content'][0]['value']
             except KeyError:
@@ -76,7 +75,6 @@ class Refresher(threading.Thread):
         self.feed_id = u(feed['_id'])
 
     def run(self):
-        print('Checking %s feed' % self.feed['_id'])
         self.data = feedparser.parse(self.feed['url'])
 
         local_update = get_datetime(self.feed['last_update'])
@@ -91,13 +89,10 @@ class Refresher(threading.Thread):
         else:
             return
 
-        print(':: %s' % self.feed['title'])
         if remote_update > local_update:
             readed = []
             for entry in backend.get_stories(self.feed['_id']):
-                print('!!! 1')
                 if entry['read']:
-                    print('!!! 2')
                     readed.append(entry['title'])
                 backend.remove_story(entry['_id'])
 
@@ -106,9 +101,7 @@ class Refresher(threading.Thread):
             retriever.join()
 
             for entry in readed:
-                print('!!! 3')
                 if backend.get_story_by_title(entry):
-                    print('!!! 4')
                     entry = backend.get_story_by_title(entry)
                     entry['read'] = True
                     backend.update_story(entry['_id'], copy.copy(entry))
@@ -165,9 +158,6 @@ class Reader(object):
     def get(self, feed_id):
         res = []
         for entry in backend.get_stories(feed_id):
-            print('===')
-            print(entry)
-            print('===')
             res.append({"title":entry['title'],"_id":entry['_id'],"read":entry['read']})
         return res
 
@@ -198,9 +188,6 @@ class Reader(object):
         entry['last_read_state'] = entry['read']
         entry['read'] = True
         backend.update_story(entry['_id'], copy.copy(entry))
-        print('!!!!')
-        print(entry)
-        print('!!!!')
         return entry
 
     def unread(self, story_id):
