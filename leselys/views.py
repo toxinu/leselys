@@ -79,7 +79,7 @@ def login():
                         password_md5, max_age=15 * 24 * 60 * 60)
                 except:
                     return render_template('login.html')
-                if password_unsigner == backend.get_password(username):
+                if password_unsigned == backend.get_password(username):
                     return redirect(url_for('home'))
     return render_template('login.html')
 

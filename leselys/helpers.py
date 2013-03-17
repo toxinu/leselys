@@ -78,7 +78,7 @@ def login_required(f):
                             password_md5, max_age=15 * 24 * 60 * 60)
                     except:
                         return redirect(url_for('login'))
-                    if password_unsigner == backend.get_password(username):
+                    if password_unsigned == backend.get_password(username):
                         return f(*args, **kwargs)
                     else:
                         return redirect(url_for('login'))
