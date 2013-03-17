@@ -31,6 +31,12 @@ function addSubscription() {
         $('#feeds.tab-pane ul').append('<li id="' +  data.feed_id + '">' + data.title + ' <a onClick="delSubscription(&quot;' + data.feed_id + '&quot;);" href="#">(delete)</a></li>');
       }
     } else {
+      /////////////////////////////////////
+      // Go login page if not connected ///
+      if ($(data).find('.form-signin').length > 0) {
+        window.location = "/login";
+      }
+      /////////////////////////////////////
       $(loader).html('<li><i class="icon-exclamation-sign"></i> Error: ' + data.output +'</li>');
       var clearLoader = function() {
         $(loader).fadeOut();
@@ -182,7 +188,7 @@ function viewSubscription(feedId) {
     $('#menu a').each(function(index) {
       $(this).css('font-weight', 'normal');
     });
-    $('#menu a[href=#' + feedId + ']').css('font-weight', 'bold');
+    $('#menu li#' + feedId + " a").css('font-weight', 'bold');
   });
   requests.push(request);
 }
@@ -210,14 +216,15 @@ function refreshSubscriptions() {
 }
 
 function readEntry(entryId) {
-  if ($('a[href=#' + entryId + ']').data('loaded') == true) {
+  // Avoid "read" state if story have just been marked unread
+  if ($('a[href=#' + entryId + ']').data('unreaded')) {
+    $('a[href=#' + entryId + ']').data('unreaded', false);
     return true;
   }
   $.getJSON('/api/read/' + entryId, function(data) {
     /////////////////////////////////////
     // Go login page if not connected ///
     if ($(data).find('.form-signin').length > 0) {
-
       window.location = "/login";
     }
     /////////////////////////////////////
@@ -229,22 +236,48 @@ function readEntry(entryId) {
     story.removeAttr('style');
     story.find('#story-date').html(published);
     story.find('#story-link').attr('href', data.content.link);
+    story.find('#story-unread').attr('onClick', "unreadEntry(\"" + entryId + "\")")
     story.find('#story-content').html(data.content.description);
 
     var story_raw = story.wrap('</p>').parent().html();
     story.unwrap();
     $('#content #' + entryId).html(story_raw)
-    if (data.content.last_read_state == false) {
+    if (data.success == true) {
       var feed_id = data.content.feed_id;
-      var counter = $("#menu li#" + feed_id + " #unread-counter").html() - 1;
+      var counter = parseInt($("#menu li#" + feed_id + " #unread-counter").html()) - 1;
       if (counter == 0) {
-        $("#menu li#" + feed_id + " #unread-counter").remove();
+        $("#menu li#" + feed_id + " #unread-counter").html(counter);
+        $("#menu li#" + feed_id + " #unread-counter").fadeOut();
       } else {
         $("#menu li#" + feed_id + " #unread-counter").html(counter);
       }
     }
   });
-  $('a[href=#' + entryId + ']').css('font-weight', 'normal').data('loaded', true);
+  $('a[href=#' + entryId + ']').css('font-weight', 'normal');
+}
+
+function unreadEntry(storyId) {
+  $.getJSON('/api/unread/' + storyId, function(data) {
+    /////////////////////////////////////
+    // Go login page if not connected ///
+    if ($(data).find('.form-signin').length > 0) {
+      window.location = "/login";
+    }
+    /////////////////////////////////////
+    if (data.success == true) {
+      feedId = data.content.feed_id;
+      var counter = parseInt($("#menu li#" + feedId + " #unread-counter").html()) + 1;
+
+      $('a[href=#' + storyId + ']').data('unreaded', true);
+      if (counter == 1) {
+        $("#menu li#" + feedId + " #unread-counter").html(counter);
+        $("#menu li#" + feedId + " #unread-counter").fadeIn();
+      } else {
+        $("#menu li#" + feedId + " #unread-counter").html(counter);
+      }
+      $('a[href=#' + storyId + ']').css('font-weight', 'bold');
+    }
+  });
 }
 
 function initAddSubscription(){

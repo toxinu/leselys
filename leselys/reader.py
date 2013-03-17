@@ -203,21 +203,24 @@ class Reader(object):
     def get_unread(self, feed_id):
         return len(backend.get_feed_unread(feed_id))
 
-    def read(self, entry_id):
+    def read(self, story_id):
         """
-        Return entry content, set it at readed state and give
+        Return story content, set it at readed state and give
         previous read state for counter
         """
-        entry = backend.get_story_by_id(entry_id)
+        story = backend.get_story_by_id(story_id)
+        if story['read']:
+            return {'success': False, 'output': 'Story already readed', 'content': story}
 
         # Save read state before update it for javascript counter in UI
-        entry['last_read_state'] = entry['read']
-        entry['read'] = True
-        backend.update_story(entry['_id'], copy.copy(entry))
-        return entry
+        story['read'] = True
+        backend.update_story(story['_id'], copy.copy(story))
+        return {'success': True, 'content': story}
 
     def unread(self, story_id):
         story = backend.get_story_by_id(story_id)
+        if not story['read']:
+            return {'success': False, 'output': 'Story already unreaded'}
         story['read'] = False
         backend.update_story(story['_id'], copy.copy(story))
-        return True
+        return {'success': True, 'content': story}
