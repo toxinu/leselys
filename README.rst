@@ -1,12 +1,13 @@
 Leselys
 =======
 
-I'm Leselys, your very elegant RSS reader.
+I'm Leselys, your very elegant RSS reader. No Bullshit Android, iPhone apps, just a responsive design for every devices.
 
 Leselys can be used with your very own backend, take a look at `Mongodb`_ example.
 
+There is a `demo here`_ (demo/demo).
 
-There is a `demo here`_. Logins: demo/demo.
+Leselys is in heavy development right know, and feedbacks are welcome.
 
 Installation
 ------------
