@@ -13,6 +13,12 @@ function addSubscription() {
   $("ul#menu").append(loader);
   $.post('/api/add', {url: url}, function(data) {
     if (data.success == true) {
+      /////////////////////////////////////
+      // Go login page if not connected ///
+      if ($(data).find('.form-signin').length > 0) {
+        window.location = "/login";
+      }
+      /////////////////////////////////////
       $(loader).hide();
       $(loader).html('<a onClick="viewSubscription(&quot;' + data.feed_id + '&quot;)" href="/#' + data.feed_id + '">' + data.title + ' <span id="unread-counter" class="badge badge-inverse">' + data.counter  + '</span></a>').fadeIn();
       $(loader).attr('id', data.feed_id);
@@ -40,7 +46,6 @@ function handleOPMLImport(evt) {
     return false;
   }
   if (importer) {
-    console.log('NO!')
     return false;
   }
   // Check if browser is FileRead object compatible
@@ -60,6 +65,12 @@ function handleOPMLImport(evt) {
   reader.onload = (function(OPMLFile) {
     return function(e) {
       $.post('/api/import/opml', { file: e.target.result }, function(data) {
+        /////////////////////////////////////
+        // Go login page if not connected ///
+        if ($(data).find('.form-signin').length > 0) {
+          window.location = "/login";
+        }
+        /////////////////////////////////////
         if (data.success == true) {
           importer = false;
           $('#OPMLSubmit').html('Importing, reload page later...');
@@ -73,9 +84,12 @@ function handleOPMLImport(evt) {
 
 function viewSettings() {
   $.get('/settings', function(body) {
+    /////////////////////////////////////
+    // Go login page if not connected ///
     if ($(body).find('.form-signin').length > 0) {
       window.location = "/login";
     }
+    /////////////////////////////////////
     var content = $(body).find('#content');
     var sidebar = $(body).find('#menu')
     $('#content').html(content.html());
@@ -85,20 +99,26 @@ function viewSettings() {
       $('#OPMLSubmit').addClass('disabled');
       return false;
     }
-    document.getElementById('OPMLSubmit').addEventListener('click', handleOPMLImport, false);
+    if ($('#OPMLSubmit').length > 0) {
+      document.getElementById('OPMLSubmit').addEventListener('click', handleOPMLImport, false);
+    }
+    initAddSubscription();
   });
 }
 
 function viewHome() {
   $.get('/', function(body) {
+    /////////////////////////////////////
+    // Go login page if not connected ///
     if ($(body).find('.form-signin').length > 0) {
       window.location = "/login";
     }
+    /////////////////////////////////////
     var content = $(body).find('#content');
     var sidebar = $(body).find('#menu')
     $('#content').html(content.html());
     $('#menu').html(sidebar.html());
-    //window.history.pushState(document.title,document.title,"/");
+    initAddSubscription();
   });
 }
 
@@ -107,6 +127,12 @@ function delSubscription(feedId) {
     url: '/api/remove/' + feedId,
     type: 'DELETE',
     success: function(result) {
+      /////////////////////////////////////
+      // Go login page if not connected ///
+      if ($(result).find('.form-signin').length > 0) {
+        window.location = "/login";
+      }
+      /////////////////////////////////////
       $('#feeds ul li#' + feedId).fadeOut(300, function() {
         $(this).remove();
         if ($('#feeds ul li').length < 1) {
@@ -131,6 +157,12 @@ function viewSubscription(feedId) {
       requests.shift();
   });
   var request = $.getJSON('/api/get/' + feedId, function(data) {
+    /////////////////////////////////////
+    // Go login page if not connected ///
+    if ($(data).find('.form-signin').length > 0) {
+      window.location = "/login";
+    }
+    /////////////////////////////////////
     $('#content').html('<div class="accordion" id="accordion2">');
     $.each(data.content, function(i,item){
       var content = '<div class="accordion-group">                                                                                            \
@@ -161,6 +193,12 @@ function refreshSubscriptions() {
       refresher.shift();
   });
   var refresh = $.getJSON('/api/refresh', function(data) {
+    /////////////////////////////////////
+    // Go login page if not connected ///
+    if ($(data).find('.form-signin').length > 0) {
+      window.location = "/login";
+    }
+    /////////////////////////////////////
     $.each(data.content, function(i,feed) {
       var feed_title = feed[0];
       var feed_id = feed[1];
@@ -176,6 +214,13 @@ function readEntry(entryId) {
     return true;
   }
   $.getJSON('/api/read/' + entryId, function(data) {
+    /////////////////////////////////////
+    // Go login page if not connected ///
+    if ($(data).find('.form-signin').length > 0) {
+
+      window.location = "/login";
+    }
+    /////////////////////////////////////
     var published = data.content.last_update['year'] + '-' + data.content.last_update['month'] +
                     '-' + data.content.last_update['day'];
 
@@ -191,22 +236,18 @@ function readEntry(entryId) {
     $('#content #' + entryId).html(story_raw)
     if (data.content.last_read_state == false) {
       var feed_id = data.content.feed_id;
-      var counter = $("#menu a[href=#" + feed_id + "] span.badge").html() - 1;
+      var counter = $("#menu li#" + feed_id + " #unread-counter").html() - 1;
       if (counter == 0) {
-        $("#menu a[href=#" + feed_id + "] span.badge").remove();
+        $("#menu li#" + feed_id + " #unread-counter").remove();
       } else {
-        $("#menu a[href=#" + feed_id + "] span.badge").html(counter);
+        $("#menu li#" + feed_id + " #unread-counter").html(counter);
       }
     }
   });
   $('a[href=#' + entryId + ']').css('font-weight', 'normal').data('loaded', true);
 }
 
-$(document).ready(function(){
-  // Globals
-  requests = new Array();
-  refresher = new Array();
-  importer = false;
+function initAddSubscription(){
   // Add subscription pop up
   var add_subscription = $('#template-add-subscription').clone();
   add_subscription.removeAttr('id');
@@ -214,4 +255,12 @@ $(document).ready(function(){
   var add_subscription_raw = add_subscription.wrap('<form/>').parent().html();
   add_subscription.unwrap();
   $('#add').popover({title:"<center>New subscription</center>",html:true,content:add_subscription_raw,placement:"bottom"});
+}
+
+$(document).ready(function(){
+  // Globals
+  requests = new Array();
+  refresher = new Array();
+  importer = false;
+  initAddSubscription();
 });

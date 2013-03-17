@@ -91,6 +91,12 @@ class Backend(object):
 
     def update_story(self, _id, content):
         self.db.stories.remove(ObjectId(_id))
+        if content['_id']:
+            if not isinstance(content['_id'], ObjectId):
+                try:
+                    content['_id'] = ObjectId(content['_id'])
+                except:
+                    raise Exception('Update story failed, cant find id')
         return str(self.db.stories.save(content))
 
     def get_story_by_id(self, _id):
