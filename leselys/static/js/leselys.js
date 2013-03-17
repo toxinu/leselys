@@ -227,12 +227,13 @@ function readEntry(entryId) {
     var story = $('#template-story').clone();
     story.removeAttr('id');
     story.removeAttr('style');
-    story.find('span.label').html(published);
-    story.find('a').attr('href', data.content.link);
-    story.find('p').append(data.content.description);
+    story.find('#story-date').html(published);
+    story.find('#story-link').attr('href', data.content.link);
+    story.find('#story-content').html(data.content.description);
 
-    var story_raw = story.wrap('<div/>').parent().html();
+    var story_raw = story.wrap('</p>').parent().html();
     story.unwrap();
+    console.log(story_raw);
     $('#content #' + entryId).html(story_raw)
     if (data.content.last_read_state == false) {
       var feed_id = data.content.feed_id;
