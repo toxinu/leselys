@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from sofart import Database
 
+
 class Backend(object):
     def __init__(self, **kwargs):
         self.path = kwargs['path']
@@ -14,7 +15,8 @@ class Backend(object):
         return res
 
     def add_user(self, username, password):
-        return str(self.db.users.save({'username': username, 'password': password}))
+        return str(self.db.users.save({'username': username,
+                                       'password': password}))
 
     def remove_user(self, username):
         user = self.db.users.find_one({'username': username})
