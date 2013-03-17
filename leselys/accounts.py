@@ -2,10 +2,10 @@
 import hashlib
 from getpass import getpass
 
-import leselys
 
 def get_users(backend):
     return backend.get_users()
+
 
 def add_user(backend):
     username = raw_input('Username: ')
@@ -30,6 +30,7 @@ def add_user(backend):
     print('User added.')
     exit(0)
 
+
 def del_user(backend):
     username = raw_input('Username: ')
     if username not in get_users(backend):
@@ -38,6 +39,7 @@ def del_user(backend):
     backend.remove_user(username)
     print('User removed.')
     exit(0)
+
 
 def update_password(backend):
     username = raw_input('Username :')

@@ -1,5 +1,6 @@
 import lxml.etree
 
+
 class OutlineElement(object):
     """A single outline object."""
 
@@ -26,6 +27,7 @@ class OutlineElement(object):
 
     def __getitem__(self, index):
         return self._outlines[index]
+
 
 class Opml(object):
     """Python representation of an OPML file."""
@@ -58,14 +60,13 @@ class Opml(object):
     def __getitem__(self, index):
         return self._outlines[index]
 
+
 def from_string(opml_text):
 #    hparser = lxml.etree.HTMLParser(encoding='utf-8')
     #return Opml(lxml.etree.fromstring(opml_text, hparser))
     return Opml(lxml.etree.fromstring(opml_text))
 
+
 def parse(opml_url):
 
     return Opml(lxml.etree.parse(opml_url))
-
-
-

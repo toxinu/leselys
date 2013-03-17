@@ -3,9 +3,7 @@ import hashlib
 import leselys
 
 from flask import render_template
-from flask import jsonify
 from flask import request
-from flask import flash
 from flask import session
 from flask import redirect
 from flask import url_for
@@ -18,25 +16,30 @@ app = leselys.core.app
 reader = leselys.core.reader
 signer = leselys.core.signer
 
+
 # Each template context have the subscriptions list
 # Context which return subscriptions list to every template
 @app.context_processor
 def get_subscriptions():
-	return dict(subscriptions=reader.get_subscriptions())
+    return dict(subscriptions=reader.get_subscriptions())
 
 #######################################################################
 # VIEWS
 #######################################################################
+
+
 @app.route('/')
 @login_required
 def home():
     return render_template('home.html')
 
+
 @app.route('/settings')
 @login_required
 def settings():
-	_settings = backend.get_settings()
-	return render_template('settings.html', settings=_settings)
+    _settings = backend.get_settings()
+    return render_template('settings.html', settings=_settings)
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -70,12 +73,14 @@ def login():
             password_md5 = request.cookies.get('password')
             if username in backend.get_users():
                 try:
-                    password_unsigned = signer.unsign(password_md5, max_age=15*24*60*60)
+                    password_unsigned = signer.unsign(
+                        password_md5, max_age=15 * 24 * 60 * 60)
                 except:
                     return render_template('login.html')
-                if password_unsigner == backend.get_password(username):
+                if password_unsigned == backend.get_password(username):
                     return redirect(url_for('home'))
     return render_template('login.html')
+
 
 @app.route('/logout')
 def logout():
