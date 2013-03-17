@@ -49,9 +49,9 @@ def login():
         password_md5 = m.hexdigest()
 
         if username not in backend.get_users():
-            flash('Invalid credentials', 'error')
+            return render_template('login.html')
         elif backend.get_password(username) != password_md5:
-            flash('Invalid credentials', 'error')
+            return render_template('login.html')
         else:
             session['logged_in'] = True
             rsp = make_response(redirect(url_for('home')))

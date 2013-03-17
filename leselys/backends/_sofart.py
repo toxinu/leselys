@@ -62,6 +62,10 @@ class Backend(object):
     def get_feed_by_title(self, title):
         return self.db.feeds.find_one({'title': title})
 
+    def update_feed(self, _id, content):
+        self.db.feeds.remove(_id)
+        return self.db.feeds.save(content)
+
     def get_feeds(self):
         res = []
         for feed in self.db.feeds.find():

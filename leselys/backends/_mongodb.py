@@ -76,6 +76,16 @@ class Backend(object):
             feed['_id'] = str(feed['_id'])
         return feed
 
+    def update_feed(self, _id, content):
+        self.db.feeds.remove(ObjectId(_id))
+        if content['_id']:
+            if not isinstance(content['_id'], ObjectId):
+                try:
+                    content['_id'] = ObjectId(content['_id'])
+                except:
+                    raise Exception('Update feed failed, cant find _id')
+        return str(self.db.feeds.save(content))
+
     def get_feeds(self):
         res = []
         for feed in self.db.feeds.find():
@@ -96,7 +106,7 @@ class Backend(object):
                 try:
                     content['_id'] = ObjectId(content['_id'])
                 except:
-                    raise Exception('Update story failed, cant find id')
+                    raise Exception('Update story failed, cant find _id')
         return str(self.db.stories.save(content))
 
     def get_story_by_id(self, _id):

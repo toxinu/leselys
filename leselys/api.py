@@ -33,10 +33,11 @@ def remove(feed_id):
 	return jsonify(reader.delete(feed_id))
 
 # Return list of entries for given feed_id
-@app.route('/api/get/<feed_id>')
+@app.route('/api/get/<feed_id>', defaults={'order_type': 'normal'})
+@app.route('/api/get/<feed_id>/<order_type>')
 @login_required
-def get(feed_id):
-	return jsonify(content=reader.get(feed_id))
+def get(feed_id, order_type):
+	return jsonify(content=reader.get(feed_id, order_type))
 
 # Set entry as readed
 @app.route('/api/read/<entry_id>')
@@ -54,7 +55,7 @@ def count_unread(feed_id):
 # Refresh all feeds
 @app.route('/api/refresh')
 @login_required
-@cached(1*60)
+@cached(1)
 def refresh():
 	result = reader.refresh_all()
 	return jsonify(success=True, content=result)
