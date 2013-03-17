@@ -31,7 +31,7 @@
         {% if subscription.counter > 0 %}
           <li id="{{ subscription.id }}"><a onClick="viewSubscription(&quot;{{ subscription.id }}&quot;)" href="/#{{ subscription.id }}">{{ subscription.title }} <span id="unread-counter" class="badge badge-inverse">{{ subscription.counter }}</span></a></li>
         {% else %}
-          <li id="{{ subscription.id }}"><a onClick="viewSubscription(&quot;{{ subscription.id }}&quot;)" href="/#{{ subscription.id }}">{{ subscription.title }}</a></li>
+          <li id="{{ subscription.id }}"><a onClick="viewSubscription(&quot;{{ subscription.id }}&quot;)" href="/#{{ subscription.id }}">{{ subscription.title }} <span style="display: none;" id="unread-counter" class="badge badge-inverse">{{ subscription.counter }}</span></a></li>
         {% endif %}
       {% endfor %}
       <li id="empty-feed-list" style="display: none"><center><em>Add your first subscription with the little cross icon.</em></center></li>

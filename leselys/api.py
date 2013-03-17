@@ -39,26 +39,24 @@ def remove(feed_id):
 def get(feed_id, order_type):
 	return jsonify(content=reader.get(feed_id, order_type))
 
-# Set entry as readed
-@app.route('/api/read/<entry_id>')
+# Set story as readed
+@app.route('/api/read/<story_id>')
 @login_required
-def read(entry_id):
-	entry = reader.read(entry_id)
-	return jsonify(success=True, content=entry)
+def read(story_id):
+	return jsonify(reader.read(story_id))
 
-# Return number of unreaded entries
-@app.route('/api/unread/<feed_id>')
+# Set story as unreaded
+@app.route('/api/unread/<story_id>')
 @login_required
-def count_unread(feed_id):
-	return jsonify(count=reader.get_unread(feed_id))
+def unread(story_id):
+	return jsonify(reader.unread(story_id))
 
 # Refresh all feeds
 @app.route('/api/refresh')
 @login_required
-@cached(1)
+@cached(30)
 def refresh():
-	result = reader.refresh_all()
-	return jsonify(success=True, content=result)
+	return jsonify(success=True, content=reader.refresh_all())
 
 # Upload opml
 @app.route('/api/import/opml', methods=['POST'])
