@@ -1,7 +1,7 @@
 # coding: utf-8
 
 __title__ = 'leselys'
-__version__ = '0.1.2'
+__version__ = '0.1.3'
 __author__ = 'Geoffrey Lehée'
 __license__ = ''
 __copyright__ = 'Copyright 2013 Geoffrey Lehée'
