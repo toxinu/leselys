@@ -43,7 +43,8 @@ setup(
         'pymongo',
         'feedparser',
         'lxml',
-        'itsdangerous'
+        'itsdangerous',
+        'sofart'
     ],
     include_package_data=True,
     classifiers=(
