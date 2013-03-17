@@ -10,9 +10,9 @@ from leselys.helpers import get_dicttime
 
 backend = leselys.core.backend
 
-####################################################################################
+#########################################################################
 # Set defaults settings
-####################################################################################
+#########################################################################
 if not backend.get_setting('acceptable_elements'):
     backend.set_setting('acceptable_elements', ["object", "embed", "iframe"])
 
@@ -22,12 +22,15 @@ acceptable_elements = backend.get_setting('acceptable_elements')
 for element in acceptable_elements:
     feedparser._HTMLSanitizer.acceptable_elements.add(element)
 
-####################################################################################
+#########################################################################
 # Retriever object
-####################################################################################
+#########################################################################
+
+
 class Retriever(threading.Thread):
-    """ The Retriever object have to retrieve all feeds asynchronously and return it to
-    the Reader when a new subscription arrived """
+    """The Retriever object has to retrieve all feeds asynchronously and
+    return it to the Reader when a new subscription arrives
+    """
 
     def __init__(self, feed):
         threading.Thread.__init__(self)
@@ -57,16 +60,18 @@ class Retriever(threading.Thread):
                 published = None
 
             _id = backend.add_story({
-                    'title': title,
-                    'link': link,
-                    'description': description,
-                    'published': published,
-                    'last_update': last_update,
-                    'feed_id': feed['_id'],
-                    'read': False})
+                'title': title,
+                'link': link,
+                'description': description,
+                'published': published,
+                'last_update': last_update,
+                'feed_id': feed['_id'],
+                'read': False})
+
 
 class Refresher(threading.Thread):
-    """ The Refresher object have to retrieve all new entries asynchronously """
+    """The Refresher object have to retrieve all new entries asynchronously
+    """
 
     def __init__(self, feed):
         threading.Thread.__init__(self)
@@ -113,12 +118,15 @@ class Refresher(threading.Thread):
             self.feed['last_update'] = remote_update_raw
             backend.update_feed(self.feed_id, self.feed)
 
-####################################################################################
+#########################################################################
 # Reader object
-####################################################################################
+#########################################################################
+
+
 class Reader(object):
-    """ The Reader object is the subscriptions manager, it handle all new feed, read/unread
-    state and refresh feeds"""
+    """The Reader object is the subscriptions manager, it handles all
+    new feed, read/unread state and refresh feeds
+    """
 
     def add(self, url):
         url = url.strip()
@@ -126,7 +134,7 @@ class Reader(object):
 
         # Bad feed
         if not feed.feed.get('title', False):
-            return {'success': False, 'output':'Bad feed'}
+            return {'success': False, 'output': 'Bad feed'}
 
         title = feed.feed['title']
 
@@ -141,10 +149,12 @@ class Reader(object):
             elif feed.get('published_parsed'):
                 feed_update = get_dicttime(feed.published_parsed)
             else:
-                return {'success':False, 'output':'Parsing error'}
-            feed_id = backend.add_feed({'url':url, 'title': title, 'last_update': feed_update})
+                return {'success': False, 'output': 'Parsing error'}
+            feed_id = backend.add_feed({'url': url,
+                                        'title': title,
+                                        'last_update': feed_update})
         else:
-            return {'success':False, 'output':'Feed already exists'}
+            return {'success': False, 'output': 'Feed already exists'}
 
         retriever = Retriever(feed)
         retriever.start()
@@ -184,20 +194,24 @@ class Reader(object):
         for entry in res:
             if not entry['read']:
                 unreaded.append(entry)
-        unreaded.sort(key=lambda r: get_datetime(r['last_update']), reverse=True)
+        unreaded.sort(key=lambda r: get_datetime(r['last_update']),
+                      reverse=True)
         return unreaded + readed
 
     def get_subscriptions(self):
         feeds = []
         for feed in backend.get_feeds():
-            feeds.append({'title': feed['title'], 'id': feed['_id'], 'counter': self.get_unread(feed['_id'])})
+            feeds.append({'title': feed['title'],
+                          'id': feed['_id'],
+                          'counter': self.get_unread(feed['_id'])
+                          })
         return feeds
 
     def refresh_all(self):
         feeds_id = []
         for subscription in backend.get_feeds():
             refresher = Refresher(subscription)
-            refresher.start()    
+            refresher.start()
         return []
 
     def get_unread(self, feed_id):
@@ -210,7 +224,9 @@ class Reader(object):
         """
         story = backend.get_story_by_id(story_id)
         if story['read']:
-            return {'success': False, 'output': 'Story already readed', 'content': story}
+            return {'success': False,
+                    'output': 'Story already readed',
+                    'content': story}
 
         # Save read state before update it for javascript counter in UI
         story['read'] = True
