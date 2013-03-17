@@ -11,4 +11,3 @@ type = mongodb
 host = ${MONGOHQ_URL}
 database = ${DATABASE}
 EOL
-leselys serve --config heroku.ini
