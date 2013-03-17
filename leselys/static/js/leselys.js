@@ -233,7 +233,6 @@ function readEntry(entryId) {
 
     var story_raw = story.wrap('</p>').parent().html();
     story.unwrap();
-    console.log(story_raw);
     $('#content #' + entryId).html(story_raw)
     if (data.content.last_read_state == false) {
       var feed_id = data.content.feed_id;
