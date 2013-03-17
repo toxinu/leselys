@@ -21,7 +21,7 @@ Usage
 
 ::
 
-  echo_leselys_conf > leselys.ini
+  leselys init --config leselys.ini
   leselys adduser --config leselys.ini
   leselys serve --config leselys.ini
 
