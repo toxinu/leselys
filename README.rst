@@ -7,6 +7,7 @@ Leselys can be used with your very own backend, take a look at `Mongodb`_ exampl
 
 
 There is a `demo here`_. Logins: demo/demo.
+
 Installation
 ------------
 
