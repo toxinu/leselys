@@ -35,7 +35,7 @@ setup(
 	url='https://github.com/socketubs/leselys',
 	keywords='rss reader greader',
 	packages=['leselys'],
-	scripts=['scripts/leselys', 'scripts/echo_leselys_conf'],
+	scripts=['scripts/leselys'],
 	install_requires=['docopt==0.5.0','flask==0.9','pymongo','feedparser','lxml','itsdangerous'],
 	include_package_data=True,
 	classifiers=(
