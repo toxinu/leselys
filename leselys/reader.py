@@ -2,6 +2,7 @@
 import feedparser
 import threading
 import leselys
+import copy
 
 from leselys.helpers import u
 from leselys.helpers import get_datetime
@@ -41,9 +42,10 @@ class Retriever(threading.Thread):
             url = feed['url']
             self.data = feedparser.parse(url)['entries']
 
-        for entry_id, entry in enumerate(self.data):
+        for entry in self.data:
             title = entry['title']
             link = entry['link']
+            print('Add -> %s' % title)
             try:
                 description = entry['content'][0]['value']
             except KeyError:
@@ -57,7 +59,6 @@ class Retriever(threading.Thread):
                 published = None
 
             _id = backend.add_story({
-                    'entry_id': entry_id,
                     'title':title,
                     'link':link,
                     'description':description,
@@ -69,32 +70,48 @@ class Retriever(threading.Thread):
 class Refresher(threading.Thread):
     """ The Refresher object have to retrieve all new entries asynchronously """
 
-    def __init__(self, feed_id, data=None):
+    def __init__(self, feed):
         threading.Thread.__init__(self)
-        self.feed_id = u(feed_id)
-        self.data = data
+        self.feed = feed
+        self.feed_id = u(feed['_id'])
 
     def run(self):
-        if self.data is None:
-            print(self.feed_id)
-            feed = backend.get_feed_by_id(self.feed_id)
-            self.data = feedparser.parse(feed['url'])
+        print('Checking %s feed' % self.feed['_id'])
+        self.data = feedparser.parse(self.feed['url'])
 
-        readed = []
-        for entry in backend.get_stories(self.feed_id):
-            if entry['read']:
-                readed.append(entry['title'])
-            backend.remove_story(entry['_id'])
+        local_update = get_datetime(self.feed['last_update'])
+        if self.data.feed.get('updated_parsed'):
+            remote_update = get_datetime(self.data.feed.updated_parsed)
+        elif self.data.get('updated_parsed'):
+            remote_update = get_datetime(self.data.updated_parsed)
+        elif self.data.feed.get('published_parsed'):
+            remote_update = get_datetime(self.data.feed.published_parsed)
+        elif self.data.get('published_parsed'):
+            remote_update = get_datetime(self.data.published_parsed)
+        else:
+            return
 
-        retriever = Retriever(title=self.data.feed['title'], data=self.data.entries)
-        retriever.start()
-        retriever.join()
+        print(':: %s' % self.feed['title'])
+        if remote_update > local_update:
+            readed = []
+            for entry in backend.get_stories(self.feed['_id']):
+                print('!!! 1')
+                if entry['read']:
+                    print('!!! 2')
+                    readed.append(entry['title'])
+                backend.remove_story(entry['_id'])
 
-        for entry in readed:
-            if backend.get_story_by_title(entry):
-                entry = backend.get_story_by_title(entry)
-                entry['read'] = True
-                backend.update_story(entry['_id'], entry)
+            retriever = Retriever(title=self.feed['title'], data=self.data.entries)
+            retriever.start()
+            retriever.join()
+
+            for entry in readed:
+                print('!!! 3')
+                if backend.get_story_by_title(entry):
+                    print('!!! 4')
+                    entry = backend.get_story_by_title(entry)
+                    entry['read'] = True
+                    backend.update_story(entry['_id'], copy.copy(entry))
 
 ####################################################################################
 # Reader object
@@ -125,7 +142,7 @@ class Reader(object):
                 feed_update = get_dicttime(r.published_parsed)
             else:
                 return {'success':False, 'output':'Parsing error'}
-            feed_id = backend.add_feed({'url':url, 'title': title, 'last_update': feed_update, 'read': False})
+            feed_id = backend.add_feed({'url':url, 'title': title, 'last_update': feed_update})
         else:
             return {'success':False, 'output':'Feed already exists'}
 
@@ -148,6 +165,9 @@ class Reader(object):
     def get(self, feed_id):
         res = []
         for entry in backend.get_stories(feed_id):
+            print('===')
+            print(entry)
+            print('===')
             res.append({"title":entry['title'],"_id":entry['_id'],"read":entry['read']})
         return res
 
@@ -160,32 +180,9 @@ class Reader(object):
     def refresh_all(self):
         feeds_id = []
         for subscription in backend.get_feeds():
-            r = feedparser.parse(subscription['url'])
-
-            local_update = get_datetime(subscription['last_update'])
-            if r.feed.get('updated_parsed'):
-                remote_update = get_datetime(r.feed.updated_parsed)
-            elif r.get('updated_parsed'):
-                remote_update = get_datetime(r.updated_parsed)
-            elif r.feed.get('published_parsed'):
-                remote_update = get_datetime(r.feed.published_parsed)
-            elif r.get('published_parsed'):
-                remote_update = get_datetime(r.published_parsed)
-            else:
-                return {'success': False, 'output': 'Feed parsing error'}
-
-            if remote_update > local_update:
-                feeds_id.append(subscription['_id'])
-                print('Update feed: %s' % subscription['title'])
-                refresher = Refresher(subscription['_id'], r)
-                refresher.start()
-                refresher.join()
-
-        res = []
-        for feed in feeds_id:
-            feed = backend.get_feed_by_id(feed)
-            res.append((feed['title'], feed['_id'], self.get_unread(feed['_id'])))
-        return res
+            refresher = Refresher(subscription)
+            refresher.start()    
+        return []
 
     def get_unread(self, feed_id):
         return len(backend.get_feed_unread(feed_id))
@@ -196,14 +193,18 @@ class Reader(object):
         previous read state for counter
         """
         entry = backend.get_story_by_id(entry_id)
+
         # Save read state before update it for javascript counter in UI
         entry['last_read_state'] = entry['read']
         entry['read'] = True
-        backend.update_story(entry['_id'], entry)
+        backend.update_story(entry['_id'], copy.copy(entry))
+        print('!!!!')
+        print(entry)
+        print('!!!!')
         return entry
 
     def unread(self, story_id):
         story = backend.get_story_by_id(story_id)
         story['read'] = False
-        backend.update_story(story['_id'], story)
+        backend.update_story(story['_id'], copy.copy(story))
         return True

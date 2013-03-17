@@ -35,7 +35,6 @@ def remove(feed_id):
 # Return list of entries for given feed_id
 @app.route('/api/get/<feed_id>')
 @login_required
-@cached(2*60)
 def get(feed_id):
 	return jsonify(content=reader.get(feed_id))
 

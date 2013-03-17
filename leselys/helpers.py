@@ -81,7 +81,7 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-def cached(timeout=5 * 60, key='view/%s'):
+def cached(timeout=5*60, key='view/%s'):
     cache = leselys.core.cache
     def decorator(f):
         @wraps(f)
