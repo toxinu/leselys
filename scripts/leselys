@@ -51,11 +51,14 @@ mode = multi"""
                 print('Configuration file created.')
                 sys.exit(0)
         else:
-            print('Error: %s file already exists.' % config_path)
+            print('Error: "%s" file already exists.' % config_path)
             sys.exit(1)
 
 
     config.read(args.get('--config'))
+    if not os.path.exists(config_path):
+        print('Error: "%s" file not exists.' % config_path)
+        sys.exit(1)
 
     if args.get('serve'):
         # Defaults
