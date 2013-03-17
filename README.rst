@@ -31,11 +31,11 @@ Import your Google Reader OPML file right now!
 Heroku
 ~~~~~~
 
-```
-heroku create
-heroku addons:add mongohq:sandbox
-git push heroku master
-```
+::
+
+	heroku create
+	heroku addons:add mongohq:sandbox
+	git push heroku master
 
 Don't forget to create a leselys account with ``heroku run "bash heroku.sh && leselys adduser --config heroku.ini"``.
 
