@@ -2,6 +2,7 @@
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 
+
 class Backend(object):
     def __init__(self, **kwargs):
         self.database = kwargs.get('database') or 'leselys'
@@ -19,7 +20,8 @@ class Backend(object):
         return res
 
     def add_user(self, username, password):
-        return str(self.db.users.save({'username': username, 'password': password}))
+        return str(self.db.users.save({'username': username,
+                                       'password': password}))
 
     def remove_user(self, username):
         user = self.db.users.find_one({'username': username})
@@ -34,7 +36,8 @@ class Backend(object):
 
     def set_password(self, username, password):
         self.remove_user(username)
-        return str(self.db.users.save({'username': username, 'password': password}))
+        return str(self.db.users.save({'username': username,
+                                       'password': password}))
 
     def set_setting(self, key, value):
         return str(self.db.settings.save({key: value}))
