@@ -2,8 +2,6 @@
 import hashlib
 from getpass import getpass
 
-import leselys
-
 
 def get_users(backend):
     return backend.get_users()

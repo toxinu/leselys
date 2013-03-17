@@ -3,7 +3,6 @@ import leselys
 
 from flask import jsonify
 from flask import request
-from flask import flash
 
 from threading import Thread
 
@@ -11,8 +10,6 @@ from leselys.helpers import login_required
 from leselys.helpers import cached
 from leselys.helpers import retrieve_feeds_from_opml
 
-
-from flask import render_template
 
 reader = leselys.core.reader
 app = leselys.core.app

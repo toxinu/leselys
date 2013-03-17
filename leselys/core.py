@@ -4,7 +4,6 @@ import os
 from itsdangerous import TimestampSigner
 from flask import Flask
 from werkzeug.contrib.cache import SimpleCache
-from leselys.logger import stream_logger
 
 
 class Core(object):
