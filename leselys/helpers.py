@@ -53,7 +53,7 @@ def get_dicttime(parsed_date):
             'month': parsed_date[1],
             'day': parsed_date[2],
             'hour': parsed_date[3],
-            'min': parsed_date[4]}
+            'min': _min}
 
 
 # Decorator for webapp
