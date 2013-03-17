@@ -62,7 +62,7 @@ def login_required(f):
         if not session.get('logged_in'):
             # No cookie
             if not request.cookies.get('remember'):
-                return redirect(url_for('login', next=request.url))
+                return redirect(url_for('login'))
             else:
                 username = request.cookies.get('username')
                 password_md5 = request.cookies.get('password')
@@ -71,13 +71,13 @@ def login_required(f):
                     try:
                         password_unsigned = signer.unsign(password_md5, max_age=15*24*60*60)
                     except:
-                        return redirect(url_for('login', next=request.url))
+                        return redirect(url_for('login'))
                     if password_unsigner == backend.get_password(username):
                         return f(*args, **kwargs)
                     else:
-                        return redirect(url_for('login', next=request.url))
+                        return redirect(url_for('login'))
                 else:
-                    return redirect(url_for('login', next=request.url))
+                    return redirect(url_for('login'))
         return f(*args, **kwargs)
     return decorated_function
 
