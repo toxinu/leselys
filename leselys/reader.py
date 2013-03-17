@@ -42,7 +42,6 @@ class Retriever(threading.Thread):
     def run(self):
         # This feed comes from database
         feed = backend.get_feed_by_title(self.title)
-        url = feed['url']
 
         for entry in self.data:
             title = entry['title']
@@ -59,7 +58,7 @@ class Retriever(threading.Thread):
             else:
                 published = None
 
-            _id = backend.add_story({
+            backend.add_story({
                 'title': title,
                 'link': link,
                 'description': description,
@@ -208,7 +207,6 @@ class Reader(object):
         return feeds
 
     def refresh_all(self):
-        feeds_id = []
         for subscription in backend.get_feeds():
             refresher = Refresher(subscription)
             refresher.start()
