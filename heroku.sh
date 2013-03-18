@@ -1,4 +1,9 @@
 #!/bin/bash
+# Installed heroku deps
+pip install gunicorn
+pip install pymongo
+
+# Create heroku configuration file
 DATABASE=$(echo ${MONGOHQ_URL} | cut -d"/" -f4)
 cat >heroku.ini <<EOL
 [webserver]
