@@ -51,7 +51,10 @@ class Retriever(threading.Thread):
             except KeyError:
                 description = entry['summary']
 
-            last_update = get_dicttime(entry.updated_parsed)
+            if entry.get('updated_parsed'):
+                last_update = get_dicttime(entry.updated_parsed)
+            else:
+                last_update = False
 
             if entry.get('published_parsed', False):
                 published = get_dicttime(entry.published_parsed)
@@ -148,7 +151,7 @@ class Reader(object):
             elif feed.get('published_parsed'):
                 feed_update = get_dicttime(feed.published_parsed)
             else:
-                return {'success': False, 'output': 'Parsing error'}
+                feed_update = False
             feed_id = backend.add_feed({'url': url,
                                         'title': title,
                                         'last_update': feed_update})
