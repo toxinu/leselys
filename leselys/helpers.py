@@ -118,6 +118,7 @@ def retrieve_feeds_from_opml(opml_raw):
                 result.append({'title': outline.text, 'url': outline.xmlUrl})
     return result
 
+
 def export_to_opml():
     storage = leselys.core.storage
     header = """<?xml version="1.0" encoding="UTF-8"?>
@@ -134,6 +135,10 @@ def export_to_opml():
         body += """
     <outline text="%s"
         title="%s" type="rss"
-        xmlUrl="%s" htmlUrl="%s"/>""" % (feed['title'], feed['title'], feed['url'], feed['url'])
+        xmlUrl="%s" htmlUrl="%s"/>""" % (
+            feed['title'],
+            feed['title'],
+            feed['url'],
+            feed['url'])
 
     return header + body + footer

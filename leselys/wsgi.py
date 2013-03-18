@@ -6,6 +6,7 @@ import ConfigParser
 from leselys import core
 from leselys.backends.storage import _load_storage
 
+
 def app(config_path):
     config = ConfigParser.ConfigParser()
 
