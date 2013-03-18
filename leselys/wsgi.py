@@ -4,7 +4,6 @@ import sys
 import ConfigParser
 
 from leselys import core
-from leselys.config import get_config
 from leselys.backends import _load_backend
 
 def app(config_path):
