@@ -9,7 +9,6 @@ from docopt import docopt
 from leselys import core
 from leselys import accounts
 
-from leselys.config import get_config
 from leselys.backends import _load_backend
 
 doc = """Leselys is a Web Interface for Leselys.
