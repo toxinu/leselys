@@ -33,10 +33,11 @@ Heroku
 ~~~~~~
 
 Advanced setup with Gunicorn and MongoDB as backend on Heroku.
-All Heroku dependencies like ``Pymongo`` and ``gunicorn`` are automagically installed with ``heroku.sh``: ::
+All Heroku dependencies like ``Pymongo`` and ``redis`` are automagically installed with ``heroku.sh``: ::
 
 	heroku create
 	heroku addons:add mongohq:sandbox
+	heroku addons:add redistogo:nano
 	git push heroku master
 
 Don't forget to create a Leselys account with ``heroku run "bash heroku.sh && leselys adduser --config heroku.ini"``.
