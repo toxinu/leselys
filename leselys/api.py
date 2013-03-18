@@ -57,12 +57,12 @@ def unread(story_id):
     return jsonify(reader.unread(story_id))
 
 
-# Refresh all feeds
-@app.route('/api/refresh')
+# Refresh a feed
+@app.route('/api/refresh/<feed_id>')
 @login_required
 @cached(30)
-def refresh():
-    return jsonify(success=True, content=reader.refresh_all())
+def resfresh(feed_id):
+    return jsonify(reader.refresh(feed_id))
 
 
 # Import opml

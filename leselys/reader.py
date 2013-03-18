@@ -171,11 +171,13 @@ class Reader(object):
             'output': 'Feed added',
             'counter': len(feed['entries'])}
 
+
     def delete(self, feed_id):
         if not storage.get_feed_by_id(feed_id):
             return {'success': False, "output": "Feed not found"}
         storage.remove_feed(feed_id)
         return {"success": True, "output": "Feed removed"}
+
 
     def get(self, feed_id, order_type='normal'):
         res = []
@@ -203,6 +205,7 @@ class Reader(object):
                       reverse=True)
         return unreaded + readed
 
+
     def get_subscriptions(self):
         feeds = []
         for feed in storage.get_feeds():
@@ -213,14 +216,19 @@ class Reader(object):
                           })
         return feeds
 
-    def refresh_all(self):
-        for subscription in storage.get_feeds():
-            refresher = Refresher(subscription)
-            refresher.start()
-        return []
+
+    def refresh(self, feed_id):
+        feed = storage.get_feed_by_id(feed_id)
+        refresher = Refresher(feed)
+        refresher.start()
+        refresher.join()
+        feed['counter'] = self.get_unread(feed_id)
+        return {'success': True, 'content': feed}
+
 
     def get_unread(self, feed_id):
         return len(storage.get_feed_unread(feed_id))
+
 
     def read(self, story_id):
         """
@@ -237,6 +245,7 @@ class Reader(object):
         story['read'] = True
         storage.update_story(story['_id'], copy.copy(story))
         return {'success': True, 'content': story}
+
 
     def unread(self, story_id):
         story = storage.get_story_by_id(story_id)
