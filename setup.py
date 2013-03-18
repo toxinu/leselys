@@ -38,9 +38,8 @@ setup(
     packages=['leselys'],
     scripts=['scripts/leselys'],
     install_requires=[
-        'docopt==0.5.0',
-        'flask==0.9',
-        'pymongo',
+        'docopt',
+        'flask',
         'feedparser',
         'lxml',
         'itsdangerous',
