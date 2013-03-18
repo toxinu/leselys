@@ -10,6 +10,18 @@ li {
   font-size:13px;
 }
 
+ul#menu {
+  margin-bottom: 10px;
+}
+
+li#icons a {
+  text-decoration: none;
+}
+
+li a [class^="icon-"] {
+  color: #222222 ;
+}
+
 #login-background {
   padding-top: 40px;
   padding-bottom: 40px;
@@ -49,6 +61,15 @@ li {
   .sidenav-affix {
     position: static;
     width: auto;
-    top: 0;
+  }
+  li a [class^="icon-"] {
+    font-size: 2em;
+  }
+  li#listSubscriptions {
+    font-size: 14px;
+  }
+  li.story {
+    font-size: 16px;
+    padding: 3px 0px;
   }
 }
