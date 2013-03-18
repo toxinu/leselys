@@ -1,1 +1,1 @@
-web: sh heroku.sh && gunicorn 'leselys.wsgi:app("heroku.ini")' --workers 1
+web: sh heroku.sh && leselys serve --config heroku.ini
