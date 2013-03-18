@@ -4,7 +4,7 @@ import sys
 import ConfigParser
 
 from leselys import core
-from leselys.backends import _load_backend
+from leselys.backends.storage import _load_storage
 
 def app(config_path):
     config = ConfigParser.ConfigParser()
@@ -15,11 +15,11 @@ def app(config_path):
 
     config.read(config_path)
 
-    # Create backend
-    backend_settings = {}
-    for item in config.items('backend'):
-        backend_settings[item[0]] = item[1]
-    del backend_settings['type']
+    # Create storage
+    storage_settings = {}
+    for item in config.items('storage'):
+        storage_settings[item[0]] = item[1]
+    del storage_settings['type']
 
     # Flask webserver config
     if config.has_section('webserver') and config.get('webserver', 'host'):
@@ -32,10 +32,10 @@ def app(config_path):
         else:
             core.debug = False
 
-    backend_module = _load_backend(config.get('backend', 'type'))
-    core.backend = backend_module
-    core.backend_settings = backend_settings
-    core.load_backend()
+    storage_module = _load_storage(config.get('storage', 'type'))
+    core.storage = storage_module
+    core.storage_settings = storage_settings
+    core.load_storage()
     core.load_wsgi()
 
     app = core.app

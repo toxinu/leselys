@@ -2,7 +2,7 @@
 from sofart import Database
 
 
-class Backend(object):
+class Storage(object):
     def __init__(self, **kwargs):
         self.path = kwargs['path']
         self.mode = kwargs['mode']
