@@ -11,11 +11,24 @@ class Core(object):
         self.host = host
         self.port = int(port)
         self.debug = debug
-        self.backend = None
-        self.backend_settings = None
+        self.storage = None
+        self.storage_settings = None
+        self.session = None
+        self.session_settings = None
 
-    def load_backend(self):
-        self.backend = self.backend.Backend(**self.backend_settings)
+        self.app = Flask(__name__)
+        self.app.config['SECRET_KEY'] = os.urandom(24)
+        self.signer = TimestampSigner(self.app.config['SECRET_KEY'])
+        self.cache = SimpleCache()
+
+    def load_storage(self):
+        self.storage = self.storage.Storage(**self.storage_settings)
+
+    def load_session(self):
+        if self.session == "memory":
+            return
+        self.session = self.session.Session(**self.session_settings)
+        self.app.session_interface = self.session
 
     def load_wsgi(self):
         from leselys.reader import Reader
@@ -33,11 +46,6 @@ class Core(object):
     def run(self):
         from leselys.reader import Reader
         self.reader = Reader()
-
-        self.app = Flask(__name__)
-        self.app.config['SECRET_KEY'] = os.urandom(24)
-        self.signer = TimestampSigner(self.app.config['SECRET_KEY'])
-        self.cache = SimpleCache()
 
         from leselys import views
         from leselys import api
