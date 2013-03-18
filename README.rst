@@ -12,15 +12,19 @@ Leselys is in heavy development right now, and feedback is welcome.
 Installation
 ------------
 
+Quick local setup (with sofart backend):
+
+Ubuntu
+~~~~~~
+
 ::
 
+	apt-get install build-essential python-dev
+	apt-get install libxslt1-dev libxml2-dev python-libxml2 python-libxslt1
+
+And finally: ::
+
 	pip install leselys
-
-Usage
------
-
-Quick local setup (with sofart backend): ::
-
 	pip install sofart
 	leselys init --config leselys.ini
 	leselys adduser --config leselys.ini
