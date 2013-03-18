@@ -18,6 +18,8 @@ signer = leselys.core.signer
 
 # Each template context have the subscriptions list
 # Context which return subscriptions list to every template
+
+
 @app.context_processor
 def get_subscriptions():
     return dict(subscriptions=reader.get_subscriptions())
