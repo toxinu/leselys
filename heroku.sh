@@ -11,8 +11,12 @@ host = 0.0.0.0
 port = ${PORT}
 debug = false
 
-[backend]
+[storage]
 type = mongodb
 host = ${MONGOHQ_URL}
 database = ${DATABASE}
+
+[session]
+type = redis
+uri = ${REDISTOGO_URL}
 EOL

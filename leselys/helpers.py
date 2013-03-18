@@ -58,7 +58,7 @@ def get_dicttime(parsed_date):
 
 # Decorator for webapp
 def login_required(f):
-    backend = leselys.core.backend
+    storage = leselys.core.storage
     signer = leselys.core.signer
 
     @wraps(f)
@@ -72,13 +72,13 @@ def login_required(f):
                 username = request.cookies.get('username')
                 password_md5 = request.cookies.get('password')
 
-                if username in backend.get_users():
+                if username in storage.get_users():
                     try:
                         password_unsigned = signer.unsign(
                             password_md5, max_age=15 * 24 * 60 * 60)
                     except:
                         return redirect(url_for('login'))
-                    if password_unsigned == backend.get_password(username):
+                    if password_unsigned == storage.get_password(username):
                         return f(*args, **kwargs)
                     else:
                         return redirect(url_for('login'))
