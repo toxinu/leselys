@@ -208,6 +208,7 @@ class Reader(object):
         for feed in storage.get_feeds():
             feeds.append({'title': feed['title'],
                           'id': feed['_id'],
+                          'url': feed['url'],
                           'counter': self.get_unread(feed['_id'])
                           })
         return feeds
