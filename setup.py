@@ -42,8 +42,7 @@ setup(
         'flask',
         'feedparser',
         'lxml',
-        'itsdangerous',
-        'sofart'
+        'itsdangerous'
     ],
     include_package_data=True,
     classifiers=(

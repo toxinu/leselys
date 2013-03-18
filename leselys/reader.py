@@ -9,16 +9,16 @@ from leselys.helpers import u
 from leselys.helpers import get_datetime
 from leselys.helpers import get_dicttime
 
-backend = leselys.core.backend
+storage = leselys.core.storage
 
 #########################################################################
 # Set defaults settings
 #########################################################################
-if not backend.get_setting('acceptable_elements'):
-    backend.set_setting('acceptable_elements', ["object", "embed", "iframe"])
+if not storage.get_setting('acceptable_elements'):
+    storage.set_setting('acceptable_elements', ["object", "embed", "iframe"])
 
 # Acceptable elements are special tag that you can disable in entries rendering
-acceptable_elements = backend.get_setting('acceptable_elements')
+acceptable_elements = storage.get_setting('acceptable_elements')
 
 for element in acceptable_elements:
     feedparser._HTMLSanitizer.acceptable_elements.add(element)
@@ -42,7 +42,7 @@ class Retriever(threading.Thread):
 
     def run(self):
         # This feed comes from database
-        feed = backend.get_feed_by_title(self.title)
+        feed = storage.get_feed_by_title(self.title)
 
         for entry in self.data:
             title = entry['title']
@@ -62,7 +62,7 @@ class Retriever(threading.Thread):
             else:
                 published = get_dicttime(datetime.datetime.now().timetuple())
 
-            backend.add_story({
+            storage.add_story({
                 'title': title,
                 'link': link,
                 'description': description,
@@ -104,23 +104,23 @@ class Refresher(threading.Thread):
         if remote_update > local_update:
             print(':: %s is outdated' % self.feed['title'])
             readed = []
-            for entry in backend.get_stories(self.feed['_id']):
+            for entry in storage.get_stories(self.feed['_id']):
                 if entry['read']:
                     readed.append(entry['title'])
-                backend.remove_story(entry['_id'])
+                storage.remove_story(entry['_id'])
 
             retriever = Retriever(self.data)
             retriever.start()
             retriever.join()
 
             for entry in readed:
-                if backend.get_story_by_title(entry):
-                    entry = backend.get_story_by_title(entry)
+                if storage.get_story_by_title(entry):
+                    entry = storage.get_story_by_title(entry)
                     entry['read'] = True
-                    backend.update_story(entry['_id'], copy.copy(entry))
+                    storage.update_story(entry['_id'], copy.copy(entry))
 
             self.feed['last_update'] = remote_update_raw
-            backend.update_feed(self.feed_id, self.feed)
+            storage.update_feed(self.feed_id, self.feed)
 
 #########################################################################
 # Reader object
@@ -142,7 +142,7 @@ class Reader(object):
 
         title = feed.feed['title']
 
-        feed_id = backend.get_feed_by_title(title)
+        feed_id = storage.get_feed_by_title(title)
         if not feed_id:
             if feed.feed.get('updated_parsed'):
                 feed_update = get_dicttime(feed.feed.updated_parsed)
@@ -155,7 +155,7 @@ class Reader(object):
             else:
                 feed_update = get_dicttime(datetime.datetime.now().timetuple())
 
-            feed_id = backend.add_feed({'url': url,
+            feed_id = storage.add_feed({'url': url,
                                         'title': title,
                                         'last_update': feed_update})
         else:
@@ -172,14 +172,14 @@ class Reader(object):
             'counter': len(feed['entries'])}
 
     def delete(self, feed_id):
-        if not backend.get_feed_by_id(feed_id):
+        if not storage.get_feed_by_id(feed_id):
             return {'success': False, "output": "Feed not found"}
-        backend.remove_feed(feed_id)
+        storage.remove_feed(feed_id)
         return {"success": True, "output": "Feed removed"}
 
     def get(self, feed_id, order_type='normal'):
         res = []
-        for entry in backend.get_stories(feed_id):
+        for entry in storage.get_stories(feed_id):
             res.append({
                 "title": entry['title'],
                 "_id": entry['_id'],
@@ -205,7 +205,7 @@ class Reader(object):
 
     def get_subscriptions(self):
         feeds = []
-        for feed in backend.get_feeds():
+        for feed in storage.get_feeds():
             feeds.append({'title': feed['title'],
                           'id': feed['_id'],
                           'counter': self.get_unread(feed['_id'])
@@ -213,20 +213,20 @@ class Reader(object):
         return feeds
 
     def refresh_all(self):
-        for subscription in backend.get_feeds():
+        for subscription in storage.get_feeds():
             refresher = Refresher(subscription)
             refresher.start()
         return []
 
     def get_unread(self, feed_id):
-        return len(backend.get_feed_unread(feed_id))
+        return len(storage.get_feed_unread(feed_id))
 
     def read(self, story_id):
         """
         Return story content, set it at readed state and give
         previous read state for counter
         """
-        story = backend.get_story_by_id(story_id)
+        story = storage.get_story_by_id(story_id)
         if story['read']:
             return {'success': False,
                     'output': 'Story already readed',
@@ -234,13 +234,13 @@ class Reader(object):
 
         # Save read state before update it for javascript counter in UI
         story['read'] = True
-        backend.update_story(story['_id'], copy.copy(story))
+        storage.update_story(story['_id'], copy.copy(story))
         return {'success': True, 'content': story}
 
     def unread(self, story_id):
-        story = backend.get_story_by_id(story_id)
+        story = storage.get_story_by_id(story_id)
         if not story['read']:
             return {'success': False, 'output': 'Story already unreaded'}
         story['read'] = False
-        backend.update_story(story['_id'], copy.copy(story))
+        storage.update_story(story['_id'], copy.copy(story))
         return {'success': True, 'content': story}

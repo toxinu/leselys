@@ -11,7 +11,7 @@ from flask import make_response
 
 from leselys.helpers import login_required
 
-backend = leselys.core.backend
+storage = leselys.core.storage
 app = leselys.core.app
 reader = leselys.core.reader
 signer = leselys.core.signer
@@ -36,7 +36,7 @@ def home():
 @app.route('/settings')
 @login_required
 def settings():
-    _settings = backend.get_settings()
+    _settings = storage.get_settings()
     return render_template('settings.html', settings=_settings)
 
 
@@ -50,9 +50,9 @@ def login():
         m.update(password)
         password_md5 = m.hexdigest()
 
-        if username not in backend.get_users():
+        if username not in storage.get_users():
             return render_template('login.html')
-        elif backend.get_password(username) != password_md5:
+        elif storage.get_password(username) != password_md5:
             return render_template('login.html')
         else:
             session['logged_in'] = True
@@ -70,13 +70,13 @@ def login():
         if request.cookies.get('remember'):
             username = request.cookies.get('username')
             password_md5 = request.cookies.get('password')
-            if username in backend.get_users():
+            if username in storage.get_users():
                 try:
                     password_unsigned = signer.unsign(
                         password_md5, max_age=15 * 24 * 60 * 60)
                 except:
                     return render_template('login.html')
-                if password_unsigned == backend.get_password(username):
+                if password_unsigned == storage.get_password(username):
                     return redirect(url_for('home'))
     return render_template('login.html')
 

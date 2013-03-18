@@ -3,13 +3,13 @@ import hashlib
 from getpass import getpass
 
 
-def get_users(backend):
-    return backend.get_users()
+def get_users(storage):
+    return storage.get_users()
 
 
-def add_user(backend):
+def add_user(storage):
     username = raw_input('Username: ')
-    if username in get_users(backend):
+    if username in get_users(storage):
         print('User already exists')
         exit(1)
 
@@ -26,22 +26,22 @@ def add_user(backend):
     m.update(password1)
     password_md5 = m.hexdigest()
 
-    backend.add_user(username, password_md5)
+    storage.add_user(username, password_md5)
     print('User added.')
     exit(0)
 
 
-def del_user(backend):
+def del_user(storage):
     username = raw_input('Username: ')
-    if username not in get_users(backend):
+    if username not in get_users(storage):
         print('User not found.')
         exit(1)
-    backend.remove_user(username)
+    storage.remove_user(username)
     print('User removed.')
     exit(0)
 
 
-def update_password(backend):
+def update_password(storage):
     username = raw_input('Username :')
     same_password = False
     while not same_password:
@@ -55,6 +55,6 @@ def update_password(backend):
     m = hashlib.md5()
     m.update(password1)
     password_md5 = m.hexdigest()
-    backend.set_password(username, password_md5)
+    storage.set_password(username, password_md5)
     print('Password updated.')
     exit(0)
