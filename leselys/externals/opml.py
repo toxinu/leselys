@@ -1,3 +1,9 @@
+################################################
+# OPML library written by Nathan R. Yergler
+# Under MIT License
+# https://pypi.python.org/pypi/opml
+# Version 0.5
+################################################
 import lxml.etree
 
 
@@ -62,11 +68,8 @@ class Opml(object):
 
 
 def from_string(opml_text):
-#    hparser = lxml.etree.HTMLParser(encoding='utf-8')
-    #return Opml(lxml.etree.fromstring(opml_text, hparser))
     return Opml(lxml.etree.fromstring(opml_text))
 
 
 def parse(opml_url):
-
     return Opml(lxml.etree.parse(opml_url))
