@@ -36,7 +36,7 @@
           <ul>
           {% if subscriptions %}
             {% for feed in subscriptions %}
-              <li id="{{ feed.id }}">{{ feed.title }} (<a class="muted" onClick="delSubscription(&quot;{{ feed.id }}&quot;)" href="#">remove</a>)</li>
+            <li id="{{ feed.id }}">{{ feed.title }} (<a class="muted" onClick="delSubscription(&quot;{{ feed.id }}&quot;)" href="#">remove</a>) - <a href="{{ feed.url }}">{{ feed.url }}</a></li>
             {% endfor %}
             <span id="empty-feed-list" style="display: none"><em>No subscriptions...</em></span>
           {% else %}
