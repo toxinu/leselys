@@ -7,7 +7,7 @@
         <a href="#" onClick="refreshSubscriptions()"><i class="icon-refresh"></i></a>
         <a href="#" id="add"><i class="icon-plus-sign"></i></a>
         <a href="#settings" onclick="viewSettings()"><i class="icon-wrench"></i></a>
-        <a href="https://github.com/socketubs/leselys" target="_blank"><i class="icon-question-sign"></i></a>
+        <a href="https://github.com/socketubs/leselys" target="_blank"><i class="icon-github-alt"></i></a>
         <a href="/logout"><i class="icon-off"></i></a>
       </li>
     </center>
@@ -29,9 +29,9 @@
       <li id="listSubscriptions" class="nav-header">Subscriptions</li>
       {% for subscription in subscriptions %}
         {% if subscription.counter > 0 %}
-          <li id="{{ subscription.id }}"><a onClick="viewSubscription(&quot;{{ subscription.id }}&quot;)" href="/#{{ subscription.id }}">{{ subscription.title }} <span id="unread-counter" class="badge badge-inverse">{{ subscription.counter }}</span></a></li>
+          <li class="story" id="{{ subscription.id }}"><a onClick="viewSubscription(&quot;{{ subscription.id }}&quot;)" href="/#{{ subscription.id }}">{{ subscription.title }} <span id="unread-counter" class="badge badge-inverse">{{ subscription.counter }}</span></a></li>
         {% else %}
-          <li id="{{ subscription.id }}"><a onClick="viewSubscription(&quot;{{ subscription.id }}&quot;)" href="/#{{ subscription.id }}">{{ subscription.title }} <span style="display: none;" id="unread-counter" class="badge badge-inverse">{{ subscription.counter }}</span></a></li>
+          <li class="story" id="{{ subscription.id }}"><a onClick="viewSubscription(&quot;{{ subscription.id }}&quot;)" href="/#{{ subscription.id }}">{{ subscription.title }} <span style="display: none;" id="unread-counter" class="badge badge-inverse">{{ subscription.counter }}</span></a></li>
         {% endif %}
       {% endfor %}
       <li id="empty-feed-list" style="display: none"><center><em>Add your first subscription with the little cross icon.</em></center></li>

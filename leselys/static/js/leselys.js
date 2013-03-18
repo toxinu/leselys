@@ -296,6 +296,10 @@ function initAddSubscription(){
 
 $(document).ready(function(){
   // Globals
+  // Remove anchors binding for mobile view
+  $('.story').click(function(e) {
+    e.preventDefault();
+  });
   requests = new Array();
   refresher = new Array();
   importer = false;
