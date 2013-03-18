@@ -1,6 +1,6 @@
 #!/bin/bash
 # Installed heroku deps
-pip install gunicorn
+pip install redis
 pip install pymongo
 
 # Create heroku configuration file
