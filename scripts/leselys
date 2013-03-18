@@ -2,16 +2,16 @@
 # coding: utf-8
 import sys
 import os
-import ConfigParser
 import leselys
+import ConfigParser
 
 from docopt import docopt
 from leselys import core
 from leselys import accounts
 
+from leselys.config import get_config
 from leselys.backends import _load_backend
 
-config = ConfigParser.ConfigParser()
 doc = """Leselys is a Web Interface for Leselys.
 
 Usage:
@@ -54,11 +54,13 @@ mode = multi"""
             print('Error: "%s" file already exists.' % config_path)
             sys.exit(1)
 
+    config = ConfigParser.ConfigParser()
 
-    config.read(args.get('--config'))
-    if not os.path.exists(config_path):
+    if not os.path.exists(args.get('--config')):
         print('Error: "%s" file not exists.' % config_path)
         sys.exit(1)
+
+    config.read(config_path)
 
     if args.get('serve'):
         # Defaults
