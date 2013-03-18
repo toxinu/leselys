@@ -228,17 +228,21 @@ function readEntry(entryId) {
       window.location = "/login";
     }
     /////////////////////////////////////
-    var published = data.content.last_update['year'] + '-' + data.content.last_update['month'] +
-                    '-' + data.content.last_update['day'];
-
     var story = $('#template-story').clone();
     story.removeAttr('id');
     story.removeAttr('style');
-    story.find('#story-date').html(published);
+
+    if (data.content.last_update == false) {
+      var published = "No date";
+    } else {
+      var published = data.content.last_update['year'] + '-' + data.content.last_update['month'] +
+                    '-' + data.content.last_update['day'];
+    }
+
     story.find('#story-link').attr('href', data.content.link);
     story.find('#story-unread').attr('onClick', "unreadEntry(\"" + entryId + "\")")
     story.find('#story-content').html(data.content.description);
-
+    story.find('#story-date').html(published);
     var story_raw = story.wrap('</p>').parent().html();
     story.unwrap();
     $('#content #' + entryId).html(story_raw)

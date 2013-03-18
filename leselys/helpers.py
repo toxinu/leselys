@@ -26,6 +26,8 @@ else:
 
 # Date helpers
 def get_datetime(unparsed_date):
+    if not unparsed_date:
+        return False
     if isinstance(unparsed_date, dict):
         return datetime.datetime(
             unparsed_date['year'],
@@ -45,6 +47,8 @@ def get_datetime(unparsed_date):
 
 
 def get_dicttime(parsed_date):
+    if not parsed_date:
+        return False
     if parsed_date[4] == "0":
         _min = "00"
     else:
