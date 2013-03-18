@@ -62,7 +62,6 @@ def login():
                 rsp.set_cookie('remember', True)
                 rsp.set_cookie('username', username)
                 rsp.set_cookie('token', signer.sign(password_md5))
-            reader.refresh_all()
             return rsp
     else:
         if session.get('logged_in'):
