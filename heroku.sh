@@ -1,6 +1,6 @@
 #!/bin/bash
 # Installed heroku deps
-pip install gunicorn
+pip install redis
 pip install pymongo
 
 # Create heroku configuration file
@@ -11,8 +11,12 @@ host = 0.0.0.0
 port = ${PORT}
 debug = false
 
-[backend]
+[storage]
 type = mongodb
 host = ${MONGOHQ_URL}
 database = ${DATABASE}
+
+[session]
+type = redis
+uri = ${REDISTOGO_URL}
 EOL

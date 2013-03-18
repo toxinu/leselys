@@ -3,7 +3,7 @@ from pymongo import MongoClient
 from bson.objectid import ObjectId
 
 
-class Backend(object):
+class Storage(object):
     def __init__(self, **kwargs):
         self.database = kwargs.get('database') or 'leselys'
 
