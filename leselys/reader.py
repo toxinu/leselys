@@ -1,4 +1,5 @@
 # coding: utf-8
+import datetime
 import feedparser
 import threading
 import leselys
@@ -54,12 +55,12 @@ class Retriever(threading.Thread):
             if entry.get('updated_parsed'):
                 last_update = get_dicttime(entry.updated_parsed)
             else:
-                last_update = False
+                last_update = get_dicttime(datetime.datetime.now().timetuple())
 
             if entry.get('published_parsed', False):
                 published = get_dicttime(entry.published_parsed)
             else:
-                published = None
+                published = get_dicttime(datetime.datetime.now().timetuple())
 
             backend.add_story({
                 'title': title,
@@ -97,7 +98,8 @@ class Refresher(threading.Thread):
             remote_update = get_datetime(self.data.published_parsed)
             remote_update_raw = get_dicttime(self.data.published_parsed)
         else:
-            return
+            remote_update = datetime.datetime.now()
+            remote_update_raw = get_dicttime(remote_update.timetuple())
 
         if remote_update > local_update:
             print(':: %s is outdated' % self.feed['title'])
@@ -151,7 +153,8 @@ class Reader(object):
             elif feed.get('published_parsed'):
                 feed_update = get_dicttime(feed.published_parsed)
             else:
-                feed_update = False
+                feed_update = get_dicttime(datetime.datetime.now().timetuple())
+
             feed_id = backend.add_feed({'url': url,
                                         'title': title,
                                         'last_update': feed_update})
