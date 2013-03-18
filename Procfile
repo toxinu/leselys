@@ -1,1 +1,1 @@
-web: sh heroku.sh && leselys serve --config heroku.ini
+web: sh heroku.sh && gunicornleselys serve --config heroku.ini
