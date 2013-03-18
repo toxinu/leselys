@@ -3,12 +3,14 @@ import leselys
 
 from flask import jsonify
 from flask import request
+from flask import make_response
 
 from threading import Thread
 
 from leselys.helpers import login_required
 from leselys.helpers import cached
 from leselys.helpers import retrieve_feeds_from_opml
+from leselys.helpers import export_to_opml
 
 
 reader = leselys.core.reader
@@ -63,7 +65,7 @@ def refresh():
     return jsonify(success=True, content=reader.refresh_all())
 
 
-# Upload opml
+# Import opml
 @app.route('/api/import/opml', methods=['POST'])
 @login_required
 @cached(10)
@@ -73,6 +75,16 @@ def import_opml():
         t = Thread(target=reader.add, args=(feed['url'],))
         t.start()
     return jsonify(success=True, output='Imported file is processing...')
+
+
+# Export opml
+@app.route('/api/export/opml')
+@login_required
+@cached(10)
+def export_opml():
+    rsp = make_response(export_to_opml())
+    rsp.headers['Content-Type'] = "application/xml"
+    return rsp
 
 
 # [WIP]: Set settings
