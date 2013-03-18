@@ -16,7 +16,6 @@ app = leselys.core.app
 reader = leselys.core.reader
 signer = leselys.core.signer
 
-
 # Each template context have the subscriptions list
 # Context which return subscriptions list to every template
 @app.context_processor
@@ -63,8 +62,8 @@ def login():
                 rsp.set_cookie('remember', True)
                 rsp.set_cookie('username', username)
                 rsp.set_cookie('token', signer.sign(password_md5))
+            reader.refresh_all()
             return rsp
-            #return redirect(url_for('home'))
     else:
         if session.get('logged_in'):
             return redirect(url_for('home'))
