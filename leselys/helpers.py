@@ -117,3 +117,23 @@ def retrieve_feeds_from_opml(opml_raw):
             if outline.type == 'rss':
                 result.append({'title': outline.text, 'url': outline.xmlUrl})
     return result
+
+def export_to_opml():
+    storage = leselys.core.storage
+    header = """<?xml version="1.0" encoding="UTF-8"?>
+<opml version="1.0">
+  <head>
+    <title>Abonnements de Geoffrey dans Google Reader</title>
+  </head>
+  <body>
+"""
+    body = ""
+    footer = """\n</body>\n</opml>"""
+
+    for feed in storage.get_feeds():
+        body += """
+    <outline text="%s"
+        title="%s" type="rss"
+        xmlUrl="%s" htmlUrl="%s"/>""" % (feed['title'], feed['title'], feed['url'], feed['url'])
+
+    return header + body + footer
