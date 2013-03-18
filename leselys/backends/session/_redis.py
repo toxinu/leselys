@@ -24,7 +24,7 @@ class Session(SessionInterface):
 
     def __init__(self, address="localhost", port=6379, db=0, uri=None, prefix='session:'):
         if uri:
-            self.redis = redis.from_url(uri)
+            self.redis = Redis.from_url(uri)
         else:
             port = int(port)
             db = int(db)
