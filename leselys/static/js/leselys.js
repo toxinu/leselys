@@ -170,22 +170,25 @@ function viewSubscription(feedId) {
       window.location = "/login";
     }
     /////////////////////////////////////
+    var header = '<div class="accordion" id="accordion2">';
     $('#content').html('<div class="accordion" id="accordion2">');
+    var content = "";
+    var footer = "</div>";
     $.each(data.content, function(i,item){
-      var content = '<div class="accordion-group">                                                                                            \
-<div class="accordion-heading">                                                                                                                 \
-  <a class="accordion-toggle" data-toggle="collapse" onClick="readEntry(&quot;' + item._id + '&quot)" data-parent="#accordion2" href="#' + item._id + '">' + item.title + '</a>  \
-</div>                                                                                                                                          \
-<div id="' + item._id + '" class="accordion-body collapse">                                                                                     \
-  <div class="accordion-inner" id="' + item._id + '"></div>                                                                                   \
-</div>                                                                                                                                          \
+      content += '<div class="accordion-group">\n\
+  <div class="accordion-heading">\n\
+    <a class="accordion-toggle" data-toggle="collapse" onClick="readEntry(&quot;' + item._id + '&quot)" data-parent="#accordion2" href="#' + item._id + '">' + item.title + '</a>\n\
+  </div>\n\
+  <div id="' + item._id + '" class="accordion-body collapse">\n\
+    <div class="accordion-inner" id="' + item._id + '"></div>\n\
+  </div>\n\
 </div>';
-      $("#content").append(content);
       if (item.read == false) {
         $('#content a[href=#' + item._id + ']').css('font-weight', 'bold');
       }
     });
-    $('#content').append('</div>');
+    $("#content").html(header + content + footer);
+    //$('#content').append('</div>');
     $('#menu a').each(function(index) {
       $(this).css('font-weight', 'normal');
     });
