@@ -43,4 +43,4 @@ class Core(object):
 
         from leselys import views
         from leselys import api
-        self.app.run(host=self.host, port=int(self.port), debug=self.debug)
+        self.app.run(host=self.host, port=int(self.port), debug=self.debug, use_reloader=self.debug)
