@@ -5,6 +5,7 @@ import ConfigParser
 
 from leselys import core
 from leselys.backends.storage import _load_storage
+from leselys.backends.session import _load_session
 
 
 def app(config_path):
@@ -22,6 +23,22 @@ def app(config_path):
         storage_settings[item[0]] = item[1]
     del storage_settings['type']
 
+    storage_module = _load_storage(config.get('storage', 'type'))
+    core.storage = storage_module
+    core.storage_settings = storage_settings
+    core.load_storage()
+
+    # Create session
+    session_settings = {}
+    for item in config.items('session'):
+        session_settings[item[0]] = item[1]
+    del session_settings['type']
+
+    session_module = _load_session(config.get('session', 'type'))
+    core.session = session_module
+    core.session_settings = session_settings
+    core.load_session()
+
     # Flask webserver config
     if config.has_section('webserver') and config.get('webserver', 'host'):
         core.host = config.get('webserver', 'host')
@@ -33,11 +50,6 @@ def app(config_path):
         else:
             core.debug = False
 
-    storage_module = _load_storage(config.get('storage', 'type'))
-    core.storage = storage_module
-    core.storage_settings = storage_settings
-    core.load_storage()
     core.load_wsgi()
-
     app = core.app
     return app

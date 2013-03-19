@@ -34,14 +34,8 @@ class Core(object):
         from leselys.reader import Reader
         self.reader = Reader()
 
-        self.app = Flask(__name__)
-        self.app.config['SECRET_KEY'] = os.urandom(24)
-        self.signer = TimestampSigner(self.app.config['SECRET_KEY'])
-        self.cache = SimpleCache()
-
         from leselys import views
         from leselys import api
-
 
     def run(self):
         from leselys.reader import Reader
