@@ -19,7 +19,7 @@ Ubuntu
 
 ::
 
-	apt-get install build-essential python-dev
+	apt-get install build-essential python-dev python-pip
 	apt-get install libxslt1-dev libxml2-dev python-libxml2 python-libxslt1
 
 And finally: ::
