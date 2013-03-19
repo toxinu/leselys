@@ -153,7 +153,6 @@ function delSubscription(feedId) {
           $('ul#menu li#empty-feed-list').fadeIn(200);
         }
       });
-      //$('ul#menu li#' + feedId).remove();  
     }
   });
 }
@@ -170,25 +169,30 @@ function viewSubscription(feedId) {
       window.location = "/login";
     }
     /////////////////////////////////////
-    var header = '<div class="accordion" id="accordion2">';
-    $('#content').html('<div class="accordion" id="accordion2">');
-    var content = "";
-    var footer = "</div>";
+    var header = '<div class="accordion" id="story-list-accordion">';
+    var footer = '</div>';
+    var content = '';
+
     $.each(data.content, function(i,item){
-      content += '<div class="accordion-group">\n\
-  <div class="accordion-heading">\n\
-    <a class="accordion-toggle" data-toggle="collapse" onClick="readEntry(&quot;' + item._id + '&quot)" data-parent="#accordion2" href="#' + item._id + '">' + item.title + '</a>\n\
-  </div>\n\
-  <div id="' + item._id + '" class="accordion-body collapse">\n\
-    <div class="accordion-inner" id="' + item._id + '"></div>\n\
-  </div>\n\
-</div>';
+      var storyAccordion = $('#template-story-accordion').clone();
+      storyAccordion.removeAttr('id');
+      storyAccordion.removeAttr('style');
+      storyAccordion.attr('id', 'story-list-accordion');
+      storyAccordion.find('a.accordion-toggle').attr('onClick', "readEntry(\"" + item._id + "\")");
+      storyAccordion.find('a.accordion-toggle').attr('href', "#" + item._id);
+      storyAccordion.find('a.accordion-toggle').html(item.title);
+      storyAccordion.find('div.accordion-body').attr('id', item._id);
+      storyAccordion.find('div.accordion-inner').attr('id', item._id);
+
       if (item.read == false) {
-        $('#content a[href=#' + item._id + ']').css('font-weight', 'bold');
+        storyAccordion.find('a.accordion-toggle').css('font-weight', 'bold');
       }
+
+      var storyAccordionRaw = storyAccordion.wrap('</p>').parent().html();
+      storyAccordion.unwrap();
+      content += storyAccordionRaw;
     });
     $("#content").html(header + content + footer);
-    //$('#content').append('</div>');
     $('#menu a').each(function(index) {
       $(this).css('font-weight', 'normal');
     });
