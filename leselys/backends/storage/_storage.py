@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
-import hashlib
+import bcrypt
 
 class Storage(object):
     def _hash_string(self, string):
-            m = hashlib.md5()
-            m.update(string)
-            return m.hexdigest()
+        return bcrypt.hashpw(string, bcrypt.gensalt())
 
     def is_valid_login(self, username, password):
         """
@@ -15,15 +13,15 @@ class Storage(object):
         password : plaintext password
         """
         if username in self.get_users():
-            hashed = self._hash_string(password)
-            if hashed == self.get_password(username):
+            stored = self.get_password(username)
+            if bcrypt.hashpw(password, stored) == stored:
                 return True
         else:
             return False
 
     def create_user(self, username, password):
         """
-        Create new user to DB. Hashes password.
+        Create new user to DB. Hashes password with bcrypt.
 
         username : plaintext username
         password : plaintext password
@@ -33,7 +31,7 @@ class Storage(object):
 
     def update_password(self, username, new_password):
         """
-        Update password for given username. Hashes password.
+        Update password for given username. Hashes password with bcrypt.
 
         username : plaintext username
         password : plaintext password
