@@ -17,6 +17,16 @@ def app(config_path):
 
     config.read(config_path)
 
+    if not config.has_section('storage'):
+        print('Missing storage section in configuration file')
+        sys.exit(1)
+    if not config.get('storage', 'type'):
+        print('Missing type setting in storage section in configuration file')
+        sys.exit(1)
+    if not config.has_section('session'):
+        config.add_section('session')
+        config.set('session', 'type', 'memory')
+
     # Create storage
     storage_settings = {}
     for item in config.items('storage'):
