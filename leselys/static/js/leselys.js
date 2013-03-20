@@ -1,48 +1,53 @@
 function addFeed() {
-  if (document.getElementById('urlFeed').innerHTML == '') { return false }
+  var url = document.getElementById('urlFeed').value;
+  if (url == '') { return false }
 
   // Clear help message if no subscriptions
-  if ($("ul#menu li#empty-feed-list").length) {
-    $("ul#menu li#empty-feed-list").hide();
-    $("ul#menu li#listSubscriptions").show();
+  if (document.getElementById('menu').getElementsByClassName('empty-feed-list')) {
+    document.getElementById('menu').getElementsByClassName('empty-feed-list')[0].style.display = "none";
+    document.getElementById('menu').getElementsByClassName('feeds-list-title')[0].style.display = "";
   }
-  var loader = crel('li', crel('i', {'class': 'icon-tasks'}), ' Loading...');
-  loader.style.display = "none";
+
+  var loader = crel("li", crel("i", {"class": "icon-tasks"}), " Loading...");
   document.getElementById('menu').appendChild(loader);
-  fadeIn(loader, 2);
-  $.post('/api/add', {url: url}, function(data) {
+  $.post("/api/add", {url: url}, function(data) {
     if (data.success == true) {
       /////////////////////////////////////
       // Go login page if not connected ///
-      if ($(data).find('.form-signin').length > 0) {
-        window.location = "/login";
-      }
+      if (document.getElementsByClassName('form-signin')[0]) { window.location = "/login" }
       ////////////////////////////////////
-      fadeOut(loader, 2);
-      var newFeed = crel('a', {'onClick': 'viewSubscription("' + data.feed_id + '")', 'href': '/#' + data.feed},
-            crel('span', {'id': 'unread-counter', 'class': 'badge badge-inverse'}, data.counter));
-      newFeed.style.display = "none";
+      var feedId = data.feed_id;
+      var feedTitle = data.title;
+      var feedURL = data.url;
+      var feedCounter = data.counter;
+      var dataOutput = data.output;
+
+      var newFeed = crel('a', {'onClick': 'viewFeed("' + feedId + '")', 'href': '/#' + feedId}, feedTitle + " ",
+            crel('span', {'id': 'unread-counter', 'class': 'badge badge-inverse'}, feedCounter));
       loader.innerHTML = newFeed.outerHTML;
-      $(loader).attr('id', data.feed_id);
-      $(loader).addClass('story');
+      loader.id = feedId;
+      loader.className += " story";
       // Add new feed in settings/feeds if opened
-      if ($('#settings.tab-pane').length > 0) {
+      if (document.getElementById('feeds-settings')) {
         // Remove message if feeds list is empty
-        if ($('#feeds.tab-pane #empty-feed-list').length > 0) {
-          $('#feeds.tab-pane #empty-feed-list').hide();
+        if (document.getElementById('feeds-settings').getElementsByClassName('empty-feed-list')) {
+          document.getElementById('feeds-settings').getElementsByClassName('empty-feed-list')[0].style.display = "none";
         }
-        $('#feeds.tab-pane ul').append('<li id="' +  data.feed_id + '">' + data.title + ' <a onClick="delSubscription(&quot;' + data.feed_id + '&quot;);" href="#">(delete)</a></li>');
+        var newFeedSetting = crel('li', {'id': feedId}, feedTitle, 
+              ' ',
+              crel('a', {'href': '#', 'onClick': 'deleteFeed("' + feedId + '")'}, '(delete)'),
+              ' - ',
+              crel('a', {'href': feedURL, 'target': '_blank'}, feedURL));
+        document.getElementById('feeds-settings').getElementsByTagName('ul')[0].innerHTML += newFeedSetting.outerHTML;
       }
     } else {
       /////////////////////////////////////
       // Go login page if not connected ///
-      if ($(data).find('.form-signin').length > 0) {
-        window.location = "/login";
-      }
+      if (document.getElementsByClassName('form-signin')[0]) { window.location = "/login" }
       /////////////////////////////////////
-      $(loader).html('<li><i class="icon-exclamation-sign"></i> Error: ' + data.output +'</li>');
+      loader.innerHTML = '<li><i class="icon-exclamation-sign"></i> Error: ' + dataOutput +'</li>';
       var clearLoader = function() {
-        $(loader).fadeOut();
+        loader.style.display = "none";
       }
       setTimeout(clearLoader, 5000);
     }
@@ -73,9 +78,7 @@ function handleOPMLImport(evt) {
       $.post('/api/import/opml', { file: e.target.result }, function(data) {
         /////////////////////////////////////
         // Go login page if not connected ///
-        if ($(data).find('.form-signin').length > 0) {
-          window.location = "/login";
-        }
+        if (document.getElementsByClassName('form-signin')[0]) { window.location = "/login" }
         /////////////////////////////////////
         if (data.success == true) {
           importer = false;
@@ -92,9 +95,7 @@ function viewSettings() {
   $.get('/settings', function(body) {
     /////////////////////////////////////
     // Go login page if not connected ///
-    if ($(body).find('.form-signin').length > 0) {
-      window.location = "/login";
-    }
+    if (document.getElementsByClassName('form-signin')[0]) { window.location = "/login" }
     /////////////////////////////////////
     var content = $(body).find('#content');
     var sidebar = $(body).find('#menu')
@@ -102,10 +103,10 @@ function viewSettings() {
     document.getElementById("menu").innerHTML = sidebar.html()
     if (importer) {
       document.getElementById("OPMLSubmit").innerHTML = "Last import not finished...";
-      $('#OPMLSubmit').addClass('disabled');
+      document.getElementById("OPMLSubmit").className += " disabled";
       return false;
     }
-    if ($('#OPMLSubmit').length > 0) {
+    if (document.getElementById("OPMLSubmit")) {
       document.getElementById('OPMLSubmit').addEventListener('click', handleOPMLImport, false);
     }
     initAddFeed();
@@ -116,9 +117,7 @@ function viewHome() {
   $.get('/', function(body) {
     /////////////////////////////////////
     // Go login page if not connected ///
-    if ($(body).find('.form-signin').length > 0) {
-      window.location = "/login";
-    }
+    if (document.getElementsByClassName('form-signin')[0]) { window.location = "/login" }
     /////////////////////////////////////
     var content = $(body).find('#content');
     var sidebar = $(body).find('#menu')
@@ -128,28 +127,26 @@ function viewHome() {
   });
 }
 
-function delFeed(feedId) {
+function deleteFeed(feedId) {
   $.ajax({
     url: '/api/remove/' + feedId,
     type: 'DELETE',
     success: function(result) {
       /////////////////////////////////////
       // Go login page if not connected ///
-      if ($(result).find('.form-signin').length > 0) {
-        window.location = "/login";
-      }
+      if (document.getElementsByClassName('form-signin')[0]) { window.location = "/login" }
       /////////////////////////////////////
-      $('#feeds ul li#' + feedId).fadeOut(300, function() {
+      $('#feeds-settings ul li#' + feedId).fadeOut(300, function() {
         $(this).remove();
-        if ($('#feeds ul li').length < 1) {
-          $('#feeds.tab-pane #empty-feed-list').fadeIn(200);
+        if ($('#feeds-settings ul li').length < 1) {
+          document.getElementById('feeds-settings').getElementsByClassName('empty-feed-list')[0].style.display = "";
         }
       });
       $('ul#menu li#' + feedId).fadeOut(300, function() {
         $(this).remove();
         if ($('ul#menu li').length < 6) {
-          $('ul#menu li#listFeeds.nav-header').fadeOut(200);
-          $('ul#menu li#empty-feed-list').fadeIn(200);
+          document.getElementById('menu').getElementsByClassName('feeds-list-title')[0].style.display = "none";
+          document.getElementById('menu').getElementsByClassName('empty-feed-list')[0].style.display = "";
         }
       });
     }
@@ -164,12 +161,9 @@ function viewFeed(feedId) {
   var request = $.getJSON('/api/get/' + feedId, function(data) {
     /////////////////////////////////////
     // Go login page if not connected ///
-    if ($(data).find('.form-signin').length > 0) {
-      window.location = "/login";
-    }
+    if (document.getElementsByClassName('form-signin')[0]) { window.location = "/login" }
     /////////////////////////////////////
-    var header = '<div class="accordion" id="story-list-accordion">';
-    var footer = '</div>';
+    var storyListAccordion = crel('div', {'class': 'accordion', 'id': 'story-list-accordion'});
     var content = '';
 
     $.each(data.content, function(i,item){
@@ -181,9 +175,7 @@ function viewFeed(feedId) {
       storyAccordion.getElementsByClassName("accordion-toggle")[0].onclick = 'readStory("' + storyId + '")';
       storyAccordion.getElementsByClassName("accordion-toggle")[0].setAttribute("onclick", 'readStory("' + storyId + '")');
       storyAccordion.getElementsByClassName("accordion-toggle")[0].innerHTML = storyTitle;
-
-      storyAccordion.getElementsByClassName("accordion-toggle")[0].setAttribute("data-target", "#" + storyId + "-body");
-      storyAccordion.getElementsByClassName("accordion-body")[0].id = storyId + "-body";
+      storyAccordion.getElementsByClassName("accordion-toggle")[0].setAttribute("data-target", "#" + storyId + " .accordion-body");
 
       if (item.read == false) {
         storyAccordion.getElementsByClassName('accordion-toggle')[0].style.fontWeight = "bold";
@@ -191,11 +183,13 @@ function viewFeed(feedId) {
 
       content += storyAccordion.outerHTML;
     });
-    document.getElementById('content').innerHTML = header + content + footer;
+    storyListAccordion.innerHTML = content;
+    document.getElementById('content').innerHTML = storyListAccordion.innerHTML;
+
     $('#menu a').each(function(index) {
       $(this).css('font-weight', 'normal');
     });
-    $('#menu li#' + feedId + " a").css('font-weight', 'bold');
+    document.getElementById(feedId).getElementsByClassName('a')[0].style.fontWeight = "bold";
   });
   requests.push(request);
 }
@@ -206,13 +200,11 @@ function refreshFeeds() {
     $.getJSON('/api/refresh/' + feedId), function(data) {
       /////////////////////////////////////
       // Go login page if not connected ///
-      if ($(data).find('.form-signin').length > 0) {
-        window.location = "/login";
-      }
+      if (document.getElementsByClassName('form-signin')[0]) { window.location = "/login" }
       /////////////////////////////////////
       var feedTitle = data.content.title;
       var feedCounter = data.content.counter;
-      $("#menu a[href=#" + feedId + "] span.badge").html(feedCounter);
+      document.getElementById(feedId).getElementsByClassName('badge')[0].innerHTML = feedCounter;
     }
   });
 }
@@ -229,9 +221,7 @@ function readStory(storyId, ignore) {
   $.getJSON('/api/read/' + storyId, function(data) {
     /////////////////////////////////////
     // Go login page if not connected ///
-    if ($(data).find('.form-signin').length > 0) {
-      window.location = "/login";
-    }
+    if (document.getElementsByClassName('form-signin')[0]) { window.location = "/login" }
     /////////////////////////////////////
     if (data.content.last_update == false) {
       var published = "No date";
@@ -268,9 +258,8 @@ function unreadStory(storyId) {
   $.getJSON('/api/unread/' + storyId, function(data) {
     /////////////////////////////////////
     // Go login page if not connected ///
-    if ($(data).find('.form-signin').length > 0) {
-      window.location = "/login";
-    }
+    if (document.getElementsByClassName('form-signin')[0]) { window.location = "/login" }
+    /////////////////////////////////////
     /////////////////////////////////////
     if (data.success == true) {
       var feedId = data.content.feed_id;
@@ -306,8 +295,7 @@ function initAddFeed() {
                      'placement': "bottom"}
   );
 }
-
-$(document).ready(function(){
+$(document).ready(function() {
   // Globals
   // Remove anchors binding for mobile view
   $('.feed').click(function(e) {

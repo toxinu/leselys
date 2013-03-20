@@ -167,6 +167,7 @@ class Reader(object):
         return {
             'success': True,
             'title': title,
+            'url': url,
             'feed_id': feed_id,
             'output': 'Feed added',
             'counter': len(feed['entries'])}

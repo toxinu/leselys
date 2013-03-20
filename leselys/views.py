@@ -15,13 +15,13 @@ app = leselys.core.app
 reader = leselys.core.reader
 signer = leselys.core.signer
 
-# Each template context have the subscriptions list
-# Context which return subscriptions list to every template
+# Each template context have the feeds list
+# Context which return feeds list to every template
 
 
 @app.context_processor
-def get_subscriptions():
-    return dict(subscriptions=reader.get_subscriptions())
+def get_feeds():
+    return dict(feeds=reader.get_subscriptions())
 
 #######################################################################
 # VIEWS
