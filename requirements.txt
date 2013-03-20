@@ -1,0 +1,6 @@
+docopt
+flask
+feedparser
+lxml
+itsdangerous
+py-bcrypt
