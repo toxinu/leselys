@@ -7,7 +7,9 @@ function addFeed() {
     $("ul#menu li#listSubscriptions").show();
   }
   var loader = crel('li', crel('i', {'class': 'icon-tasks'}), ' Loading...');
+  loader.style.display = "none";
   document.getElementById('menu').appendChild(loader);
+  fadeIn(loader, 2);
   $.post('/api/add', {url: url}, function(data) {
     if (data.success == true) {
       /////////////////////////////////////
@@ -15,9 +17,12 @@ function addFeed() {
       if ($(data).find('.form-signin').length > 0) {
         window.location = "/login";
       }
-      /////////////////////////////////////
-      $(loader).hide();
-      $(loader).html('<a onClick="viewSubscription(&quot;' + data.feed_id + '&quot;)" href="/#' + data.feed_id + '">' + data.title + ' <span id="unread-counter" class="badge badge-inverse">' + data.counter  + '</span></a>').fadeIn();
+      ////////////////////////////////////
+      fadeOut(loader, 2);
+      var newFeed = crel('a', {'onClick': 'viewSubscription("' + data.feed_id + '")', 'href': '/#' + data.feed},
+            crel('span', {'id': 'unread-counter', 'class': 'badge badge-inverse'}, data.counter));
+      newFeed.style.display = "none";
+      loader.innerHTML = newFeed.outerHTML;
       $(loader).attr('id', data.feed_id);
       $(loader).addClass('story');
       // Add new feed in settings/feeds if opened
