@@ -1,5 +1,4 @@
 # coding: utf-8
-import hashlib
 import leselys
 
 from flask import render_template
@@ -48,15 +47,8 @@ def login():
         username = request.form['username']
         password = request.form['password']
         remember = request.form.get('remember', False)
-        m = hashlib.md5()
-        m.update(password)
-        password_md5 = m.hexdigest()
 
-        if username not in storage.get_users():
-            return render_template('login.html')
-        elif storage.get_password(username) != password_md5:
-            return render_template('login.html')
-        else:
+        if storage.is_valid_login(username, password):
             session['logged_in'] = True
             rsp = make_response(redirect(url_for('home')))
             if remember:
@@ -65,6 +57,8 @@ def login():
                 rsp.set_cookie('username', username)
                 rsp.set_cookie('token', signer.sign(password_md5))
             return rsp
+        else:
+            return render_template('login.html')
     else:
         if session.get('logged_in'):
             return redirect(url_for('home'))

@@ -21,8 +21,9 @@ class Core(object):
         self.signer = TimestampSigner(self.app.config['SECRET_KEY'])
         self.cache = SimpleCache()
 
-    def load_storage(self):
-        self.storage = self.storage.Storage(**self.storage_settings)
+    def load_storage(self, storage_klass, storage_settings):
+        self.storage_settings = storage_settings
+        self.storage = storage_klass(**self.storage_settings)
 
     def load_session(self):
         if self.session == "memory":
