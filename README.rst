@@ -38,10 +38,13 @@ Heroku
 ~~~~~~
 
 Advanced setup with MongoDB for storage and Redis for session on Heroku.
-All Heroku dependencies like ``Pymongo`` and ``redis`` are automagically installed with ``heroku.sh``: ::
+All Heroku dependencies like ``Pymongo``, ``gunicorn`` and ``redis`` are in ``requirements-heroku.txt`` file.
+
+::
 
 	git clone git@github.com:socketubs/leselys.git
 	cd leselys
+	cp requirements-heroku.txt requirements.txt
 	heroku create
 	heroku addons:add mongohq:sandbox
 	heroku addons:add redistogo:nano
