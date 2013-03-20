@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 from sofart import Database
+from _storage import Storage
 
 
-class Storage(object):
+class Sofart(Storage):
     def __init__(self, **kwargs):
         self.path = kwargs['path']
         self.mode = kwargs['mode']

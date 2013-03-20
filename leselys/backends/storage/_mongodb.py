@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 from pymongo import MongoClient
 from bson.objectid import ObjectId
+from _storage import Storage
 
 
-class Storage(object):
+class Mongodb(Storage):
     def __init__(self, **kwargs):
         self.database = kwargs.get('database') or 'leselys'
 
