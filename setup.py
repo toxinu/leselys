@@ -42,7 +42,8 @@ setup(
         'flask',
         'feedparser',
         'lxml',
-        'itsdangerous'
+        'itsdangerous',
+        'py-bcrypt'
     ],
     include_package_data=True,
     classifiers=(
