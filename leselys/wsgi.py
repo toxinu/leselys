@@ -34,9 +34,7 @@ def app(config_path):
     del storage_settings['type']
 
     storage_module = _load_storage(config.get('storage', 'type'))
-    core.storage = storage_module
-    core.storage_settings = storage_settings
-    core.load_storage()
+    core.load_storage(storage_module, storage_settings)
 
     # Create session
     session_settings = {}
