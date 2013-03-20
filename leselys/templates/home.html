@@ -13,15 +13,52 @@
     </div>
   </div>
 </div>
-
-<!-- Template story -->
-  <div id="template-story" class="accordion-inner" style="display: none">
-    <p style="font-size: 12px">
-      <span id="story-date" class="label"></span> | <a id="story-link" href="" target="_blank">External link</a> |
-       <a id="story-unread" href="#" onClick="">Unread</a>
-      <br /><br />
-    </p>
-    <div id="story-content"></div>
-  </div>
-<!-- -->
+<script type="text/javascript">
+    // Template add subscription
+    var getAddSubscriptionTemplate = function () {
+        return crel('form', 
+            crel('fieldset',
+                crel('center',
+                    crel('input', {'id': 'urlSubscription',
+                                   'type': 'text',
+                                   'class': 'input-medium',
+                                   'placeholder': 'Url...'}),
+                    crel('button', {'type': 'submit',
+                                    'class': 'btn',
+                                    'onClick': 'addSubscription()'}, 'Submit')
+                )
+            )
+        )
+    }
+    // Template story accordion
+    var getStoryAccordionTemplate = function() {
+        return crel('div', {'class': 'accordion-group'},
+            crel('div', {'class': 'accordion-heading'},
+            crel('a', {'class': 'accordion-toggle',
+                       'data-toggle': 'collapse',
+                       'data-parent': '#story-list-accordion'})
+            ),
+            crel('div', {'class': 'accordion-body collapse'},
+                crel('div', {'class': 'accordion-inner'})
+            )
+        )
+    }
+    // Template story
+    var getStoryTemplate = function() {
+        return crel('div', {'class': 'accordion-inner'},
+            crel('p', {'style': 'font-size: 12px;'},
+                crel('span', {'class': 'label story-date'}),
+                ' | ',
+                crel('a', {'class': 'story-link', 'target': '_blank'}, 'External link'),
+                ' | ',
+                crel('a', {'class': 'story-unread', 'href': '#'}, 'Unread'),
+                crel('br'), crel('br')
+            ),
+            crel('div', {'class': 'story-content'})
+        ) 
+    }
+    $(document).ready(function(){
+      initAddSubscription();
+    });
+</script>
 {% endblock %}
