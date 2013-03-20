@@ -7,7 +7,7 @@ class Storage(object):
 
     def is_valid_login(self, username, password):
         """
-        Check if username/password combinatin is valid login.
+        Check if username/password combination is valid login.
 
         username : plaintext username
         password : plaintext password
