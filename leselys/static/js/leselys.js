@@ -184,7 +184,7 @@ function viewFeed(feedId) {
       content += storyAccordion.outerHTML;
     });
     storyListAccordion.innerHTML = content;
-    document.getElementById('content').innerHTML = storyListAccordion.innerHTML;
+    document.getElementById('content').innerHTML = storyListAccordion.outerHTML;
 
     $('#menu a').each(function(index) {
       $(this).css('font-weight', 'normal');
