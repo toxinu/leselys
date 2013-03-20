@@ -9,8 +9,8 @@ function addSubscription() {
     $("ul#menu li#empty-feed-list").hide();
     $("ul#menu li#listSubscriptions").show();
   }
-  var loader = $('<li><i class="icon-tasks"></i> Loading...</li>');
-  $("ul#menu").append(loader);
+  var loader = crel('li', crel('i', {'class': 'icon-tasks'}), ' Loading...');
+  document.getElementById('menu').appendChild(loader);
   $.post('/api/add', {url: url}, function(data) {
     if (data.success == true) {
       /////////////////////////////////////
