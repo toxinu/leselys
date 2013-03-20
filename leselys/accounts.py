@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import hashlib
 from getpass import getpass
 
 
@@ -22,11 +21,7 @@ def add_user(storage):
         else:
             print('Not same password')
 
-    m = hashlib.md5()
-    m.update(password1)
-    password_md5 = m.hexdigest()
-
-    storage.add_user(username, password_md5)
+    storage.create_user(username, password1)
     print('User added.')
     exit(0)
 
@@ -52,9 +47,6 @@ def update_password(storage):
         else:
             print('Not same password')
 
-    m = hashlib.md5()
-    m.update(password1)
-    password_md5 = m.hexdigest()
-    storage.set_password(username, password_md5)
+    storage.update_password(username, password1)
     print('Password updated.')
     exit(0)
