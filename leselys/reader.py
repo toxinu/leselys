@@ -6,6 +6,9 @@ import leselys
 import copy
 import httplib2
 
+from urlparse import urlparse
+from urlparse import urljoin
+
 from leselys.helpers import u
 from leselys.helpers import get_datetime
 from leselys.helpers import get_dicttime
@@ -149,10 +152,14 @@ class Reader(object):
             # Each url is tuple where href is first element.
             # NOTE : Sites might have several feeds available and we are just
             # naively picking first one found.
-            return urls[0][0]
+            feed_url = urls[0][0]
+            if urlparse(feed_url)[1] == '':
+                # We have empty 'netloc', meaning we have relative url
+                return urljoin(stripped, feed_url)
+            else:
+                return feed_url
 
-        return None
-
+        return ''
 
     def add(self, url):
         url = self.parse_feed_url(url)
