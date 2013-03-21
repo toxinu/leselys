@@ -18,7 +18,6 @@ function addFeed() {
       var feedTitle = data.title;
       var feedURL = data.url;
       var feedCounter = data.counter;
-      var dataOutput = data.output;
 
       var newFeed = crel('a', {'onClick': 'viewFeed("' + feedId + '")', 'href': '/#' + feedId}, feedTitle + " ",
             crel('span', {'class': 'badge badge-inverse unread-counter'}, feedCounter));
@@ -46,7 +45,7 @@ function addFeed() {
         $(newFeedSetting).fadeIn();
       }
     } else {
-      loader.innerHTML = '<li><i class="icon-exclamation-sign"></i> Error: ' + dataOutput +'</li>';
+      loader.innerHTML = '<li><i class="icon-exclamation-sign"></i> Error: ' + data.output +'</li>';
       var clearLoader = function() {
         $(loader).hide();
       }
