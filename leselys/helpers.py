@@ -10,6 +10,7 @@ from flask import redirect
 from flask import request
 from flask import session
 from flask import url_for
+from flask import jsonify
 
 from leselys.externals import opml
 
@@ -67,7 +68,10 @@ def login_required(f):
         if not session.get('logged_in'):
             # No cookie
             if not request.cookies.get('remember'):
-                return redirect(url_for('login'))
+                if request.args.get('jsonify', "false") == "false":
+                    return redirect(url_for('login_view'))
+                else:
+                    return jsonify(success=False, output="Failed to log in.")
             else:
                 username = request.cookies.get('username')
                 password_md5 = request.cookies.get('password')
@@ -77,13 +81,22 @@ def login_required(f):
                         password_unsigned = signer.unsign(
                             password_md5, max_age=15 * 24 * 60 * 60)
                     except:
-                        return redirect(url_for('login'))
+                        if request.args.get('jsonify', "false") == "false":
+                            return redirect(url_for('login_view'))
+                        else:
+                            return jsonify(success=False, output="Failed to log in.")
                     if password_unsigned == storage.get_password(username):
                         return f(*args, **kwargs)
                     else:
-                        return redirect(url_for('login'))
+                        if request.args.get('jsonify', "false") == "false":
+                            return redirect(url_for('login_view'))
+                        else:
+                            return jsonify(success=False, output="Failed to log in.")
                 else:
-                    return redirect(url_for('login'))
+                    if request.args.get('jsonify', "false") == "false":
+                        return redirect(url_for('login_view'))
+                    else:
+                        return jsonify(success=False, output="Failed to log in.")
         return f(*args, **kwargs)
     return decorated_function
 
@@ -124,7 +137,7 @@ def export_to_opml():
     header = """<?xml version="1.0" encoding="UTF-8"?>
 <opml version="1.0">
   <head>
-    <title>Abonnements de Geoffrey dans Google Reader</title>
+    <title>Leselys feeds export</title>
   </head>
   <body>
 """

@@ -130,7 +130,7 @@ class Refresher(threading.Thread):
 
 
 class Reader(object):
-    """The Reader object is the subscriptions manager, it handles all
+    """The Reader object is the feeds manager, it handles all
     new feed, read/unread state and refresh feeds
     """
 
@@ -152,7 +152,6 @@ class Reader(object):
             return urls[0][0]
 
         return None
-
 
     def add(self, url):
         url = self.parse_feed_url(url)
@@ -226,7 +225,7 @@ class Reader(object):
                       reverse=True)
         return unreaded + readed
 
-    def get_subscriptions(self):
+    def get_feeds(self):
         feeds = []
         for feed in storage.get_feeds():
             feeds.append({'title': feed['title'],

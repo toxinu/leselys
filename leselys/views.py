@@ -7,6 +7,7 @@ from flask import session
 from flask import redirect
 from flask import url_for
 from flask import make_response
+from flask import jsonify
 
 from leselys.helpers import login_required
 
@@ -21,7 +22,7 @@ signer = leselys.core.signer
 
 @app.context_processor
 def get_feeds():
-    return dict(feeds=reader.get_subscriptions())
+    return dict(feeds=reader.get_feeds())
 
 #######################################################################
 # VIEWS
@@ -31,56 +32,35 @@ def get_feeds():
 @app.route('/')
 @login_required
 def home():
-    return render_template('home.html')
+    home_template = render_template('home.html')
+    if request.args.get('jsonify', 'false') == "true":
+        return jsonify(success=True, content=home_template)
+    return home_template
 
 
 @app.route('/settings')
 @login_required
 def settings():
-    _settings = storage.get_settings()
-    return render_template('settings.html', settings=_settings)
+    settings_context = storage.get_settings()
+    settings_template = render_template('settings.html', settings=settings_context)
+    if request.args.get('jsonify', 'false') == "true":
+        return jsonify(success=True, content=settings_template)
+    return settings_template
 
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        remember = request.form.get('remember', False)
-
-        if storage.is_valid_login(username, password):
-            session['logged_in'] = True
-            rsp = make_response(redirect(url_for('home')))
-            if remember:
-                session.permanent = True
-                rsp.set_cookie('remember', True)
-                rsp.set_cookie('username', username)
-                rsp.set_cookie('token', signer.sign(password_md5))
-            return rsp
-        else:
-            return render_template('login.html')
-    else:
-        if session.get('logged_in'):
-            return redirect(url_for('home'))
-        if request.cookies.get('remember'):
-            username = request.cookies.get('username')
-            password_md5 = request.cookies.get('password')
-            if username in storage.get_users():
-                try:
-                    password_unsigned = signer.unsign(
-                        password_md5, max_age=15 * 24 * 60 * 60)
-                except:
-                    return render_template('login.html')
-                if password_unsigned == storage.get_password(username):
-                    return redirect(url_for('home'))
+@app.route('/login')
+def login_view():
+    if session.get('logged_in'):
+        return redirect(url_for('home'))
+    if request.cookies.get('remember'):
+        username = request.cookies.get('username')
+        password_md5 = request.cookies.get('password')
+        if username in storage.get_users():
+            try:
+                password_unsigned = signer.unsign(
+                    password_md5, max_age=15 * 24 * 60 * 60)
+            except:
+                return render_template('login.html')
+            if password_unsigned == storage.get_password(username):
+                return redirect(url_for('home'))
     return render_template('login.html')
-
-
-@app.route('/logout')
-def logout():
-    session.pop('logged_in', None)
-    rsp = make_response(redirect(url_for('login')))
-    rsp.set_cookie('username', None)
-    rsp.set_cookie('token', None)
-    rsp.set_cookie('remember', False)
-    return rsp
