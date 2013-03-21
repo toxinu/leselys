@@ -14,10 +14,6 @@ function addFeed() {
   $(loader).fadeIn();
   $.post("/api/add", {url: url}, function(data) {
     if (data.success == true) {
-      /////////////////////////////////////
-      // Go login page if not connected ///
-      if (document.getElementsByClassName('form-signin')[0]) { window.location = "/login" }
-      ////////////////////////////////////
       var feedId = data.feed_id;
       var feedTitle = data.title;
       var feedURL = data.url;
@@ -50,10 +46,6 @@ function addFeed() {
         $(newFeedSetting).fadeIn();
       }
     } else {
-      /////////////////////////////////////
-      // Go login page if not connected ///
-      if (document.getElementsByClassName('form-signin')[0]) { window.location = "/login" }
-      /////////////////////////////////////
       loader.innerHTML = '<li><i class="icon-exclamation-sign"></i> Error: ' + dataOutput +'</li>';
       var clearLoader = function() {
         $(loader).hide();
@@ -85,10 +77,6 @@ function handleOPMLImport(evt) {
   reader.onload = (function(OPMLFile) {
     return function(e) {
       $.post('/api/import/opml', { file: e.target.result }, function(data) {
-        /////////////////////////////////////
-        // Go login page if not connected ///
-        if (document.getElementsByClassName('form-signin')[0]) { window.location = "/login" }
-        /////////////////////////////////////
         if (data.success == true) {
           importer = false;
           document.getElementById("OPMLSubmit").innerHTML = "Importing, reload page later...";
@@ -101,13 +89,9 @@ function handleOPMLImport(evt) {
 }
 
 function viewSettings() {
-  $.get('/settings', function(body) {
-    /////////////////////////////////////
-    // Go login page if not connected ///
-    if (document.getElementsByClassName('form-signin')[0]) { window.location = "/login" }
-    /////////////////////////////////////
-    var content = $(body).find('#content');
-    var sidebar = $(body).find('#menu')
+  $.get('/settings', function(data) {
+    var content = $(data).find('#content');
+    var sidebar = $(data).find('#menu')
     document.getElementById("content").innerHTML = content.html();
     document.getElementById("menu").innerHTML = sidebar.html()
     if (importer) {
@@ -123,13 +107,9 @@ function viewSettings() {
 }
 
 function viewHome() {
-  $.get('/', function(body) {
-    /////////////////////////////////////
-    // Go login page if not connected ///
-    if (document.getElementsByClassName('form-signin')[0]) { window.location = "/login" }
-    /////////////////////////////////////
-    var content = $(body).find('#content');
-    var sidebar = $(body).find('#menu')
+  $.get('/', function(data) {
+    var content = $(data).find('#content');
+    var sidebar = $(data).find('#menu')
     document.getElementById("content").innerHTML = content.html();
     document.getElementById("menu").innerHTML = sidebar.html()
     initAddFeed();
@@ -141,10 +121,6 @@ function deleteFeed(feedId) {
     url: '/api/remove/' + feedId,
     type: 'DELETE',
     success: function(result) {
-      /////////////////////////////////////
-      // Go login page if not connected ///
-      if (document.getElementsByClassName('form-signin')[0]) { window.location = "/login" }
-      /////////////////////////////////////
       $('#feeds-settings ul li#' + feedId).fadeOut(300, function() {
         $(this).remove();
         if ($('#feeds-settings ul li').length < 1) {
@@ -168,10 +144,6 @@ function viewFeed(feedId) {
       requests.shift();
   });
   var request = $.getJSON('/api/get/' + feedId, function(data) {
-    /////////////////////////////////////
-    // Go login page if not connected ///
-    if (document.getElementsByClassName('form-signin')[0]) { window.location = "/login" }
-    /////////////////////////////////////
     var storyListAccordion = crel('div', {'class': 'accordion', 'id': 'story-list-accordion'});
     var content = '';
 
@@ -204,13 +176,9 @@ function viewFeed(feedId) {
 }
 
 function refreshFeeds() {
-  $.each($('#menu .feed'), function(i, story) {
-    var feedId = $(story).attr('id');
+  $.each($('#menu .feed'), function(i, feed) {
+    var feedId = $(feed).attr('id');
     $.getJSON('/api/refresh/' + feedId), function(data) {
-      /////////////////////////////////////
-      // Go login page if not connected ///
-      if (document.getElementsByClassName('form-signin')[0]) { window.location = "/login" }
-      /////////////////////////////////////
       var feedTitle = data.content.title;
       var feedCounter = data.content.counter;
       document.getElementById(feedId).getElementsByClassName('badge')[0].innerHTML = feedCounter;
@@ -228,10 +196,6 @@ function readStory(storyId, ignore) {
   }
 
   $.getJSON('/api/read/' + storyId, function(data) {
-    /////////////////////////////////////
-    // Go login page if not connected ///
-    if (document.getElementsByClassName('form-signin')[0]) { window.location = "/login" }
-    /////////////////////////////////////
     if (data.content.last_update == false) {
       var published = "No date";
     } else {
@@ -263,11 +227,6 @@ function readStory(storyId, ignore) {
 
 function unreadStory(storyId) {
   $.getJSON('/api/unread/' + storyId, function(data) {
-    /////////////////////////////////////
-    // Go login page if not connected ///
-    if (document.getElementsByClassName('form-signin')[0]) { window.location = "/login" }
-    /////////////////////////////////////
-    /////////////////////////////////////
     if (data.success == true) {
       var feedId = data.content.feed_id;
       var story = document.getElementById(storyId);
