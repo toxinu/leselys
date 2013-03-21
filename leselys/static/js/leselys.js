@@ -1,5 +1,6 @@
 function addFeed() {
-  if (document.getElementById('urlFeed').innerHTML == '') { return false }
+  var feed_url = document.getElementById('urlFeed').value
+  if ( feed_url == '') { return false }
 
   // Clear help message if no subscriptions
   if ($("ul#menu li#empty-feed-list").length) {
@@ -8,7 +9,7 @@ function addFeed() {
   }
   var loader = $('<li><i class="icon-tasks"></i> Loading...</li>');
   $("ul#menu").append(loader);
-  $.post('/api/add', {url: url}, function(data) {
+  $.post('/api/add', {url: feed_url}, function(data) {
     if (data.success == true) {
       /////////////////////////////////////
       // Go login page if not connected ///
