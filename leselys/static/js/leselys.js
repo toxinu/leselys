@@ -9,7 +9,9 @@ function addFeed() {
   }
 
   var loader = crel("li", crel("i", {"class": "icon-tasks"}), " Loading...");
-  document.getElementById('menu').appendChild(loader);
+  loader.style.display = "none";
+  loader = document.getElementById('menu').appendChild(loader);
+  $(loader).fadeIn();
   $.post("/api/add", {url: url}, function(data) {
     if (data.success == true) {
       /////////////////////////////////////
@@ -23,10 +25,15 @@ function addFeed() {
       var dataOutput = data.output;
 
       var newFeed = crel('a', {'onClick': 'viewFeed("' + feedId + '")', 'href': '/#' + feedId}, feedTitle + " ",
-            crel('span', {'id': 'unread-counter', 'class': 'badge badge-inverse'}, feedCounter));
-      loader.innerHTML = newFeed.outerHTML;
-      loader.id = feedId;
-      loader.className += " story";
+            crel('span', {'class': 'badge badge-inverse unread-counter'}, feedCounter));
+
+      $(loader).fadeOut(function () {
+        loader.innerHTML = newFeed.outerHTML;
+        loader.id = feedId;
+        loader.className += " story";
+        $(loader).fadeIn();
+      });
+
       // Add new feed in settings/feeds if opened
       if (document.getElementById('feeds-settings')) {
         // Remove message if feeds list is empty
@@ -34,11 +41,13 @@ function addFeed() {
           document.getElementById('feeds-settings').getElementsByClassName('empty-feed-list')[0].style.display = "none";
         }
         var newFeedSetting = crel('li', {'id': feedId}, feedTitle, 
-              ' ',
-              crel('a', {'href': '#', 'onClick': 'deleteFeed("' + feedId + '")'}, '(delete)'),
-              ' - ',
+              ' (',
+              crel('a', {'class': 'muted', 'href': '#', 'onClick': 'deleteFeed("' + feedId + '")'}, 'remove'),
+              ') - ',
               crel('a', {'href': feedURL, 'target': '_blank'}, feedURL));
-        document.getElementById('feeds-settings').getElementsByTagName('ul')[0].innerHTML += newFeedSetting.outerHTML;
+        newFeedSetting.style.display = "none";
+        newFeedSetting = document.getElementById('feeds-settings').getElementsByTagName('ul')[0].appendChild(newFeedSetting);
+        $(newFeedSetting).fadeIn();
       }
     } else {
       /////////////////////////////////////
@@ -47,7 +56,7 @@ function addFeed() {
       /////////////////////////////////////
       loader.innerHTML = '<li><i class="icon-exclamation-sign"></i> Error: ' + dataOutput +'</li>';
       var clearLoader = function() {
-        loader.style.display = "none";
+        $(loader).hide();
       }
       setTimeout(clearLoader, 5000);
     }
@@ -139,14 +148,14 @@ function deleteFeed(feedId) {
       $('#feeds-settings ul li#' + feedId).fadeOut(300, function() {
         $(this).remove();
         if ($('#feeds-settings ul li').length < 1) {
-          document.getElementById('feeds-settings').getElementsByClassName('empty-feed-list')[0].style.display = "";
+          fadeIn(document.getElementById('feeds-settings').getElementsByClassName('empty-feed-list')[0])
         }
       });
       $('ul#menu li#' + feedId).fadeOut(300, function() {
         $(this).remove();
         if ($('ul#menu li').length < 6) {
-          document.getElementById('menu').getElementsByClassName('feeds-list-title')[0].style.display = "none";
-          document.getElementById('menu').getElementsByClassName('empty-feed-list')[0].style.display = "";
+          fadeOut(document.getElementById('menu').getElementsByClassName('feeds-list-title')[0])
+          fadeIn(document.getElementById('menu').getElementsByClassName('empty-feed-list')[0])
         }
       });
     }
@@ -189,13 +198,13 @@ function viewFeed(feedId) {
     $('#menu a').each(function(index) {
       $(this).css('font-weight', 'normal');
     });
-    document.getElementById(feedId).getElementsByClassName('a')[0].style.fontWeight = "bold";
+    document.getElementById(feedId).getElementsByTagName('a')[0].style.fontWeight = "bold";
   });
   requests.push(request);
 }
 
 function refreshFeeds() {
-  $.each($('#menu .story'), function(i, story) {
+  $.each($('#menu .feed'), function(i, story) {
     var feedId = $(story).attr('id');
     $.getJSON('/api/refresh/' + feedId), function(data) {
       /////////////////////////////////////
@@ -242,12 +251,10 @@ function readStory(storyId, ignore) {
 
     document.getElementById(storyId).getElementsByClassName("accordion-body")[0].innerHTML = story.outerHTML;
     if (data.success == true) {
-      var counter = parseInt($("#menu li#" + feedId + " #unread-counter").html()) - 1;
+      var counter = parseInt($("#" + feedId + " .unread-counter").html()) - 1;
+      document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML = counter;
       if (counter == 0) {
-        $("#menu li#" + feedId + " #unread-counter").html(counter);
-        $("#menu li#" + feedId + " #unread-counter").fadeOut();
-      } else {
-        $("#menu li#" + feedId + " #unread-counter").html(counter);
+        $("#" + feedId + " .unread-counter").fadeOut();
       }
     }
   });
@@ -273,14 +280,14 @@ function unreadStory(storyId) {
       story.getElementsByClassName("story-read-toggle")[0].setAttribute("onclick", 'readStory("' + storyId + '")');
       story.getElementsByClassName("story-read-toggle")[0].innerHTML = 'Mark as read';
 
-      var counter = parseInt($("#menu li#" + feedId + " #unread-counter").html()) + 1;
+      var counter = parseInt($("#" + feedId + " .unread-counter").html()) + 1;
 
       $('a[href=#' + storyId + ']').data('unreaded', true);
       if (counter == 1) {
-        $("#menu li#" + feedId + " #unread-counter").html(counter);
-        $("#menu li#" + feedId + " #unread-counter").fadeIn();
+        $("#" + feedId + " .unread-counter").html(counter);
+        $("#" + feedId + " .unread-counter").fadeIn();
       } else {
-        $("#menu li#" + feedId + " #unread-counter").html(counter);
+        $("#" + feedId + " .unread-counter").html(counter);
       }
       document.getElementById(storyId).getElementsByClassName("accordion-toggle")[0].style.fontWeight = 'bold';
     }
