@@ -4,7 +4,7 @@
     <center>
       <li id="icons">
         <a href="#" onClick="viewHome()"><i class="icon-home"></i></a>
-        <a href="#" onClick="refreshSubscriptions()"><i class="icon-refresh"></i></a>
+        <a href="#" onClick="refreshFeeds()"><i class="icon-refresh"></i></a>
         <a href="#" id="add"><i class="icon-plus-sign"></i></a>
         <a href="#" onclick="viewSettings()"><i class="icon-wrench"></i></a>
         <a href="https://github.com/socketubs/leselys" target="_blank"><i class="icon-github-alt"></i></a>
@@ -23,18 +23,18 @@
       {% endwith %}
 
     {% if not subscriptions %}
-      <li style="display:none" id="listSubscriptions" class="nav-header">Subscriptions</li>
-      <li id="empty-feed-list"><center><em>Add your first subscription with the little cross icon.</em></center></li>
+      <li style="display:none" id="listFeed" class="nav-header">Feeds</li>
+      <li id="empty-feed-list"><center><em>Add your first feed with the little cross icon.</em></center></li>
     {% else %}
-      <li id="listSubscriptions" class="nav-header">Subscriptions</li>
+      <li id="listFeed" class="nav-header">Feeds</li>
       {% for subscription in subscriptions %}
         {% if subscription.counter > 0 %}
-          <li class="story" id="{{ subscription.id }}"><a onClick="viewSubscription(&quot;{{ subscription.id }}&quot;)" href="/#{{ subscription.id }}">{{ subscription.title }} <span id="unread-counter" class="badge badge-inverse">{{ subscription.counter }}</span></a></li>
+          <li class="feed" id="{{ subscription.id }}"><a onClick="viewFeed(&quot;{{ subscription.id }}&quot;)" href="/#{{ subscription.id }}">{{ subscription.title }} <span id="unread-counter" class="badge badge-inverse">{{ subscription.counter }}</span></a></li>
         {% else %}
-          <li class="story" id="{{ subscription.id }}"><a onClick="viewSubscription(&quot;{{ subscription.id }}&quot;)" href="/#{{ subscription.id }}">{{ subscription.title }} <span style="display: none;" id="unread-counter" class="badge badge-inverse">{{ subscription.counter }}</span></a></li>
+          <li class="feed" id="{{ subscription.id }}"><a onClick="viewFeed(&quot;{{ subscription.id }}&quot;)" href="/#{{ subscription.id }}">{{ subscription.title }} <span style="display: none;" id="unread-counter" class="badge badge-inverse">{{ subscription.counter }}</span></a></li>
         {% endif %}
       {% endfor %}
-      <li id="empty-feed-list" style="display: none"><center><em>Add your first subscription with the little cross icon.</em></center></li>
+      <li id="empty-feed-list" style="display: none"><center><em>Add your first feed with the little cross icon.</em></center></li>
     {% endif %}
   </ul>
 </div>

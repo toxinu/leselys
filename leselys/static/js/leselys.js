@@ -1,8 +1,5 @@
-function addSubscription() {
-  var url = $('#urlSubscription').val();
-  if (url == '') {
-    return false;
-  }
+function addFeed() {
+  if (document.getElementById('urlFeed').innerHTML == '') { return false }
 
   // Clear help message if no subscriptions
   if ($("ul#menu li#empty-feed-list").length) {
@@ -49,12 +46,9 @@ function addSubscription() {
 }
 
 function handleOPMLImport(evt) {
-  if ($('#import-export #upload-file-info').html() == "") {
-    return false;
-  }
-  if (importer) {
-    return false;
-  }
+  if (document.getElementById("upload-file-info").innerHTML == "") { return false }
+  if (importer) { return false }
+
   // Check if browser is FileRead object compatible
   if (window.File && window.FileReader && window.FileList && window.Blob) {
     // Great success! All the File APIs are supported.
@@ -65,7 +59,7 @@ function handleOPMLImport(evt) {
 
   // Retrieve file from form
   importer = true;
-  var file = document.getElementById('OPMLFile').files[0]
+  var file = document.getElementById('OPMLFile').files[0];
   if (!file) { return false }
   var reader = new FileReader();
 
@@ -80,7 +74,7 @@ function handleOPMLImport(evt) {
         /////////////////////////////////////
         if (data.success == true) {
           importer = false;
-          $('#OPMLSubmit').html('Importing, reload page later...');
+          document.getElementById("OPMLSubmit").innerHTML = "Importing, reload page later...";
           $('#OPMLSubmit').addClass('disabled');
         }
       });
@@ -99,17 +93,17 @@ function viewSettings() {
     /////////////////////////////////////
     var content = $(body).find('#content');
     var sidebar = $(body).find('#menu')
-    $('#content').html(content.html());
-    $('#menu').html(sidebar.html());
+    document.getElementById("content").innerHTML = content.html();
+    document.getElementById("menu").innerHTML = sidebar.html()
     if (importer) {
-      $('#OPMLSubmit').html('Last import not finished...');
+      document.getElementById("OPMLSubmit").innerHTML = "Last import not finished...";
       $('#OPMLSubmit').addClass('disabled');
       return false;
     }
     if ($('#OPMLSubmit').length > 0) {
       document.getElementById('OPMLSubmit').addEventListener('click', handleOPMLImport, false);
     }
-    initAddSubscription();
+    initAddFeed();
   });
 }
 
@@ -123,13 +117,13 @@ function viewHome() {
     /////////////////////////////////////
     var content = $(body).find('#content');
     var sidebar = $(body).find('#menu')
-    $('#content').html(content.html());
-    $('#menu').html(sidebar.html());
-    initAddSubscription();
+    document.getElementById("content").innerHTML = content.html();
+    document.getElementById("menu").innerHTML = sidebar.html()
+    initAddFeed();
   });
 }
 
-function delSubscription(feedId) {
+function delFeed(feedId) {
   $.ajax({
     url: '/api/remove/' + feedId,
     type: 'DELETE',
@@ -149,7 +143,7 @@ function delSubscription(feedId) {
       $('ul#menu li#' + feedId).fadeOut(300, function() {
         $(this).remove();
         if ($('ul#menu li').length < 6) {
-          $('ul#menu li#listSubscriptions.nav-header').fadeOut(200);
+          $('ul#menu li#listFeeds.nav-header').fadeOut(200);
           $('ul#menu li#empty-feed-list').fadeIn(200);
         }
       });
@@ -157,7 +151,7 @@ function delSubscription(feedId) {
   });
 }
 
-function viewSubscription(feedId) {
+function viewFeed(feedId) {
   $.each(requests, function(i, request) {
       request.abort();
       requests.shift();
@@ -174,22 +168,25 @@ function viewSubscription(feedId) {
     var content = '';
 
     $.each(data.content, function(i,item){
+      var storyId = item._id;
+      var storyTitle = item.title;
       var storyAccordion = getStoryAccordionTemplate();
-      storyAccordion.id = 'story-list-accordion';
-      storyAccordion.getElementsByClassName('accordion-toggle')[0].onclick = 'readEntry("' + item._id + '")';
-      storyAccordion.getElementsByClassName('accordion-toggle')[0].setAttribute("onclick", 'readEntry("' + item._id + '")');
-      storyAccordion.getElementsByClassName('accordion-toggle')[0].href = "#" + item._id;
-      storyAccordion.getElementsByClassName('accordion-toggle')[0].innerHTML = item.title;
-      storyAccordion.getElementsByClassName('accordion-body')[0].id = item._id;
-      storyAccordion.getElementsByClassName('accordion-inner')[0].id = item._id;
+
+      storyAccordion.id = storyId;
+      storyAccordion.getElementsByClassName("accordion-toggle")[0].onclick = 'readStory("' + storyId + '")';
+      storyAccordion.getElementsByClassName("accordion-toggle")[0].setAttribute("onclick", 'readStory("' + storyId + '")');
+      storyAccordion.getElementsByClassName("accordion-toggle")[0].innerHTML = storyTitle;
+
+      storyAccordion.getElementsByClassName("accordion-toggle")[0].setAttribute("data-target", "#" + storyId + "-body");
+      storyAccordion.getElementsByClassName("accordion-body")[0].id = storyId + "-body";
 
       if (item.read == false) {
-        storyAccordion.getElementsByClassName('accordion-toggle')[0].style.fontWeight = 'bold';
+        storyAccordion.getElementsByClassName('accordion-toggle')[0].style.fontWeight = "bold";
       }
 
       content += storyAccordion.outerHTML;
     });
-    $("#content").html(header + content + footer);
+    document.getElementById('content').innerHTML = header + content + footer;
     $('#menu a').each(function(index) {
       $(this).css('font-weight', 'normal');
     });
@@ -198,7 +195,7 @@ function viewSubscription(feedId) {
   requests.push(request);
 }
 
-function refreshSubscriptions() {
+function refreshFeeds() {
   $.each($('#menu .story'), function(i, story) {
     var feedId = $(story).attr('id');
     $.getJSON('/api/refresh/' + feedId), function(data) {
@@ -215,13 +212,16 @@ function refreshSubscriptions() {
   });
 }
 
-function readEntry(entryId) {
-  // Avoid "read" state if story have just been marked unread
-  if ($('a[href=#' + entryId + ']').data('unreaded')) {
-    $('a[href=#' + entryId + ']').data('unreaded', false);
-    return true;
+function readStory(storyId, ignore) {
+  // // Avoid "read" state if story have just been marked unread
+  var ignore = ignore || false;
+  if (ignore == true) {
+    document.getElementById(storyId).getElementsByClassName("accordion-toggle")[0].onclick = 'readStory("' + storyId + '")';
+    document.getElementById(storyId).getElementsByClassName("accordion-toggle")[0].setAttribute("onclick", 'readStory("' + storyId + '")');
+    return true
   }
-  $.getJSON('/api/read/' + entryId, function(data) {
+
+  $.getJSON('/api/read/' + storyId, function(data) {
     /////////////////////////////////////
     // Go login page if not connected ///
     if ($(data).find('.form-signin').length > 0) {
@@ -235,16 +235,18 @@ function readEntry(entryId) {
                     '-' + data.content.last_update['day'];
     }
 
+    var feedId = data.content.feed_id;
     var story = getStoryTemplate();
+
     story.getElementsByClassName("story-link")[0].href = data.content.link;
-    story.getElementsByClassName("story-unread")[0].onclick = 'unreadEntry("' + entryId + '")';
-    story.getElementsByClassName('story-unread')[0].setAttribute("onclick", 'unreadEntry("' + entryId + '")');
+    story.getElementsByClassName("story-read-toggle")[0].onclick = 'unreadStory("' + storyId + '")';
+    story.getElementsByClassName("story-read-toggle")[0].setAttribute("onclick", 'unreadStory("' + storyId + '")');
+    story.getElementsByClassName("story-read-toggle")[0].innerHTML = 'Mark as unread';
     story.getElementsByClassName("story-content")[0].innerHTML = data.content.description;
     story.getElementsByClassName("story-date")[0].innerHTML = published;
 
-    $('#content #' + entryId).html(story.outerHTML)
+    document.getElementById(storyId).getElementsByClassName("accordion-body")[0].innerHTML = story.outerHTML;
     if (data.success == true) {
-      var feedId = data.content.feed_id;
       var counter = parseInt($("#menu li#" + feedId + " #unread-counter").html()) - 1;
       if (counter == 0) {
         $("#menu li#" + feedId + " #unread-counter").html(counter);
@@ -254,10 +256,10 @@ function readEntry(entryId) {
       }
     }
   });
-  $('a[href=#' + entryId + ']').css('font-weight', 'normal');
+  document.getElementById(storyId).getElementsByClassName("accordion-toggle")[0].style.fontWeight = 'normal';
 }
 
-function unreadEntry(storyId) {
+function unreadStory(storyId) {
   $.getJSON('/api/unread/' + storyId, function(data) {
     /////////////////////////////////////
     // Go login page if not connected ///
@@ -266,7 +268,17 @@ function unreadEntry(storyId) {
     }
     /////////////////////////////////////
     if (data.success == true) {
-      feedId = data.content.feed_id;
+      var feedId = data.content.feed_id;
+      var story = document.getElementById(storyId);
+
+      // Avoid next click on story title
+      document.getElementById(storyId).getElementsByClassName("accordion-toggle")[0].onclick = 'readStory("' + storyId + '", true)';
+      document.getElementById(storyId).getElementsByClassName("accordion-toggle")[0].setAttribute("onclick", 'readStory("' + storyId + '", true)');
+
+      story.getElementsByClassName("story-read-toggle")[0].onclick = 'readStory("' + storyId + '")';
+      story.getElementsByClassName("story-read-toggle")[0].setAttribute("onclick", 'readStory("' + storyId + '")');
+      story.getElementsByClassName("story-read-toggle")[0].innerHTML = 'Mark as read';
+
       var counter = parseInt($("#menu li#" + feedId + " #unread-counter").html()) + 1;
 
       $('a[href=#' + storyId + ']').data('unreaded', true);
@@ -276,16 +288,16 @@ function unreadEntry(storyId) {
       } else {
         $("#menu li#" + feedId + " #unread-counter").html(counter);
       }
-      $('a[href=#' + storyId + ']').css('font-weight', 'bold');
+      document.getElementById(storyId).getElementsByClassName("accordion-toggle")[0].style.fontWeight = 'bold';
     }
   });
 }
 
-function initAddSubscription() {
-  var addSubscription = getAddSubscriptionTemplate();
-  $('#add').popover({'title': "<center>New subscription</center>",
+function initAddFeed() {
+  var addFeed = getAddFeedTemplate();
+  $('#add').popover({'title': "<center>New feed</center>",
                      'html': true,
-                     'content': addSubscription.outerHTML,
+                     'content': addFeed.outerHTML,
                      'placement': "bottom"}
   );
 }
@@ -293,7 +305,13 @@ function initAddSubscription() {
 $(document).ready(function(){
   // Globals
   // Remove anchors binding for mobile view
-  $('.story').click(function(e) {
+  $('.feed').click(function(e) {
+    e.preventDefault();
+  });
+  $('.accordion-group').click(function(e) {
+    e.preventDefault();
+  });
+  $('.accordion-body').click(function(e) {
     e.preventDefault();
   });
   requests = new Array();

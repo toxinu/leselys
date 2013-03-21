@@ -14,18 +14,18 @@
   </div>
 </div>
 <script type="text/javascript">
-    // Template add subscription
-    var getAddSubscriptionTemplate = function () {
+    // Template add feed
+    var getAddFeedTemplate = function () {
         return crel('form', 
             crel('fieldset',
                 crel('center',
-                    crel('input', {'id': 'urlSubscription',
+                    crel('input', {'id': 'urlFeed',
                                    'type': 'text',
                                    'class': 'input-medium',
                                    'placeholder': 'Url...'}),
                     crel('button', {'type': 'submit',
                                     'class': 'btn',
-                                    'onClick': 'addSubscription()'}, 'Submit')
+                                    'onclick': 'addFeed()'}, 'Submit')
                 )
             )
         )
@@ -34,9 +34,10 @@
     var getStoryAccordionTemplate = function() {
         return crel('div', {'class': 'accordion-group'},
             crel('div', {'class': 'accordion-heading'},
-            crel('a', {'class': 'accordion-toggle',
+            crel('a', {'class': 'accordion-toggle story',
                        'data-toggle': 'collapse',
-                       'data-parent': '#story-list-accordion'})
+                       'data-parent': '#story-list-accordion',
+                       'data-target': '.accordion-body'})
             ),
             crel('div', {'class': 'accordion-body collapse'},
                 crel('div', {'class': 'accordion-inner'})
@@ -51,14 +52,14 @@
                 ' | ',
                 crel('a', {'class': 'story-link', 'target': '_blank'}, 'External link'),
                 ' | ',
-                crel('a', {'class': 'story-unread', 'href': '#'}, 'Unread'),
+                crel('a', {'class': 'story-read-toggle', 'href': '#'}),
                 crel('br'), crel('br')
             ),
             crel('div', {'class': 'story-content'})
         ) 
     }
     $(document).ready(function(){
-      initAddSubscription();
+      initAddFeed();
     });
 </script>
 {% endblock %}
