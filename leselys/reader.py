@@ -4,10 +4,12 @@ import feedparser
 import threading
 import leselys
 import copy
+import httplib2
 
 from leselys.helpers import u
 from leselys.helpers import get_datetime
 from leselys.helpers import get_dicttime
+from leselys.feed_finder import FeedFinder
 
 storage = leselys.core.storage
 
@@ -132,8 +134,28 @@ class Reader(object):
     new feed, read/unread state and refresh feeds
     """
 
+    def parse_feed_url(self, url):
+        """Given url might be point to http document or to actual feed. In case
+        of http document, we try to find first feed auto discovery url.
+        """
+        stripped = url.strip()
+        http = httplib2.Http()
+        resp, doc = http.request(stripped, "GET")
+        if resp.get('content-type') in FeedFinder.feed_content_types:
+            return stripped
+
+        urls = FeedFinder.parse(doc)
+        if len(urls) > 0:
+            # Each url is tuple where href is first element.
+            # NOTE : Sites might have several feeds available and we are just
+            # naively pick first one found.
+            return urls[0][0]
+
+        return None
+
+
     def add(self, url):
-        url = url.strip()
+        url = self.parse_feed_url(url)
         feed = feedparser.parse(url)
 
         # Bad feed
