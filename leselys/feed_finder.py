@@ -32,7 +32,7 @@ class FeedFinder(HTMLParser):
         """Find feed auto discovery links from html document.
 
         Returns list of tuples. Each tuple is form of (href, title). Title
-        is empty string in case not present.
+        is empty string if not present.
         """
         parser = FeedFinder()
         parser.feed(html_document)

@@ -148,7 +148,7 @@ class Reader(object):
         if len(urls) > 0:
             # Each url is tuple where href is first element.
             # NOTE : Sites might have several feeds available and we are just
-            # naively pick first one found.
+            # naively picking first one found.
             return urls[0][0]
 
         return None
