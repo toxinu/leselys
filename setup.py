@@ -43,7 +43,8 @@ setup(
         'feedparser',
         'lxml',
         'itsdangerous',
-        'py-bcrypt'
+        'py-bcrypt',
+        'httplib2'
     ],
     include_package_data=True,
     classifiers=(
