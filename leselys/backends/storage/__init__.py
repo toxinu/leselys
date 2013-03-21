@@ -1,6 +1,7 @@
 # coding: utf-8
 import sys
 
+
 def _load_storage(storage_name):
         module_name = "leselys.backends.storage._%s" % storage_name
         __import__(module_name)
