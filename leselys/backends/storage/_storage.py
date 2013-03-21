@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import bcrypt
 
+
 class Storage(object):
     def _hash_string(self, string):
         return bcrypt.hashpw(string, bcrypt.gensalt())
@@ -38,4 +39,3 @@ class Storage(object):
         """
         hashed = self._hash_string(password)
         return self.set_password(username, hashed)
-

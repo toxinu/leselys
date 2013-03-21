@@ -1,5 +1,6 @@
 from HTMLParser import HTMLParser
 
+
 class FeedFinder(HTMLParser):
     """
     HTML parser which collects all rss/atom auto discovery links.
