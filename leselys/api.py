@@ -4,6 +4,10 @@ import leselys
 from flask import jsonify
 from flask import request
 from flask import make_response
+from flask import session
+from flask import redirect
+from flask import render_template
+from flask import url_for
 
 from threading import Thread
 
@@ -12,7 +16,7 @@ from leselys.helpers import cached
 from leselys.helpers import retrieve_feeds_from_opml
 from leselys.helpers import export_to_opml
 
-
+storage = leselys.core.storage
 reader = leselys.core.reader
 app = leselys.core.app
 
@@ -83,7 +87,47 @@ def import_opml():
 @cached(10)
 def export_opml():
     rsp = make_response(export_to_opml())
-    rsp.headers['Content-Type'] = "application/xml"
+    rsp.headers['Content-Type'] = "application/atom+xml"
+    return rsp
+
+
+# Login
+@app.route('/api/login', methods=['POST'])
+def login():
+    username = request.form['username']
+    password = request.form['password']
+    remember = request.form.get('remember', False)
+    if storage.is_valid_login(username, password):
+            session['logged_in'] = True
+            if request.args.get('jsonify', "true") == "false":
+                rsp = redirect(url_for('home'))
+            else:
+                rsp = make_response(jsonify(success=True, output="Successfully logged in."))
+            if remember:
+                session.permanent = True
+                rsp.set_cookie('remember', True)
+                rsp.set_cookie('username', username)
+                rsp.set_cookie('token', signer.sign(password_md5))
+            return rsp
+    else:
+        if request.args.get('jsonify', "true") == "false":
+            return redirect(url_for('login_view'))
+        else:
+            return jsonify(success=False, output="Bad credentials.")
+
+
+# Logout
+@app.route('/logout')
+@app.route('/api/logout')
+def logout():
+    session.pop('logged_in', None)
+    if request.args.get('jsonify', "true") == "false" or request.path == "/logout":
+        rsp = make_response(redirect(url_for('login_view')))
+    else:
+        rsp = make_response(jsonify(success=True, output="Successfully logged out."))
+    rsp.set_cookie('username', None)
+    rsp.set_cookie('token', None)
+    rsp.set_cookie('remember', False)
     return rsp
 
 

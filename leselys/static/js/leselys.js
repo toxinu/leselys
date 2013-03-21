@@ -88,30 +88,38 @@ function handleOPMLImport(evt) {
 }
 
 function viewSettings() {
-  $.get('/settings', function(data) {
-    var content = $(data).find('#content');
-    var sidebar = $(data).find('#menu')
-    document.getElementById("content").innerHTML = content.html();
-    document.getElementById("menu").innerHTML = sidebar.html()
-    if (importer) {
-      document.getElementById("OPMLSubmit").innerHTML = "Last import not finished...";
-      document.getElementById("OPMLSubmit").className += " disabled";
-      return false;
+  $.get('/settings?jsonify=true', function(data) {
+    if (data.success) {
+      var content = $(data.content).find('#content');
+      var sidebar = $(data.content).find('#menu')
+      document.getElementById("content").innerHTML = content.html();
+      document.getElementById("menu").innerHTML = sidebar.html()
+      if (importer) {
+        document.getElementById("OPMLSubmit").innerHTML = "Last import not finished...";
+        document.getElementById("OPMLSubmit").className += " disabled";
+        return false;
+      }
+      if (document.getElementById("OPMLSubmit")) {
+        document.getElementById('OPMLSubmit').addEventListener('click', handleOPMLImport, false);
+      }
+      initAddFeed();
+    } else {
+      window.location = "/?jsonify=false";
     }
-    if (document.getElementById("OPMLSubmit")) {
-      document.getElementById('OPMLSubmit').addEventListener('click', handleOPMLImport, false);
-    }
-    initAddFeed();
   });
 }
 
 function viewHome() {
-  $.get('/', function(data) {
-    var content = $(data).find('#content');
-    var sidebar = $(data).find('#menu')
-    document.getElementById("content").innerHTML = content.html();
-    document.getElementById("menu").innerHTML = sidebar.html()
-    initAddFeed();
+  $.get('/?jsonify=true', function(data) {
+    if (data.success) {
+      var content = $(data.content).find('#content');
+      var sidebar = $(data.content).find('#menu')
+      document.getElementById("content").innerHTML = content.html();
+      document.getElementById("menu").innerHTML = sidebar.html()
+      initAddFeed();
+    } else {
+      window.location = "/?jsonify=false";
+    }
   });
 }
 

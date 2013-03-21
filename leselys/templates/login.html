@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block body %}	
-<form class="form-signin" method="POST">
+<form class="form-signin" method="POST" action="/api/login?jsonify=false" >
   <h2 class="form-signin-heading">Please sign in</h2>
   <input name="username" type="text" class="input-block-level" placeholder="Username">
   <input name="password" type="password" class="input-block-level" placeholder="Password">
