@@ -296,6 +296,13 @@ function initAddFeed() {
                      'placement': "bottom"}
   );
 }
+
+function loadTheme(theme, callback) {
+  $.post('/api/settings/theme', {theme: theme}, function (data) {
+    window.location = "/";
+  })
+}
+
 $(document).ready(function() {
   // Globals
   // Remove anchors binding for mobile view

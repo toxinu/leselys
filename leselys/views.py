@@ -24,6 +24,17 @@ signer = leselys.core.signer
 def get_feeds():
     return dict(feeds=reader.get_feeds())
 
+
+@app.context_processor
+def get_theme():
+    theme = session.get('theme')
+    if not theme:
+        theme = storage.get_setting('theme')
+        if not theme:
+            storage.set_setting('theme', 'readable')
+            theme = 'readable'
+    return dict(theme=theme)
+
 #######################################################################
 # VIEWS
 #######################################################################

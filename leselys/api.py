@@ -130,9 +130,20 @@ def logout():
     rsp.set_cookie('remember', False)
     return rsp
 
-
-# [WIP]: Set settings
-@app.route('/api/settings/<setting>/<value>')
+# Set theme
+@app.route('/api/settings/theme', methods=['POST'])
 @login_required
-def change_settings(setting, value):
-    pass
+def set_theme():
+    value = request.form['theme']
+    storage.set_setting('theme', value)
+    session['theme'] = value
+    return jsonify(success=True, output='Theme changed')
+
+# Set settings
+@app.route('/api/settings', methods=['POST'])
+@login_required
+def change_setting():
+    key = request.form['key']
+    value = request.form['value']
+    storage.set_setting(setting, value)
+    return jsonify(success=True, output="%s setting have been set at %s" % (setting, value))
