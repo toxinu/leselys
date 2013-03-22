@@ -10,6 +10,7 @@ from flask import make_response
 from flask import jsonify
 
 from leselys.helpers import login_required
+from leselys.themes import themes
 
 storage = leselys.core.storage
 app = leselys.core.app
@@ -27,13 +28,14 @@ def get_feeds():
 
 @app.context_processor
 def get_theme():
-    theme = session.get('theme')
+    _themes = dict((k.lower(), v) for k,v in themes.iteritems())
+    theme = session.get('theme_name')
     if not theme:
-        theme = storage.get_setting('theme')
+        theme = storage.get_setting('theme_name')
         if not theme:
-            storage.set_setting('theme', 'readable')
             theme = 'readable'
-    return dict(theme=theme)
+            storage.set_setting('theme_name', theme)
+    return dict(current_theme_name=theme, current_theme_url=_themes[theme])
 
 #######################################################################
 # VIEWS
@@ -53,7 +55,7 @@ def home():
 @login_required
 def settings():
     settings_context = storage.get_settings()
-    settings_template = render_template('settings.html', settings=settings_context)
+    settings_template = render_template('settings.html', settings=settings_context, themes=themes)
     if request.args.get('jsonify', 'false') == "true":
         return jsonify(success=True, content=settings_template)
     return settings_template
