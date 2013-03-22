@@ -113,7 +113,7 @@ def login():
         if request.args.get('jsonify', "true") == "false":
             return redirect(url_for('login_view'))
         else:
-            return jsonify(success=False, output="Bad credentials.")
+            return jsonify(success=False, output="Bad credentials.", callback="/api/login")
 
 
 # Logout
