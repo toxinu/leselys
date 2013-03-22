@@ -45,6 +45,7 @@ function addFeed() {
         $(newFeedSetting).fadeIn();
       }
     } else {
+      if ( data.callback == "/api/login" ) { window.location = "/login" }
       loader.innerHTML = '<li><i class="icon-exclamation-sign"></i> Error: ' + data.output +'</li>';
       var clearLoader = function() {
         $(loader).hide();
@@ -80,6 +81,10 @@ function handleOPMLImport(evt) {
           importer = false;
           document.getElementById("OPMLSubmit").innerHTML = "Importing, reload page later...";
           $('#OPMLSubmit').addClass('disabled');
+        } else {
+          if (data.callback == "/api/login") { window.location = "/login" }
+          document.getElementById("OPMLSubmit").innerHTML = "Error: " + data.output;
+          $('#OPMLSubmit').addClass('disabled');
         }
       });
     }
@@ -104,7 +109,8 @@ function viewSettings() {
       }
       initAddFeed();
     } else {
-      window.location = "/?jsonify=false";
+      if (data.callback == "/api/login") { window.location = "/login" }
+      window.location = "/";
     }
   });
 }
@@ -118,7 +124,8 @@ function viewHome() {
       document.getElementById("menu").innerHTML = sidebar.html()
       initAddFeed();
     } else {
-      window.location = "/?jsonify=false";
+      if (data.callback == "/api/login") { window.location = "/login" }
+      window.location = "/";
     }
   });
 }
@@ -128,6 +135,10 @@ function deleteFeed(feedId) {
     url: '/api/remove/' + feedId,
     type: 'DELETE',
     success: function(result) {
+      if (result.success = false) {
+        if (result.callback == "/api/login") { window.location = "/login" }
+        window.location = "/";
+      }
       $('#feeds-settings ul li#' + feedId).fadeOut(300, function() {
         $(this).remove();
         if ($('#feeds-settings ul li').length < 1) {
@@ -151,6 +162,11 @@ function viewFeed(feedId) {
       requests.shift();
   });
   var request = $.getJSON('/api/get/' + feedId, function(data) {
+    if (data.success == false) {
+      if (data.callback == "/api/login") { window.location = "/login" }
+      window.location = "/";
+    }
+
     var storyListAccordion = crel('div', {'class': 'accordion', 'id': 'story-list-accordion'});
     var content = '';
 
@@ -158,6 +174,7 @@ function viewFeed(feedId) {
       var storyId = item._id;
       var storyTitle = item.title;
       var storyAccordion = getStoryAccordionTemplate();
+      var storyRead = item.read;
 
       storyAccordion.id = storyId;
       storyAccordion.getElementsByClassName("accordion-toggle")[0].onclick = 'readStory("' + storyId + '")';
@@ -165,7 +182,7 @@ function viewFeed(feedId) {
       storyAccordion.getElementsByClassName("accordion-toggle")[0].innerHTML = storyTitle;
       storyAccordion.getElementsByClassName("accordion-toggle")[0].setAttribute("data-target", "#" + storyId + " .accordion-body");
 
-      if (item.read == false) {
+      if (storyRead == false) {
         storyAccordion.getElementsByClassName('accordion-toggle')[0].style.fontWeight = "bold";
       }
 
@@ -186,6 +203,10 @@ function refreshFeeds() {
   $.each($('#menu .feed'), function(i, feed) {
     var feedId = $(feed).attr('id');
     $.getJSON('/api/refresh/' + feedId), function(data) {
+      if (data.success == false) {
+        if (data.callback == "/api/login") { window.location = "/login" }
+        window.location = '/';
+      }
       var feedTitle = data.content.title;
       var feedCounter = data.content.counter;
       document.getElementById(feedId).getElementsByClassName('badge')[0].innerHTML = feedCounter;
@@ -203,6 +224,10 @@ function readStory(storyId, ignore) {
   }
 
   $.getJSON('/api/read/' + storyId, function(data) {
+    if (data.success == false) {
+      if (data.callback == "/api/login" ) { window.location = "/login" }
+       window.location = '/';
+    }
     if (data.content.last_update == false) {
       var published = "No date";
     } else {
@@ -256,6 +281,9 @@ function unreadStory(storyId) {
         $("#" + feedId + " .unread-counter").html(counter);
       }
       document.getElementById(storyId).getElementsByClassName("accordion-toggle")[0].style.fontWeight = 'bold';
+    } else {
+      if (callback == "/api/login") { window.location = "/login" }
+      window.location = "/";
     }
   });
 }
