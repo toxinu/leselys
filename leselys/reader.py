@@ -4,8 +4,8 @@ import feedparser
 import threading
 import leselys
 import copy
-import httplib2
 
+import requests
 from urlparse import urlparse
 from urlparse import urljoin
 
@@ -137,17 +137,18 @@ class Reader(object):
     new feed, read/unread state and refresh feeds
     """
 
-    def parse_feed_url(self, url):
+    def get_feed(self, url):
         """Given url might be point to http document or to actual feed. In case
         of http document, we try to find first feed auto discovery url.
         """
         stripped = url.strip()
-        http = httplib2.Http()
-        resp, doc = http.request(stripped, "GET")
-        if resp.get('content-type') in FeedFinder.feed_content_types:
-            return stripped
+        resp = requests.get(stripped)
+        feed = feedparser.parse(resp.text)
+        if feed.version != '':
+            return feed
 
-        urls = FeedFinder.parse(doc)
+        urls = FeedFinder.parse(resp.text)
+        feed_url = ''
         if len(urls) > 0:
             # Each url is tuple where href is first element.
             # NOTE : Sites might have several feeds available and we are just
@@ -155,22 +156,17 @@ class Reader(object):
             feed_url = urls[0][0]
             if urlparse(feed_url)[1] == '':
                 # We have empty 'netloc', meaning we have relative url
-                return urljoin(stripped, feed_url)
-            else:
-                return feed_url
-
-        return ''
+                feed_url = urljoin(stripped, feed_url)
+        return feedparser.parse(feed_url)
 
     def add(self, url):
-        url = self.parse_feed_url(url)
-        feed = feedparser.parse(url)
+        feed = self.get_feed(url)
 
         # Bad feed
-        if not feed.feed.get('title', False):
+        if feed.version == '' or not feed.feed.get('title'):
             return {'success': False, 'output': 'Bad feed'}
 
         title = feed.feed['title']
-
         feed_id = storage.get_feed_by_title(title)
         if not feed_id:
             if feed.feed.get('updated_parsed'):
