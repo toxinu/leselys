@@ -142,14 +142,14 @@ function deleteFeed(feedId) {
       $('#feeds-settings ul li#' + feedId).fadeOut(300, function() {
         $(this).remove();
         if ($('#feeds-settings ul li').length < 1) {
-          fadeIn(document.getElementById('feeds-settings').getElementsByClassName('empty-feed-list')[0])
+          $(document.getElementById('feeds-settings').getElementsByClassName('empty-feed-list')[0]).fadeIn();
         }
       });
       $('ul#menu li#' + feedId).fadeOut(300, function() {
         $(this).remove();
         if ($('ul#menu li').length < 6) {
-          fadeOut(document.getElementById('menu').getElementsByClassName('feeds-list-title')[0])
-          fadeIn(document.getElementById('menu').getElementsByClassName('empty-feed-list')[0])
+          $(document.getElementById('menu').getElementsByClassName('feeds-list-title')[0]).fadeOut();
+          $(document.getElementById('menu').getElementsByClassName('empty-feed-list')[0]).fadeIn();
         }
       });
     }
