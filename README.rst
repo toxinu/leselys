@@ -5,12 +5,7 @@ I'm Leselys, your very elegant RSS reader.
 
 No `bullshit apps`_ for Android, iPhone, etc. Just a responsive design and for every device.
 
-Leselys is Heroku ready and easy to install. It can be used with your very own storage backend. Take a look at the `MongoDB`_ example.
-
-There is a `demo here`_ (demo/demo).
-
-
-Leselys is in heavy development right now, and feedback is welcome.
+Leselys is Heroku ready. Tere is a `demo here`_ (demo/demo).
 
 Installation
 ------------
@@ -54,6 +49,12 @@ All Heroku dependencies like ``Pymongo``, ``gunicorn`` and ``redis`` are in ``re
 	git push heroku master
 
 Don't forget to create a Leselys account with ``heroku run "bash heroku.sh && leselys adduser --config heroku.ini"``.
+
+
+Misc
+----
+
+Storage and session backends are Python modules, you can easily write your own. Take a look at the `MongoDB`_ storage backend.
 
 License
 -------
