@@ -35,46 +35,42 @@
 */
 
 window.crel = (function(undefined){
-    var arrayProto = [];
-    
-    function isNode(object){
-        // http://stackoverflow.com/questions/384286/javascript-isdom-how-do-you-check-if-a-javascript-object-is-a-dom-object
-        return (
-            typeof Node === "object" ? object instanceof Node : 
-            object && typeof object === "object" && typeof object.nodeType === "number" && typeof object.nodeName==="string"
-        );
-    };
+
+    // based on http://stackoverflow.com/questions/384286/javascript-isdom-how-do-you-check-if-a-javascript-object-is-a-dom-object
+    var isNode = typeof Node === 'object'
+        ? function (object) { return object instanceof Node }
+        : function (object) {
+            return object
+                && typeof object === 'object'
+                && typeof object.nodeType === 'number'
+                && typeof object.nodeName === 'string';
+        };
+
     function crel(){
         var document = window.document,
-            args = arguments,
-            type,
-            settings,
-            children,
-            element,
+            args = arguments, //Note: assigned to a variable to assist compilers. Saves about 40k in closure compiler. Has negligable effect on performance.
+            element = document.createElement(args[0]),
+            settings = args[1],
+            childIndex = 2,
+            argumentsLength = args.length,
             attributeMap = crel.attrMap;
 
-        // shortcut (approx twice as fast as going through slice.call)
-        if(arguments.length === 1){
-            return document.createElement(arguments[0]);
+        // shortcut
+        if(argumentsLength === 1){
+            return element;
         }
 
-        args = arrayProto.slice.call(arguments);
-        type = args.shift();
-        settings = args.shift();
-        children = args;
-        element = document.createElement(type);
-            
-        if(isNode(settings) || typeof settings !== 'object') {
-            children = [settings].concat(children); 
-            settings = {};
+        if(typeof settings !== 'object' || isNode(settings)) {
+            --childIndex;
+            settings = null;
         }
-        
+
         // shortcut if there is only one child that is a string    
-        if(children.length === 1 && typeof children[0] === 'string' && element.textContent !== undefined){
-            element.textContent = children[0];
+        if((argumentsLength - childIndex) === 1 && typeof args[childIndex] === 'string' && element.textContent !== undefined){
+            element.textContent = args[childIndex];
         }else{    
-            for(var i = 0; i < children.length; i++){
-                child = children[i];
+            for(; childIndex < argumentsLength; ++childIndex){
+                child = args[childIndex];
                 
                 if(child == null){
                     continue;
@@ -105,6 +101,7 @@ window.crel = (function(undefined){
     }
     
     // Used for mapping one kind of attribute to the supported version of that in bad browsers.
+    // String referenced so that compilers maintain the property name.
     crel['attrMap'] = {};
     
     // String referenced so that compilers maintain the property name.
