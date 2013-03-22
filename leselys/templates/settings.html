@@ -7,14 +7,14 @@
   <div id="content" class="span10">
     <div class="tabbable">
       <ul class="nav nav-tabs">
-        <li class="active"><a href="#settings" data-toggle="tab">Settings</a></li>
-        <li><a href="#feeds-settings" data-toggle="tab">Feeds</a></li>
+        <!-- <li class="active"><a href="#settings" data-toggle="tab">Settings</a></li> -->
+        <li class="active"><a href="#feeds-settings" data-toggle="tab">Feeds</a></li>
         <li><a href="#import-export" data-toggle="tab">Import/Export</a></li>
         <li><a href="#themes" data-toggle="tab">Themes</a></li>
       </ul>
 
       <div class="tab-content">
-        <div class="tab-pane active" id="settings">
+        <!-- <div class="tab-pane active" id="settings">
         	<form class="form-inline">
             <fieldset>
             <legend>Settings</legend>
@@ -32,8 +32,8 @@
             <button type="submit" class="btn btn-info">Save</button>
             </fieldset>
           </form>
-        </div>
-        <div class="tab-pane" id="feeds-settings">
+        </div> -->
+        <div class="tab-pane active" id="feeds-settings">
           <ul>
           {% if feeds %}
             {% for feed in feeds %}
@@ -70,10 +70,13 @@
         </div>
         <div class="tab-pane" id="themes">
           <ul>
-            <li><a href="#" onclick="loadTheme('bootstrap.min.css')">Bootstrap</a></li>
-            <li><a href="#" onclick="loadTheme('journal.min.css')">Journal</a></li>
-            <li><a href="#" onclick="loadTheme('readable.min.css')">Readable</a></li>
-            <li><a href="#" onclick="loadTheme('flat-ui.css')">Flat UI</a></li>
+            {% for theme_name in themes.keys() %}
+                 {% if theme_name.lower() == current_theme_name.lower() %}
+                   <li style="font-weight: bold" >{{ theme_name }}</li>
+                 {% else %}
+                   <li><a href="#" onclick="loadTheme('{{ theme_name|lower }}')">{{ theme_name }}</a></li>
+                 {% endif %}
+            {% endfor %}
           </ul>
         </div>
       </div>

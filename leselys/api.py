@@ -11,6 +11,7 @@ from flask import url_for
 
 from threading import Thread
 
+from leselys.themes import themes
 from leselys.helpers import login_required
 from leselys.helpers import cached
 from leselys.helpers import retrieve_feeds_from_opml
@@ -134,9 +135,13 @@ def logout():
 @app.route('/api/settings/theme', methods=['POST'])
 @login_required
 def set_theme():
-    value = request.form['theme']
-    storage.set_setting('theme', value)
-    session['theme'] = value
+    theme_name = request.form['theme'].lower()
+    _themes = dict((k.lower(), v) for k,v in themes.iteritems())
+    if not theme_name in _themes.keys():
+        return jsonify(success=False, output='Theme not exists')
+
+    storage.set_setting('theme_name', theme_name)
+    session['theme_name'] = theme_name
     return jsonify(success=True, output='Theme changed')
 
 # Set settings
