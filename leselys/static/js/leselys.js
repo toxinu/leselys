@@ -226,7 +226,6 @@ function readStory(storyId, ignore) {
   $.getJSON('/api/read/' + storyId, function(data) {
     if (data.success == false) {
       if (data.callback == "/api/login" ) { window.location = "/login" }
-       window.location = '/';
     }
     if (data.content.last_update == false) {
       var published = "No date";
