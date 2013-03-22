@@ -5,8 +5,8 @@ class FeedFinder(HTMLParser):
     """
     HTML parser which collects all rss/atom auto discovery links.
     """
-    feed_content_types = ['application/rss+xml', 'application/atom+xml',
-            'application/xml', 'text/xml']
+    # These are used to determine if <link> is feed auto discovery link
+    feed_content_types = ['application/rss+xml', 'application/atom+xml']
 
     def __init__(self):
         HTMLParser.__init__(self)
