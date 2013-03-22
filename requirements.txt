@@ -4,3 +4,4 @@ feedparser
 lxml
 itsdangerous
 py-bcrypt
+requests
