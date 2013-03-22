@@ -58,6 +58,9 @@ li a [class^="icon-"] {
   }
 }
 @media handheld, only screen and (max-width: 768px) {
+  #menu a i.icon-github-alt, #menu a i.icon-plus-sign  {
+    display: none;
+  }
   .sidenav-affix {
     position: static;
     width: auto;
@@ -65,10 +68,14 @@ li a [class^="icon-"] {
   li a [class^="icon-"] {
     font-size: 2em;
   }
-  li#listSubscriptions {
+  #menu li {
     font-size: 14px;
   }
-  li.story {
+  #menu li.feed{
+    margin-top: 3px;
+    font-size: 16px;
+  }
+  .story {
     font-size: 16px;
     padding: 3px 0px;
   }

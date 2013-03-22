@@ -305,13 +305,10 @@ function loadTheme(theme, callback) {
 $(document).ready(function() {
   // Globals
   // Remove anchors binding for mobile view
-  $('.feed').click(function(e) {
+  $(".feed").click(function(e) {
     e.preventDefault();
   });
-  $('.accordion-group').click(function(e) {
-    e.preventDefault();
-  });
-  $('.accordion-body').click(function(e) {
+  $("body").click(function(e) {
     e.preventDefault();
   });
   requests = new Array();
