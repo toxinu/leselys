@@ -1,11 +1,14 @@
 Leselys
 =======
 
-I'm Leselys, your very elegant RSS reader. No bullshit Android, iPhone apps, just a responsive design for every device.
+I'm Leselys, your very elegant RSS reader.
+
+No `bullshit apps`_ for Android, iPhone, etc. Just a responsive design and for every device.
 
 Leselys is Heroku ready and easy to install. It can be used with your very own storage backend. Take a look at the `MongoDB`_ example.
 
 There is a `demo here`_ (demo/demo).
+
 
 Leselys is in heavy development right now, and feedback is welcome.
 
@@ -57,6 +60,7 @@ License
 
 License is `AGPL3`_. See `LICENSE`_.
 
+.. _bullshit apps: http://tommorris.org/posts/8070
 .. _demo here: https://leselys.herokuapp.com
 .. _MongoDB: https://github.com/socketubs/leselys/blob/master/leselys/backends/_mongodb.py
 .. _AGPL3: http://www.gnu.org/licenses/agpl.html
