@@ -44,7 +44,7 @@ setup(
         'lxml',
         'itsdangerous',
         'py-bcrypt',
-        'httplib2'
+        'requests'
     ],
     include_package_data=True,
     classifiers=(

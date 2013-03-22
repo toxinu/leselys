@@ -4,8 +4,8 @@ import feedparser
 import threading
 import leselys
 import copy
-import httplib2
 
+import requests
 from urlparse import urlparse
 from urlparse import urljoin
 
@@ -142,12 +142,11 @@ class Reader(object):
         of http document, we try to find first feed auto discovery url.
         """
         stripped = url.strip()
-        http = httplib2.Http()
-        resp, doc = http.request(stripped, "GET")
-        if resp.get('content-type') in FeedFinder.feed_content_types:
+        resp = requests.get(stripped)
+        if resp.headers.get('content-type') in FeedFinder.feed_content_types:
             return stripped
 
-        urls = FeedFinder.parse(doc)
+        urls = FeedFinder.parse(resp.text)
         if len(urls) > 0:
             # Each url is tuple where href is first element.
             # NOTE : Sites might have several feeds available and we are just
