@@ -58,7 +58,8 @@ type = memory
 #type = redis
 #host = localhost
 #port = 6379
-#db = 0"""
+#db = 0
+"""
                 config.write(config_default)
                 print('Configuration file created.')
                 sys.exit(0)

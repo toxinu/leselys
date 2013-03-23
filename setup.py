@@ -44,7 +44,9 @@ setup(
         'lxml',
         'itsdangerous',
         'py-bcrypt',
-        'requests'
+        'requests',
+        'celery',
+        'celery-with-mongodb'
     ],
     include_package_data=True,
     classifiers=(
