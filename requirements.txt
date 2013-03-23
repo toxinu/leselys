@@ -5,3 +5,6 @@ lxml
 itsdangerous
 py-bcrypt
 requests
+pymongo
+celery
+celery-with-mongodb
