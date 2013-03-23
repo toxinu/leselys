@@ -33,7 +33,7 @@ def get_theme():
     if not theme:
         theme = storage.get_setting('theme_name')
         if not theme:
-            theme = 'readable'
+            theme = 'journal'
             storage.set_setting('theme_name', theme)
     return dict(current_theme_name=theme, current_theme_url=_themes[theme])
 
