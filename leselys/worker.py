@@ -4,6 +4,7 @@ from __future__ import absolute_import
 import sys
 from celery import Celery
 from leselys import core
+from leselys.helpers import refresh_all
 from datetime import timedelta
 
 
@@ -19,12 +20,7 @@ def run(config_path, args):
 
 	@celery.task
 	def refresh_all():
-		from leselys.reader import Refresher
-		feeds = core.storage.get_feeds()
-		for feed in feeds:
-			print(feed['title'])
-			refresher = Refresher(feed)
-			refresher.start()
+		helper.refresh_all()
 
 	celery.conf.CELERYBEAT_SCHEDULE = {
 	'refresh-job': {
