@@ -16,4 +16,8 @@ database = ${DATABASE}
 [session]
 type = redis
 uri = ${REDISTOGO_URL}
+
+[worker]
+broker = ${MONGOHQ_URL}
+interval = 20
 EOL

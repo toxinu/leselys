@@ -2,3 +2,4 @@
 pymongo
 redis
 gunicorn
+celery-with-mongodb
