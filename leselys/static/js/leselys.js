@@ -215,7 +215,7 @@ function refreshFeeds() {
 }
 
 function readStory(storyId, ignore) {
-  // // Avoid "read" state if story have just been marked unread
+  // Avoid "read" state if story have just been marked unread
   var ignore = ignore || false;
   if (ignore == true) {
     document.getElementById(storyId).getElementsByClassName("accordion-toggle")[0].onclick = 'readStory("' + storyId + '")';
@@ -237,14 +237,19 @@ function readStory(storyId, ignore) {
     var feedId = data.content.feed_id;
     var story = getStoryTemplate();
 
+
     story.getElementsByClassName("story-link")[0].href = data.content.link;
     story.getElementsByClassName("story-read-toggle")[0].onclick = 'unreadStory("' + storyId + '")';
     story.getElementsByClassName("story-read-toggle")[0].setAttribute("onclick", 'unreadStory("' + storyId + '")');
     story.getElementsByClassName("story-read-toggle")[0].innerHTML = 'Mark as unread';
+    story.getElementsByClassName("story-read-toggle")[0].href = "#" + storyId;
     story.getElementsByClassName("story-content")[0].innerHTML = data.content.description;
     story.getElementsByClassName("story-date")[0].innerHTML = published;
 
     document.getElementById(storyId).getElementsByClassName("accordion-body")[0].innerHTML = story.outerHTML;
+    document.getElementById(storyId).getElementsByClassName("story-read-toggle")[0].addEventListener(
+    'click', function(e) { e.preventDefault() }, false
+    );
     if (data.success == true) {
       var counter = parseInt($("#" + feedId + " .unread-counter").html()) - 1;
       document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML = counter;
@@ -305,10 +310,7 @@ function loadTheme(theme, callback) {
 $(document).ready(function() {
   // Globals
   // Remove anchors binding for mobile view
-  $(".feed").click(function(e) {
-    e.preventDefault();
-  });
-  $("body").click(function(e) {
+  $(".feed").click(function(e) {  
     e.preventDefault();
   });
   requests = new Array();
