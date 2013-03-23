@@ -42,3 +42,4 @@ virtualenv
 tools
 
 requirements.txt
+*.db
