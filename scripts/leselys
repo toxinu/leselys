@@ -46,8 +46,8 @@ debug = false
 
 [storage]
 type = mongodb
-database = mongodb://localhost:27017/leselys
-mode = multi
+host = mongodb://localhost:27017
+database = leselys
 
 [worker]
 broker = mongodb://localhost:27017/leselys
@@ -55,7 +55,6 @@ interval = 10 # In minutes
 
 [session]
 type = memory
-
 #type = redis
 #host = localhost
 #port = 6379
