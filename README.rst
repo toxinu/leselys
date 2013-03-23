@@ -20,9 +20,8 @@ In order to install leselys you'll need some dependencies: ::
 	apt-get install build-essential python-dev python-pip
 	apt-get install libxslt1-dev libxml2-dev python-libxml2 python-libxslt1
 
-And install your `Mongodb`_.
+And install your `MongoDB`_.
 
-.. _Mongodb: http://docs.mongodb.org/manual/installation/
 
 ::
 
@@ -64,16 +63,17 @@ Import your Google Reader OPML file right now!
 Misc
 ----
 
-Storage and session backends are Python modules, you can easily write your own. Take a look at the `MongoDB`_ storage backend.
+Storage and session backends are Python modules, you can easily write your own. Take a look at the `MongoDB storage backend`_.
 
 License
 -------
 
 License is `AGPL3`_. See `LICENSE`_.
 
+.. _MongoDB: http://docs.mongodb.org/manual/installation/
 .. _bullshit apps: http://tommorris.org/posts/8070
 .. _demo here: https://leselys.herokuapp.com
-.. _MongoDB: https://github.com/socketubs/leselys/blob/master/leselys/backends/_mongodb.py
+.. _MongoDB storage backend: https://github.com/socketubs/leselys/blob/master/leselys/backends/_mongodb.py
 .. _Ubuntu: https://github.com/socketubs/leselys/wiki/Ubuntu
 .. _Heroku: https://github.com/socketubs/leselys/wiki/Heroku
 .. _AGPL3: http://www.gnu.org/licenses/agpl.html
