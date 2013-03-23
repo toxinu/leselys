@@ -30,7 +30,7 @@ class Storage(object):
         hashed = self._hash_string(password)
         return self.add_user(username, hashed)
 
-    def update_password(self, username, new_password):
+    def update_password(self, username, password):
         """
         Update password for given username. Hashes password with bcrypt.
 
