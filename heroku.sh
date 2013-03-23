@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Create heroku configuration file
+DATABASE=$(echo ${MONGOHQ_URL} | cut -d"/" -f4)
 cat >heroku.ini <<EOL
 [webserver]
 host = 0.0.0.0
@@ -9,7 +10,8 @@ debug = false
 
 [storage]
 type = mongodb
-uri = ${MONGOHQ_URL}
+host = ${MONGOHQ_URL}
+database = ${DATABASE}
 
 [session]
 type = redis
