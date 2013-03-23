@@ -10,7 +10,7 @@ Tere is a `demo here`_ (demo/demo).
 Installation
 ------------
 
-Two requirements: __Mongodb__ and __Python__.
+Two requirements: **Mongodb** and **Python**.
 
 ::
 
