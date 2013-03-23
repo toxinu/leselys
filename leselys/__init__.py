@@ -8,8 +8,4 @@ __copyright__ = 'Copyright 2013 Geoffrey Lehée'
 
 from leselys.core import Core
 
-defaults = {'host': '127.0.0.1',
-            'port': 5000,
-            'debug': False}
-
-core = Core(**defaults)
+core = Core()
