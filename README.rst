@@ -47,7 +47,6 @@ All Heroku dependencies like ``Pymongo``, ``gunicorn`` and ``redis`` are in ``re
 
 	git clone git@github.com:socketubs/leselys.git
 	cd leselys
-	cp requirements-heroku.txt requirements.txt
 	heroku create
 	heroku addons:add mongohq:sandbox
 	heroku addons:add redistogo:nano
