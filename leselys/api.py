@@ -20,6 +20,7 @@ from leselys.helpers import export_to_opml
 storage = leselys.core.storage
 reader = leselys.core.reader
 app = leselys.core.app
+signer = leselys.core.signer
 
 #######################################################################
 # API
@@ -108,7 +109,7 @@ def login():
                 session.permanent = True
                 rsp.set_cookie('remember', True)
                 rsp.set_cookie('username', username)
-                rsp.set_cookie('token', signer.sign(password_md5))
+                rsp.set_cookie('token', signer.sign(password))
             return rsp
     else:
         if request.args.get('jsonify', "true") == "false":
