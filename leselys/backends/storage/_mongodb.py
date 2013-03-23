@@ -1,18 +1,23 @@
 # -*- coding: utf-8 -*-
+import sys
+
 from pymongo import MongoClient
+from pymongo.uri_parser import parse_uri
 from bson.objectid import ObjectId
 from _storage import Storage
 
 
 class Mongodb(Storage):
     def __init__(self, **kwargs):
-        self.database = kwargs.get('database') or 'leselys'
+        if not kwargs.get('uri'):
+            print('Mongodb storage backend need uri option')
+            sys.exit(1)
+        self.uri = parse_uri(kwargs.get('uri'))
 
-        if kwargs.get('database'):
-            del kwargs['database']
-        self.connection = MongoClient(**kwargs)
-
-        self.db = self.connection[self.database]
+        self.host = self.uri['nodelist'][0][0]
+        self.port = int(self.uri['nodelist'][0][1])
+        self.connection = MongoClient(self.host, self.port, **self.uri['options'])
+        self.db = self.connection[self.uri['database']]
 
     def get_users(self):
         res = []

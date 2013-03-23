@@ -15,6 +15,8 @@ def run(config_path, args):
 	core.load_storage()
 	core.load_session()
 
+	interval = core.config.get('worker', 'interval')
+
 	@celery.task
 	def refresh_all():
 		from leselys.reader import Refresher
@@ -25,9 +27,9 @@ def run(config_path, args):
 			refresher.start()
 
 	celery.conf.CELERYBEAT_SCHEDULE = {
-	'refresh-every-30-seconds': {
+	'refresh-job': {
     	'task': 'leselys.worker.refresh_all',
-    	'schedule': timedelta(seconds=30)
+    	'schedule': timedelta(minutes=int(interval))
     	},
 	}
 	celery.conf.INSTALLED_APPS = ('tasks.refresh_all',)

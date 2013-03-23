@@ -37,6 +37,11 @@ def get_theme():
             storage.set_setting('theme_name', theme)
     return dict(current_theme_name=theme, current_theme_url=_themes[theme])
 
+
+@app.context_processor
+def env():
+    return dict(debug=leselys.core.debug)
+
 #######################################################################
 # VIEWS
 #######################################################################
