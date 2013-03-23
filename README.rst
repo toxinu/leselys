@@ -45,7 +45,7 @@ License is `AGPL3`_. See `LICENSE`_.
 .. _bullshit apps: http://tommorris.org/posts/8070
 .. _demo here: https://leselys.herokuapp.com
 .. _MongoDB: https://github.com/socketubs/leselys/blob/master/leselys/backends/_mongodb.py
-.. _Ubuntu: https://github.com/socketubs/leselys/tree/master/docs/ubuntu.rst 
-.. _Heroku: https://github.com/socketubs/leselys/tree/master/docs/heroku.rst
+.. _Ubuntu: https://github.com/socketubs/leselys/wiki/Ubuntu
+.. _Heroku: https://github.com/socketubs/leselys/wiki/Heroku
 .. _AGPL3: http://www.gnu.org/licenses/agpl.html
 .. _LICENSE: https://raw.github.com/socketubs/leselys/master/LICENSE
