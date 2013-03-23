@@ -107,10 +107,9 @@ function viewSettings() {
       if (document.getElementById("OPMLSubmit")) {
         document.getElementById('OPMLSubmit').addEventListener('click', handleOPMLImport, false);
       }
-      initAddFeed();
+      initPage();
     } else {
       if (data.callback == "/api/login") { window.location = "/login" }
-      window.location = "/";
     }
   });
 }
@@ -122,10 +121,9 @@ function viewHome() {
       var sidebar = $(data.content).find('#menu')
       document.getElementById("content").innerHTML = content.html();
       document.getElementById("menu").innerHTML = sidebar.html()
-      initAddFeed();
+      initPage();
     } else {
       if (data.callback == "/api/login") { window.location = "/login" }
-      window.location = "/";
     }
   });
 }
@@ -197,21 +195,6 @@ function viewFeed(feedId) {
     document.getElementById(feedId).getElementsByTagName('a')[0].style.fontWeight = "bold";
   });
   requests.push(request);
-}
-
-function refreshFeeds() {
-  $.each($('#menu .feed'), function(i, feed) {
-    var feedId = $(feed).attr('id');
-    $.getJSON('/api/refresh/' + feedId), function(data) {
-      if (data.success == false) {
-        if (data.callback == "/api/login") { window.location = "/login" }
-        window.location = '/';
-      }
-      var feedTitle = data.content.title;
-      var feedCounter = data.content.counter;
-      document.getElementById(feedId).getElementsByClassName('badge')[0].innerHTML = feedCounter;
-    }
-  });
 }
 
 function readStory(storyId, ignore) {
@@ -287,9 +270,27 @@ function unreadStory(storyId) {
       document.getElementById(storyId).getElementsByClassName("accordion-toggle")[0].style.fontWeight = 'bold';
     } else {
       if (callback == "/api/login") { window.location = "/login" }
-      window.location = "/";
     }
   });
+}
+
+function loadTheme(theme, callback) {
+  $.post('/api/settings/theme', {theme: theme}, function (data) {
+    window.location = "/";
+  })
+}
+
+function refreshCounters() {
+  $.getJSON('/api/counters'), function(data) {
+    if (data.success == false) {
+      if (data.callback == "/api/login") { window.location = "/login" }
+    }
+    $.each(data.content, function(i, feed) {
+      var feedId = feed[0];
+      var feedCounter = feed[1];
+      document.getElementById(feedId).getElementsByClassName('badge')[0].innerHTML = feedCounter;
+    });
+  }
 }
 
 function initAddFeed() {
@@ -301,18 +302,20 @@ function initAddFeed() {
   );
 }
 
-function loadTheme(theme, callback) {
-  $.post('/api/settings/theme', {theme: theme}, function (data) {
-    window.location = "/";
-  })
-}
-
-$(document).ready(function() {
-  // Globals
+function initPage() {
   // Remove anchors binding for mobile view
   $(".feed").click(function(e) {  
     e.preventDefault();
   });
+
+  // Globals
   requests = new Array();
   importer = false;
+
+  initAddFeed()
+  setInterval(refreshCounters, 120000);
+}
+
+$(document).ready(function() {
+  initPage();
 });
