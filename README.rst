@@ -18,7 +18,7 @@ Two requirements: __Mongodb__ and __Python__.
 	leselys init leselys.ini
 	leselys adduser leselys.ini
 	leselys serve leselys.ini
-
+	# In another terminal
 	leselys worker leselys.ini
 
 Open your browser at ``http://localhost:5000``.
