@@ -5,7 +5,7 @@ I'm Leselys, your very elegant RSS reader.
 
 No `bullshit apps`_ for Android, iPhone, etc. Just a responsive design and for every device.
 
-Leselys is Heroku ready. Tere is a `demo here`_ (demo/demo).
+Leselys is Heroku ready. There is a `demo here`_ (demo/demo).
 
 Installation
 ------------
