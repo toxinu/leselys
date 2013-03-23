@@ -156,3 +156,10 @@ def export_to_opml():
 
     return header + body + footer
 
+def refresh_all():
+    from leselys.reader import Refresher
+    feeds = leselys.core.storage.get_feeds()
+    for feed in feeds:
+        print(" :: %s" % feed['title'])
+        refresher = Refresher(feed)
+        refresher.start()

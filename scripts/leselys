@@ -16,6 +16,7 @@ Usage:
   leselys (adduser|deluser|passwd) <path>
   leselys init <path>
   leselys worker <path> [--celery-config=<path>]
+  leselys refresh <path>
   leselys -h | --help
   leselys -v | --version
 
@@ -83,3 +84,9 @@ type = memory
       from leselys import worker
       args = [arg for arg in sys.argv if arg != config_path]
       worker.run(config_path, args)
+      sys.exit(0)
+
+    if args.get('refresh'):
+      from leselys.helpers import refresh_all
+      refresh_all()
+      sys.exit(0)
