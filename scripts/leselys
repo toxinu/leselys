@@ -3,41 +3,41 @@
 import sys
 import os
 import leselys
-import ConfigParser
 
 from docopt import docopt
 from leselys import core
+from leselys import worker
 from leselys import accounts
-
-from leselys.backends.storage import _load_storage
-from leselys.backends.session import _load_session
 
 doc = """Leselys is a Web Interface for Leselys.
 
 Usage:
-  leselys serve --config=<path> [--host=<address>] [--port=<port>] [--debug]
-  leselys (adduser|deluser|passwd) --config=<path>
-  leselys init --config=<path>
+  leselys serve <path> [--host=<address>] [--port=<port>] [--debug]
+  leselys (adduser|deluser|passwd) <path>
+  leselys init <path>
+  leselys worker <path> [--celery-config=<path>]
   leselys -h | --help
   leselys -v | --version
 
 Options:
   --host=<address>    Address to bind webserver on [default: 127.0.0.1]
   --port=<port>       Port to listen for webserver [default: 5000]
-  --config=<path>     Path to configuration file
   --debug             Enable Debug mode for Flask [default: false]
   -h --help           Show help
   -v --version        Show version
+
+
+ - <path> is configuration file path.
 
 """
 
 if __name__ == '__main__':
     args = docopt(doc, version=leselys.__version__)
 
-    config_path = args.get('--config')
+    config_path = args.get('<path>')
     if args.get('init'):
         if not os.path.exists(config_path):
-            with open(args.get('--config'), 'w') as config:
+            with open(args.get('<path>'), 'w') as config:
                 config_default = """[webserver]
 host = 0.0.0.0
 port = 5000
@@ -60,64 +60,10 @@ mode = multi
             print('Error: "%s" file already exists.' % config_path)
             sys.exit(1)
 
-    config = ConfigParser.ConfigParser()
 
-    if not os.path.exists(args.get('--config')):
-        print('Error: "%s" file not exists.' % config_path)
-        sys.exit(1)
-
-    config.read(config_path)
-
-    if args.get('serve'):
-        # Defaults
-        core.host = '127.0.0.1'
-        core.port = 5000
-        core.debug = False
-
-        if config.has_section('webserver') and config.get('webserver', 'host'):
-            core.host = config.get('webserver', 'host')
-        if config.has_section('webserver') and config.get('webserver', 'port'):
-            core.port = config.get('webserver', 'port')
-        if config.has_section('webserver') and config.get('webserver', 'debug'):
-            if config.get('webserver', 'debug') in ['True', 'true']:
-                core.debug = True
-            else:
-                core.debug = False
-        core.host = core.host or args.get('--host')
-        core.port = core.port or args.get('--port')
-        core.debug = core.debug or args.get('--debug')
-
-
-    if not config.has_section('storage'):
-        print('Missing storage section in configuration file')
-        sys.exit(1)
-    if not config.get('storage', 'type'):
-        print('Missing type setting in storage section in configuration file')
-        sys.exit(1)
-    if not config.has_section('session'):
-        config.add_section('session')
-        config.set('session', 'type', 'memory')
-
-    # Create storage
-    storage_settings = {}
-    for item in config.items('storage'):
-        storage_settings[item[0]] = item[1]
-    del storage_settings['type']
-
-    storage_module = _load_storage(config.get('storage', 'type'))
-    core.load_storage(storage_module, storage_settings)
-
-    # Create session
-    session_settings = {}
-    for item in config.items('session'):
-        session_settings[item[0]] = item[1]
-    del session_settings['type']
-
-    session_module = _load_session(config.get('session', 'type'))
-    core.session = session_module
-    core.session_settings = session_settings
+    core.load_config(config_path, args)
+    core.load_storage()
     core.load_session()
-
     if args.get('serve'):
         core.run()
     if args.get('adduser'):
@@ -126,3 +72,8 @@ mode = multi
         accounts.del_user(core.storage)
     if args.get('passwd'):
         accounts.update_password(core.storage)
+
+    if args.get('worker'):
+      from leselys import worker
+      args = [arg for arg in sys.argv if arg != config_path]
+      worker.run(config_path, args)
