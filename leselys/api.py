@@ -26,6 +26,16 @@ signer = leselys.core.signer
 # API
 #######################################################################
 
+# Get unreaded counters
+@app.route('/api/counters')
+@login_required
+@cached(10)
+def get_counters():
+    feeds = reader.get_feeds()
+    res = []
+    for feed in feeds:
+        res.append((feed['id'], feed['counter']))
+    return jsonify(success=True, content=res)
 
 # Add feed
 @app.route('/api/add', methods=['POST'])
