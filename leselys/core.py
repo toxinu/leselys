@@ -57,6 +57,15 @@ class Core(object):
             self.config.add_section('session')
             self.config.set('session', 'type', 'memory')
 
+        if not self.config.has_section('worker'):
+            print('Missing worker section in configuration file')
+            sys.exit(1)
+        if not self.config.get('worker', 'broker'):
+            print('Missing broker settion in worker section in configuration file')
+            sys.exit(1)
+        if not self.config.has_option('worker', 'interval'):
+            self.config.set('worker', 'interval', '10')
+
     def load_storage(self):
         for item in self.config.items('storage'):
             self.storage_settings[item[0]] = item[1]

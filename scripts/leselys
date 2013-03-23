@@ -44,11 +44,17 @@ port = 5000
 debug = false
 
 [storage]
-type = sofart
-path = /tmp/leselys.db
+type = mongodb
+database = mongodb://localhost:27017/leselys
 mode = multi
 
-#[sessions]
+[worker]
+broker = mongodb://localhost:27017/leselys
+interval = 10 # In minutes
+
+[session]
+type = memory
+
 #type = redis
 #host = localhost
 #port = 6379
