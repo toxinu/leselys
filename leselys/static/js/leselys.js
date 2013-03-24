@@ -315,6 +315,9 @@ function initAddFeed() {
                      'content': addFeed.outerHTML,
                      'placement': "bottom"}
   );
+  $("#add").on('click', function(){
+    $("#urlFeed").focus();
+  });
 }
 
 function initPage() {
