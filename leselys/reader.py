@@ -90,6 +90,7 @@ class Refresher(threading.Thread):
         self.data = feedparser.parse(self.feed['url'])
 
         local_update = get_datetime(self.feed['last_update'])
+        remote_update = False
         if self.data.feed.get('updated_parsed'):
             remote_update = get_datetime(self.data.feed.updated_parsed)
             remote_update_raw = get_dicttime(self.data.feed.updated_parsed)
