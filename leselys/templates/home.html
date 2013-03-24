@@ -58,7 +58,10 @@
         ) 
     }
     $(document).ready(function(){
-      initAddFeed();
+        initAddFeed();
+        $("#add").on('click', function(){
+            $("#urlFeed").focus();
+        });
     });
 </script>
 {% endblock %}
