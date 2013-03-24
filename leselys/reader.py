@@ -101,12 +101,12 @@ class Refresher(threading.Thread):
                     remote_update_raw = get_dicttime(self.data.updated_parsed)
         if self.data.feed.get('published_parsed'):
             if remote_update:
-                if get_datetime(self.data.feed.published_parsed):
+                if get_datetime(self.data.feed.published_parsed) > remote_update:
                     remote_update = get_datetime(self.data.feed.published_parsed)
                     remote_update_raw = get_dicttime(self.data.feed.published_parsed)
         if self.data.get('published_parsed'):
             if remote_update:
-                if get_datetime(self.data.published_parsed):
+                if get_datetime(self.data.published_parsed > remote_update):
                     remote_update = get_datetime(self.data.published_parsed)
                     remote_update_raw = get_dicttime(self.data.published_parsed)
 
