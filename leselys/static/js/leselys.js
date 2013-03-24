@@ -300,6 +300,9 @@ function refreshCounters() {
     $.each(data.content, function(i, feed) {
       var feedId = feed[0];
       var feedCounter = feed[1];
+      if (feedCounter > 1) {
+        $(document.getElementById(feedId).getElementsByClassName('badge')[0]).show();
+      }
       document.getElementById(feedId).getElementsByClassName('badge')[0].innerHTML = feedCounter;
     });
   });
