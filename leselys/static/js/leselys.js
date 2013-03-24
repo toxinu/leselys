@@ -213,8 +213,20 @@ function readStory(storyId, ignore) {
     if (data.content.last_update == false) {
       var published = "No date";
     } else {
+      // Minutes
+      if (data.content.last_update['min'].toString().length == 1) {
+        var minutes = "0" + data.content.last_update['min'];
+      } else {
+        var minutes = data.content.last_update['min'];
+      }
+      // Hours
+      if (data.content.last_update['hour'].toString().length == 1) {
+        var hours = "0" + data.content.last_update['hour'];
+      } else {
+        var hours = data.content.last_update['hour'];
+      }
       var published = data.content.last_update['year'] + '-' + data.content.last_update['month'] +
-                    '-' + data.content.last_update['day'];
+                    '-' + data.content.last_update['day'] + "  " + hours + ":" + minutes;
     }
 
     var feedId = data.content.feed_id;
