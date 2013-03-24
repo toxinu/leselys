@@ -1,5 +1,5 @@
 <div class="sidebar-nav">
-  <ul id="menu" class="nav nav-list sidenav-affix" data-spy="affix">
+  <ul id="menu" class="nav nav-list sidebar-nav-fixed sidenav-affix" data-spy="affix">
     <li class="divider"></li>
     <center>
       <li id="icons">
@@ -27,11 +27,54 @@
     {% else %}
       <li class="nav-header feeds-list-title">Feeds</li>
       {% for feed in feeds %}
-        {% if feed.counter > 0 %}
-          <li class="feed" id="{{ feed.id }}"><a onClick="viewFeed(&quot;{{ feed.id }}&quot;)" href="#{{ feed.id }}">{{ feed.title }} <span class="badge badge-inverse unread-counter">{{ feed.counter }}</span></a></li>
-        {% else %}
-          <li class="feed" id="{{ feed.id }}"><a onClick="viewFeed(&quot;{{ feed.id }}&quot;)" href="#{{ feed.id }}">{{ feed.title }} <span style="display: none" class="badge badge-inverse unread-counter">{{ feed.counter }}</span></a></li>
-        {% endif %}
+        
+          <li class="feed" id="{{ feed.id }}">
+
+              <div class="btn-group btn-group-right">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                  <span id="feed-caret" class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li>
+                      <a onClick="setFeedSetting(&quot;{{ feed.id }}&quot;, &quot;order&quot;, &quot;published&quot;)" href="#">
+                      {% if feed.ordering == 'published' %}
+                        <i id="feed-ordering-published" class="icon-ok"></i>
+                      {% else %}
+                        <i id="feed-ordering-published"  class="icon-empty"></i>
+                      {% endif %}
+
+                      Sort by published</a></li>
+                    <li>
+                      <a onClick="setFeedSetting(&quot;{{ feed.id }}&quot;, &quot;order&quot;, &quot;normal&quot;)" href="#">
+
+                      {% if feed.ordering == 'normal' %}
+                        <i id="feed-ordering-normal" class="icon-ok"></i>
+                      {% else %}
+                        <i id="feed-ordering-normal" class="icon-empty"></i>
+                      {% endif %}
+                      Sort by unread</a>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                      <a onClick="deleteFeed(&quot;{{ feed.id }}&quot;)" href="#">
+                      <i class="icon-empty"></i>Remove feed</a>
+                    </li>
+                </ul>
+              </div>
+      
+              <a  onClick="viewFeed(&quot;{{ feed.id }}&quot;)" href="/#{{ feed.id }}">
+                <div id="feed-link" class="ellipsis">
+                  {{ feed.title }} 
+                </div>
+
+                {% if feed.counter > 0 %}
+                  <span class="badge badge-inverse unread-counter">{{ feed.counter }}</span>
+                {% else %}
+                  <span style="display: none" class="badge badge-inverse unread-counter">{{ feed.counter }}</span>
+                {% endif %}
+              </a>
+          </li>
+
       {% endfor %}
       <li class="empty-feed-list" style="display: none"><center><em>Add your first feed with the little cross icon.</em></center></li>
     {% endif %}

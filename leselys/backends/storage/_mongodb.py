@@ -41,7 +41,12 @@ class Mongodb(Storage):
         self.remove_user(username)
         return str(self.db.users.save({'username': username,
                                        'password': password}))
-
+    def update_setting(self, key, value):
+        setting = self.db.settings.find_one().get(key, False)
+        if setting:
+            self.db.settings.remove(setting['_id'])
+            self.db.settings.save({key: value})
+            
     def set_setting(self, key, value):
         return str(self.db.settings.save({key: value}))
 
