@@ -33,6 +33,12 @@ class Sofart(Storage):
     def set_password(self, username, password):
         return self.db.users.save({'username': username, 'password': password})
 
+    def update_setting(self, key, value):
+        setting = self.db.settings.find_one({key : {'$exists': True}})
+        if setting:
+            self.db.settings.remove(setting['_id'])
+            self.db.settings.save({key: value})
+        
     def set_setting(self, key, value):
         self.db.settings.save({key: value})
 
