@@ -36,7 +36,7 @@
                 </a>
                 <ul class="dropdown-menu">
                     <li>
-                      <a onClick="setFeedSetting(&quot;{{ feed.id }}&quot;, &quot;order&quot;, &quot;published&quot;)" href="#">
+                      <a onClick="setFeedSetting(&quot;{{ feed.id }}&quot;, &quot;ordering&quot;, &quot;published&quot;)" href="#">
                       {% if feed.ordering == 'published' %}
                         <i id="feed-ordering-published" class="icon-ok"></i>
                       {% else %}
@@ -45,7 +45,7 @@
 
                       Sort by published</a></li>
                     <li>
-                      <a onClick="setFeedSetting(&quot;{{ feed.id }}&quot;, &quot;order&quot;, &quot;normal&quot;)" href="#">
+                      <a onClick="setFeedSetting(&quot;{{ feed.id }}&quot;, &quot;ordering&quot;, &quot;normal&quot;)" href="#">
 
                       {% if feed.ordering == 'normal' %}
                         <i id="feed-ordering-normal" class="icon-ok"></i>

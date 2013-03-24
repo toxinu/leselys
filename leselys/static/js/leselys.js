@@ -289,7 +289,7 @@ function loadTheme(theme, callback) {
 }
 
 function setFeedSetting(feedId, settingKey, settingValue) {
-  $.post("/api/settings",  {key: feedId+'-'+settingKey , value:settingValue}, function(data) {
+  $.post("/api/feedsettings",  {feed_id: feedId, key:settingKey , value:settingValue}, function(data) {
       if (data.success == true) {
         viewFeed(feedId);
 

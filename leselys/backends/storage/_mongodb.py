@@ -41,12 +41,7 @@ class Mongodb(Storage):
         self.remove_user(username)
         return str(self.db.users.save({'username': username,
                                        'password': password}))
-    def update_setting(self, key, value):
-        setting = self.db.settings.find_one().get(key, False)
-        if setting:
-            self.db.settings.remove(setting['_id'])
-            self.db.settings.save({key: value})
-            
+
     def set_setting(self, key, value):
         return str(self.db.settings.save({key: value}))
 
@@ -58,7 +53,7 @@ class Mongodb(Storage):
         else:
             setting = self.db.settings.find_one()[key]
             return setting
-
+    
     def get_settings(self):
         settings = {}
         for setting in self.db.settings.find():
@@ -66,6 +61,16 @@ class Mongodb(Storage):
         if settings:
             del settings['_id']
         return settings
+    
+    def add_feed_setting(self, feed_id, setting_type, setting_value):
+        setting = self.db.feedsettings.find_one({'feed_id': feed_id, 'type':setting_type})
+        if setting:
+            self.db.feedsettings.remove(setting['_id'])
+        self.db.feedsettings.save({'feed_id':feed_id, 'type': setting_type, 'setting':setting_value})
+            
+    def get_feed_setting(self, feed_id, setting_type):
+        feedsetting = self.db.feedsettings.find_one({'feed_id': feed_id, 'type':setting_type})
+        return feedsetting
 
     def add_feed(self, content):
         return str(self.db.feeds.save(content))

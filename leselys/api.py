@@ -161,6 +161,16 @@ def set_theme():
 def change_setting():
     setting = request.form['key']
     value = request.form['value']
+    #TODO: setting
     storage.update_setting(setting, value)
     return jsonify(success=True, output="%s setting have been set at %s" % (setting, value))
 
+# Set feedsettings
+@app.route('/api/feedsettings', methods=['POST'])
+@login_required
+def change__feed_setting():
+    feed_id = request.form['feed_id']
+    key = request.form['key']
+    value = request.form['value']
+    storage.add_feed_setting(feed_id, key, value)
+    return jsonify(success=True, output="%s setting have been set at %s" % (key, value))

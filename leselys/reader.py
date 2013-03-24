@@ -204,12 +204,12 @@ class Reader(object):
         return {"success": True, "output": "Feed removed"}
 
     def get(self, feed_id, order_type='normal'):
-        setting_order_type = storage.get_setting(feed_id+'-order')
+        setting_order_type = storage.get_feed_setting(feed_id, 'ordering')
         if not setting_order_type:
-            storage.set_setting(feed_id+'-order', 'normal')
+            storage.add_feed_setting(feed_id, 'ordering', 'normal')
             order_type = 'normal'
         else:
-            order_type = setting_order_type
+            order_type = setting_order_type['setting']
         
         res = []
         entries = []
@@ -254,9 +254,13 @@ class Reader(object):
     def get_feeds(self):
         feeds = []
         for feed in storage.get_feeds():
-            ordering = storage.get_setting(feed['_id']+'-order')
+            ordering = storage.get_feed_setting(feed['_id'], 'ordering')
             if not ordering:
-                storage.set_setting(feed['_id']+'-order', 'normal')
+                storage.add_feed_setting(feed['_id'], 'ordering', 'normal')
+                ordering = storage.get_feed_setting(feed['_id'], 'ordering')
+            
+            ordering = ordering['setting']
+                
             feeds.append({'title': feed['title'],
                           'id': feed['_id'],
                           'url': feed['url'],
