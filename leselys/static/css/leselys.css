@@ -82,6 +82,9 @@ li a [class^="icon-"] {
   #content .welcome {
     display: none;
   }
+  #feed-caret{
+    display: none;
+  }
 }
 
 div#feed-link {
