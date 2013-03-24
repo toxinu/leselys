@@ -160,6 +160,6 @@ def refresh_all():
     from leselys.reader import Refresher
     feeds = leselys.core.storage.get_feeds()
     for feed in feeds:
-        print(" :: %s" % feed['title'])
+        print(" :: %s" % feed['title'].encode('utf-8'))
         refresher = Refresher(feed)
         refresher.start()
