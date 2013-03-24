@@ -55,7 +55,7 @@ All Heroku dependencies like ``Pymongo``, ``gunicorn`` and ``redis`` are in ``re
 	# Add "sh heroku.sh && leselys refresh heroku.ini" job
 	git push heroku master
 
-Don't forget to create a Leselys account with ``heroku run "bash heroku.sh && leselys adduser --config heroku.ini"``.
+Don't forget to create a Leselys account with ``heroku run "bash heroku.sh && leselys adduser heroku.ini"``.
 
 Import your Google Reader OPML file right now!
 
