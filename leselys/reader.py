@@ -107,7 +107,7 @@ class Refresher(threading.Thread):
             remote_update_raw = get_dicttime(remote_update.timetuple())
 
         if remote_update > local_update:
-            print(':: %s is outdated' % self.feed['title'])
+            print(':: %s is outdated' % self.feed['title'].encode('utf-8'))
             readed = []
             for entry in storage.get_stories(self.feed['_id']):
                 if entry['read']:
