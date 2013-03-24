@@ -1,3 +1,18 @@
--e . 
-redis
-gunicorn
+Flask==0.9
+Jinja2==2.6
+Werkzeug==0.8.3
+amqp==1.0.10
+anyjson==0.3.3
+billiard==2.7.3.23
+celery==3.0.17
+docopt==0.6.1
+feedparser==5.1.3
+gunicorn==0.17.2
+isit==0.2.9
+itsdangerous==0.17
+kombu==2.5.8
+lxml==3.1.0
+python-dateutil==1.5
+redis==2.7.2
+requests==1.1.0
+sofart==0.3.4
