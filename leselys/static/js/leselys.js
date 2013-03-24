@@ -281,7 +281,7 @@ function loadTheme(theme, callback) {
 }
 
 function refreshCounters() {
-  $.getJSON('/api/counters'), function(data) {
+  $.getJSON('/api/counters', function(data) {
     if (data.success == false) {
       if (data.callback == "/api/login") { window.location = "/login" }
     }
@@ -290,7 +290,7 @@ function refreshCounters() {
       var feedCounter = feed[1];
       document.getElementById(feedId).getElementsByClassName('badge')[0].innerHTML = feedCounter;
     });
-  }
+  });
 }
 
 function initAddFeed() {
