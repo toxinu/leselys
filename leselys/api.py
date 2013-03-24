@@ -159,7 +159,8 @@ def set_theme():
 @app.route('/api/settings', methods=['POST'])
 @login_required
 def change_setting():
-    key = request.form['key']
+    setting = request.form['key']
     value = request.form['value']
-    storage.set_setting(setting, value)
+    storage.update_setting(setting, value)
     return jsonify(success=True, output="%s setting have been set at %s" % (setting, value))
+

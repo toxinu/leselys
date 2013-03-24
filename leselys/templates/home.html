@@ -1,10 +1,10 @@
 {% extends "layout.html" %}
 {% block body %}	
 <div class="row-fluid">
-  <div class="span2">
+  <div class="span2 sidebar-nav-fixed">
     {% include 'sidebar.html' %}
   </div>
-  <div id="content" class="span10">
+  <div id="content" class="span9 span-fixed-sidebar">
     <div class="hero-unit welcome">
     	<h1>Hi,</h1>
 	      <p>I'm Leselys, your very elegant RSS reader.</p>
@@ -58,7 +58,10 @@
         ) 
     }
     $(document).ready(function(){
-      initAddFeed();
+        initAddFeed();
+        $("#add").on('click', function(){
+            $("#urlFeed").focus();
+        });
     });
 </script>
 {% endblock %}

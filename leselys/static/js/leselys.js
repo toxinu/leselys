@@ -174,6 +174,13 @@ function viewFeed(feedId) {
       var storyAccordion = getStoryAccordionTemplate();
       var storyRead = item.read;
 
+      if (item.last_update == false) {
+        var published = "No date";
+      } else {
+        var date = moment([item.last_update['year'], item.last_update['month'], item.last_update['day'], item.last_update['hour'], item.last_update['min'], 0, 0]);
+        var published = date.format("YYYY-MM-DD HH:mm");
+      }
+
       storyAccordion.id = storyId;
       storyAccordion.getElementsByClassName("accordion-toggle")[0].onclick = 'readStory("' + storyId + '")';
       storyAccordion.getElementsByClassName("accordion-toggle")[0].setAttribute("onclick", 'readStory("' + storyId + '")');
@@ -213,8 +220,9 @@ function readStory(storyId, ignore) {
     if (data.content.last_update == false) {
       var published = "No date";
     } else {
-      var published = data.content.last_update['year'] + '-' + data.content.last_update['month'] +
-                    '-' + data.content.last_update['day'];
+      var date = moment([data.content.last_update['year'], data.content.last_update['month'], 
+          data.content.last_update['day'], data.content.last_update['hour'], data.content.last_update['min'], 0, 0]);
+      var published = date.format("YYYY-MM-DD HH:mm");
     }
 
     var feedId = data.content.feed_id;
@@ -278,6 +286,22 @@ function loadTheme(theme, callback) {
   $.post('/api/settings/theme', {theme: theme}, function (data) {
     window.location = "/";
   })
+}
+
+function setFeedSetting(feedId, settingKey, settingValue) {
+  $.post("/api/settings",  {key: feedId+'-'+settingKey , value:settingValue}, function(data) {
+      if (data.success == true) {
+        viewFeed(feedId);
+
+        if(settingValue == 'normal'){
+          $('ul#menu li#' + feedId).find('#feed-ordering-published').removeClass().addClass('icon-empty');
+          $('ul#menu li#' + feedId).find('#feed-ordering-normal').removeClass().addClass('icon-ok');
+        }else if(settingValue == 'published'){
+          $('ul#menu li#' + feedId).find('#feed-ordering-published').removeClass().addClass('icon-ok');
+          $('ul#menu li#' + feedId).find('#feed-ordering-normal').removeClass().addClass('icon-empty');
+        }
+      }
+  });
 }
 
 function refreshCounters() {
