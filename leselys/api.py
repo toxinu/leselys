@@ -81,6 +81,20 @@ def resfresh(feed_id):
     return jsonify(reader.refresh(feed_id))
 
 
+# Mark all as read
+@app.route('/api/all_read/<feed_id>')
+@login_required
+def all_read(feed_id):
+    return jsonify(reader.mark_all_read(feed_id))
+
+
+# Mark all as unread
+@app.route('/api/all_unread/<feed_id>')
+@login_required
+def all_unread(feed_id):
+    return jsonify(reader.mark_all_unread(feed_id))
+
+
 # Import opml
 @app.route('/api/import/opml', methods=['POST'])
 @login_required

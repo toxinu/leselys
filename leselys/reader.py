@@ -93,16 +93,23 @@ class Refresher(threading.Thread):
         if self.data.feed.get('updated_parsed'):
             remote_update = get_datetime(self.data.feed.updated_parsed)
             remote_update_raw = get_dicttime(self.data.feed.updated_parsed)
-        elif self.data.get('updated_parsed'):
-            remote_update = get_datetime(self.data.updated_parsed)
-            remote_update_raw = get_dicttime(self.data.updated_parsed)
-        elif self.data.feed.get('published_parsed'):
-            remote_update = get_datetime(self.data.feed.published_parsed)
-            remote_update_raw = get_dicttime(self.data.feed.published_parsed)
-        elif self.data.get('published_parsed'):
-            remote_update = get_datetime(self.data.published_parsed)
-            remote_update_raw = get_dicttime(self.data.published_parsed)
-        else:
+        if self.data.get('updated_parsed'):
+            if remote_update:
+                if get_datetime(self.data.updated_parsed) > remote_update:
+                    remote_update = get_datetime(self.data.updated_parsed)
+                    remote_update_raw = get_dicttime(self.data.updated_parsed)
+        if self.data.feed.get('published_parsed'):
+            if remote_update:
+                if get_datetime(self.data.feed.published_parsed):
+                    remote_update = get_datetime(self.data.feed.published_parsed)
+                    remote_update_raw = get_dicttime(self.data.feed.published_parsed)
+        if self.data.get('published_parsed'):
+            if remote_update:
+                if get_datetime(self.data.published_parsed):
+                    remote_update = get_datetime(self.data.published_parsed)
+                    remote_update_raw = get_dicttime(self.data.published_parsed)
+
+        if not remote_update:
             remote_update = datetime.datetime.now()
             remote_update_raw = get_dicttime(remote_update.timetuple())
 
@@ -249,6 +256,24 @@ class Reader(object):
 
     def get_unread(self, feed_id):
         return len(storage.get_feed_unread(feed_id))
+
+    def mark_all_read(self, feed_id):
+        stories = storage.get_stories(feed_id)
+        if not stories:
+            return {'success': False, "content": "Feed not found"}
+        for story in storage.get_stories(feed_id):
+            story['read'] = True
+            storage.update_story(story['_id'], copy.copy(story))
+        return {'success': True, "content": "All feed stories updated"}
+
+    def mark_all_unread(self, feed_id):
+        stories = storage.get_stories(feed_id)
+        if not stories:
+            return {'success': False, "content": "Feed not found"}
+        for story in storage.get_stories(feed_id):
+            story['read'] = False
+            storage.update_story(story['_id'], copy.copy(story))
+        return {'success': True, "content": "All feed stories updated"}
 
     def read(self, story_id):
         """
