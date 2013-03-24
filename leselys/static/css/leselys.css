@@ -111,6 +111,9 @@ div#feed-link {
   margin-right: 5px;
 }
 
+.nav .dropdown-toggle .caret {
+  margin-top: 11px;
+}
 
 
 @media (min-width: 768px) { 
