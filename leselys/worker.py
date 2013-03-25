@@ -38,7 +38,7 @@ def run(config_path, args):
         },
         'retention-job': {
             'task': 'leselys.worker.run_retention',
-            'schedule': timedelta(seconds=10),
+            'schedule': timedelta(days=1),
             'args': (retention,)
         }
     }
