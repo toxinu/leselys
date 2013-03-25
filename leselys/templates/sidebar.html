@@ -1,5 +1,5 @@
 <div class="sidebar-nav">
-  <ul id="menu" class="nav nav-list sidenav-affix" data-spy="affix">
+  <ul id="menu" class="nav nav-list sidebar-nav-fixed sidenav-affix" data-spy="affix">
     <li class="divider"></li>
     <center>
       <li id="icons">
@@ -27,13 +27,131 @@
     {% else %}
       <li class="nav-header feeds-list-title">Feeds</li>
       {% for feed in feeds %}
-        {% if feed.counter > 0 %}
-          <li class="feed" id="{{ feed.id }}"><a onClick="viewFeed(&quot;{{ feed.id }}&quot;)" href="#{{ feed.id }}">{{ feed.title }} <span class="badge badge-inverse unread-counter">{{ feed.counter }}</span></a></li>
-        {% else %}
-          <li class="feed" id="{{ feed.id }}"><a onClick="viewFeed(&quot;{{ feed.id }}&quot;)" href="#{{ feed.id }}">{{ feed.title }} <span style="display: none" class="badge badge-inverse unread-counter">{{ feed.counter }}</span></a></li>
-        {% endif %}
+        
+          <li class="feed" id="{{ feed.id }}">
+
+              <div id="btn-dropdown-menu" class="btn-group btn-group-right">
+                <a id="dropdown-caret" class="dropdown-toggle" data-toggle="dropdown" href="#">
+                  <span style="display:none;" id="feed-caret" class="caret"></span>
+                </a>
+                <ul id="feed-dropdown" class="dropdown-menu">
+                    <li>
+                      <a onClick="setFeedSetting(&quot;{{ feed.id }}&quot;, &quot;ordering&quot;, &quot;published&quot;)" href="#">
+                      {% if feed.ordering == 'published' %}
+                        <i id="feed-ordering-published" class="icon-ok"></i>
+                      {% else %}
+                        <i id="feed-ordering-published"  class="icon-empty"></i>
+                      {% endif %}
+
+                      Sort by published</a></li>
+                    <li>
+                      <a onClick="setFeedSetting(&quot;{{ feed.id }}&quot;, &quot;ordering&quot;, &quot;normal&quot;)" href="#">
+
+                      {% if feed.ordering == 'normal' %}
+                        <i id="feed-ordering-normal" class="icon-ok"></i>
+                      {% else %}
+                        <i id="feed-ordering-normal" class="icon-empty"></i>
+                      {% endif %}
+                      Sort by unread</a>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                      <!--<a onClick="deleteFeed(&quot;{{ feed.id }}&quot;)" href="#">-->
+                      <a class="confirm-delete" href="#" data-id="{{ feed.id }}">
+
+                      <i class="icon-empty"></i>Remove feed</a>
+                    </li>
+                </ul>
+              </div>
+      
+              <a  onClick="viewFeed(&quot;{{ feed.id }}&quot;)" href="/#{{ feed.id }}">
+                <div id="feed-link" class="ellipsis">
+                  {{ feed.title }} 
+                </div>
+
+                {% if feed.counter > 0 %}
+                  <span class="badge badge-inverse unread-counter">{{ feed.counter }}</span>
+                {% else %}
+                  <span style="display: none" class="badge badge-inverse unread-counter">{{ feed.counter }}</span>
+                {% endif %}
+              </a>
+          </li>
+
       {% endfor %}
       <li class="empty-feed-list" style="display: none"><center><em>Add your first feed with the little cross icon.</em></center></li>
     {% endif %}
   </ul>
+
+  <div id="modal-delete-feed" class="modal hide">
+      <div class="modal-header">
+        <a href="#" data-dismiss="modal" class="close">&times;</a>
+        <h3>Delete Feed</h3>
+      </div>
+      <div class="modal-body">
+        <p>You are about to delete one feed url, this procedure is irreversible.</p>
+        <p>Do you want to proceed?</p>
+      </div>
+      <div class="modal-footer">
+        <a href="" onClick="javascript:deleteFeed(&quot;feedid&quot;)" data-dismiss="modal" class="btn danger btn-danger">Yes</a>
+        <a href="javascript:$('#modal-from-dom').modal('hide')" data-dismiss="modal" class="btn secondary">No</a>
+      </div>
+  </div>
 </div>
+
+
+<script type="text/javascript">
+    $(document).ready(function(){
+      $('.nav>li:hover, .nav>li').mouseenter(function() {
+        var menuopen = $('[data-toggle="dropdown"]').parent().hasClass('open');
+        if(!menuopen){
+          $('span#feed-caret').hide();
+        }
+        $(this).find('span#feed-caret').show(); 
+      }).mouseleave(function() {      
+        var menuopen = $(this).find('[data-toggle="dropdown"]').parent().hasClass('open');
+        if(!menuopen){
+          $(this).find('span#feed-caret').hide(); 
+        }
+      });
+
+      $('ul#menu').mouseenter(function() {
+      }).mouseleave(function() {  
+        var menuopen = $('[data-toggle="dropdown"]').parent().hasClass('open');
+        if(!menuopen){
+          $('span#feed-caret').hide();    
+        }
+      });
+
+      $(document).click(function(e) {
+        var menuopen = $('[data-toggle="dropdown"]').parent().hasClass('open');
+        if(!menuopen){
+          $('span#feed-caret').hide();
+        }
+
+        var clickedFeed = e.target.id == 'feed-link';
+        if(clickedFeed){
+          $(e.target).parent().parent().find('span#feed-caret').show(); 
+        }
+      });
+
+      $('#modal-delete-feed').bind('show', function() {
+        var id = $(this).data('id'),
+        removeBtn = $(this).find('.danger'),
+        click = removeBtn.attr('onClick');
+        removeBtn.attr('onClick', click.replace(/"([^"]*)"/g, '"' + id+'"'));
+      })
+
+      $('.confirm-delete').click(function(e) {
+          e.preventDefault();
+          var id = $(this).data('id');
+          $('#modal-delete-feed').data('id', id).modal('show');
+      });
+      $('.modal').appendTo($('body'));
+
+    });
+</script>
+
+
+
+
+

@@ -64,19 +64,3 @@ Misc
 ----
 
 Storage and session backends are Python modules, you can easily write your own. Take a look at the `MongoDB storage backend`_.
-
-Leselys automagically fetch new stories with it's refresher worker, and automagically (again), purge our stories database with it's retention task.
-
-License
--------
-
-License is `AGPL3`_. See `LICENSE`_.
-
-.. _MongoDB: http://docs.mongodb.org/manual/installation/
-.. _bullshit apps: http://tommorris.org/posts/8070
-.. _demo here: https://leselys.herokuapp.com
-.. _MongoDB storage backend: https://github.com/socketubs/leselys/blob/master/leselys/backends/_mongodb.py
-.. _Ubuntu: https://github.com/socketubs/leselys/wiki/Ubuntu
-.. _Heroku: https://github.com/socketubs/leselys/wiki/Heroku
-.. _AGPL3: http://www.gnu.org/licenses/agpl.html
-.. _LICENSE: https://raw.github.com/socketubs/leselys/master/LICENSE
