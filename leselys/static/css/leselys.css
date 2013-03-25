@@ -88,7 +88,7 @@ li a [class^="icon-"] {
 }
 
 div#feed-link {
-  width: 67%;
+  width: 65%;
   display: inline-block;
 }
 
@@ -107,7 +107,7 @@ div#feed-link {
 }
 
 .label-inverse, .badge-inverse {
-  
+  margin-left: 5px;
   margin-right: -1px;
 }
 
@@ -124,7 +124,7 @@ a#dropdown-caret{
 @media (min-width: 768px) { 
   .sidebar-nav-fixed {
     position: fixed;
-    width: 195px;
+    width: 205px;
   }
   .row-fluid > .span-fixed-sidebar {
     margin-left: 240px;
