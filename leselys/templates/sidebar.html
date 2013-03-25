@@ -57,7 +57,9 @@
                     </li>
                     <li class="divider"></li>
                     <li>
-                      <a onClick="deleteFeed(&quot;{{ feed.id }}&quot;)" href="#">
+                      <!--<a onClick="deleteFeed(&quot;{{ feed.id }}&quot;)" href="#">-->
+                      <a class="confirm-delete" href="#" data-id="{{ feed.id }}">
+
                       <i class="icon-empty"></i>Remove feed</a>
                     </li>
                 </ul>
@@ -80,6 +82,21 @@
       <li class="empty-feed-list" style="display: none"><center><em>Add your first feed with the little cross icon.</em></center></li>
     {% endif %}
   </ul>
+
+  <div id="modal-delete-feed" class="modal hide">
+      <div class="modal-header">
+        <a href="#" data-dismiss="modal" class="close">&times;</a>
+        <h3>Delete Feed</h3>
+      </div>
+      <div class="modal-body">
+        <p>You are about to delete one feed url, this procedure is irreversible.</p>
+        <p>Do you want to proceed?</p>
+      </div>
+      <div class="modal-footer">
+        <a href="" onClick="javascript:deleteFeed(&quot;feedid&quot;)" data-dismiss="modal" class="btn danger btn-danger">Yes</a>
+        <a href="javascript:$('#modal-from-dom').modal('hide')" data-dismiss="modal" class="btn secondary">No</a>
+      </div>
+  </div>
 </div>
 
 
@@ -112,6 +129,26 @@
           $('span#feed-caret').hide();
         }
       });
+
+    $('#modal-delete-feed').bind('show', function() {
+      var id = $(this).data('id'),
+      removeBtn = $(this).find('.danger'),
+      click = removeBtn.attr('onClick');
+      removeBtn.attr('onClick', click.replace('feedid', id));
+    })
+
+    $('.confirm-delete').click(function(e) {
+        e.preventDefault();
+        var id = $(this).data('id');
+        $('#modal-delete-feed').data('id', id).modal('show');
+    });
+
+    $('.modal').appendTo($('body'));
+
     });
 </script>
+
+
+
+
 
