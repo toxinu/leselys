@@ -96,9 +96,7 @@ function viewSettings() {
   $.get('/settings?jsonify=true', function(data) {
     if (data.success) {
       var content = $(data.content).find('#content');
-      var sidebar = $(data.content).find('#menu')
       document.getElementById("content").innerHTML = content.html();
-      document.getElementById("menu").innerHTML = sidebar.html()
       if (importer) {
         document.getElementById("OPMLSubmit").innerHTML = "Last import not finished...";
         document.getElementById("OPMLSubmit").className += " disabled";
@@ -290,6 +288,22 @@ function loadTheme(theme, callback) {
   $.post('/api/settings/theme', {theme: theme}, function (data) {
     window.location = "/";
   })
+}
+
+function setFeedSetting(feedId, settingKey, settingValue) {
+  $.post("/api/feedsettings",  {feed_id: feedId, key:settingKey , value:settingValue}, function(data) {
+      if (data.success == true) {
+        viewFeed(feedId);
+
+        if(settingValue == 'normal'){
+          $('ul#menu li#' + feedId).find('#feed-ordering-published').removeClass().addClass('icon-empty');
+          $('ul#menu li#' + feedId).find('#feed-ordering-normal').removeClass().addClass('icon-ok');
+        }else if(settingValue == 'published'){
+          $('ul#menu li#' + feedId).find('#feed-ordering-published').removeClass().addClass('icon-ok');
+          $('ul#menu li#' + feedId).find('#feed-ordering-normal').removeClass().addClass('icon-empty');
+        }
+      }
+  });
 }
 
 function refreshCounters() {
