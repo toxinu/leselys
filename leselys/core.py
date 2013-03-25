@@ -77,7 +77,7 @@ class Core(object):
         self.storage =  self.storage_module(**self.storage_settings)
 
     def load_session(self):
-        if self.session == "memory":
+        if self.config.get('session', 'type') == "memory":
             return
 
         for item in self.config.items('session'):

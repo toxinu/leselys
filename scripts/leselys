@@ -61,9 +61,7 @@ broker = mongodb://localhost:27017/leselys
 # Interval in minutes
 interval = 10
 # Retention in days
-retention = 30
-
-"""
+retention = 30"""
                 config.write(config_default)
                 print('Configuration file created.')
                 sys.exit(0)
