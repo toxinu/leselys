@@ -107,14 +107,19 @@ div#feed-link {
 }
 
 .label-inverse, .badge-inverse {
-  float: right;
-  margin-right: 5px;
+  
+  margin-right: -1px;
 }
 
 .nav .dropdown-toggle .caret {
   margin-top: 11px;
 }
 
+a#dropdown-caret{
+  border: none;
+  height: 10px;
+  padding: 10px;
+}
 
 @media (min-width: 768px) { 
   .sidebar-nav-fixed {
@@ -125,5 +130,3 @@ div#feed-link {
     margin-left: 240px;
   }
 }
-
-

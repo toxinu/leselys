@@ -31,8 +31,9 @@
           <li class="feed" id="{{ feed.id }}">
 
               <div class="btn-group btn-group-right">
-                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                  <span id="feed-caret" class="caret"></span>
+                <a id="dropdown-caret" class="dropdown-toggle" data-toggle="dropdown" href="#">
+                  <span style="display:none;" id="feed-caret" class="caret"></span>
+
                 </a>
                 <ul class="dropdown-menu">
                     <li>
@@ -80,3 +81,15 @@
     {% endif %}
   </ul>
 </div>
+
+
+<script type="text/javascript">
+    $(document).ready(function(){
+      $('.nav>li:hover, .nav>li').mouseenter(function() {
+          $(this).find('span#feed-caret').show(); 
+      }).mouseleave(function() {      
+          $(this).find('span#feed-caret').hide();
+      });
+    });
+</script>
+
