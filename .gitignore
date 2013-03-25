@@ -35,10 +35,12 @@ nosetests.xml
 .pydevproject
 
 leselys.db
+tests
 venv
 virtualenv
 *.ini
 tools
+.settings/
 
 requirements.txt
 *.db

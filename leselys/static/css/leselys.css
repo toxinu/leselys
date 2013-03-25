@@ -1,5 +1,5 @@
 .sidenav-affix {
-    width: 13%;
+    width: 14%;
   }
 body {
   padding-top: 15px;
@@ -28,29 +28,29 @@ li a [class^="icon-"] {
   background-color: #f5f5f5;
 }
 
-      .form-signin {
-        max-width: 300px;
-        padding: 19px 29px 29px;
-        margin: 0 auto 20px;
-        background-color: #fff;
-        border: 1px solid #e5e5e5;
-        -webkit-border-radius: 5px;
-           -moz-border-radius: 5px;
-                border-radius: 5px;
-        -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
-           -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
-                box-shadow: 0 1px 2px rgba(0,0,0,.05);
-      }
-      .form-signin .form-signin-heading,
-      .form-signin .checkbox {
-        margin-bottom: 10px;
-      }
-      .form-signin input[type="text"],
-      .form-signin input[type="password"] {
-        font-size: 16px;
-        height: auto;
-        margin-bottom: 15px;
-        padding: 7px 9px;
+.form-signin {
+  max-width: 300px;
+  padding: 19px 29px 29px;
+  margin: 0 auto 20px;
+  background-color: #fff;
+  border: 1px solid #e5e5e5;
+  -webkit-border-radius: 5px;
+     -moz-border-radius: 5px;
+          border-radius: 5px;
+  -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+     -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+          box-shadow: 0 1px 2px rgba(0,0,0,.05);
+}
+.form-signin .form-signin-heading,
+.form-signin .checkbox {
+  margin-bottom: 10px;
+}
+.form-signin input[type="text"],
+.form-signin input[type="password"] {
+  font-size: 16px;
+  height: auto;
+  margin-bottom: 15px;
+  padding: 7px 9px;
 }
 @media handheld, only screen and (max-width: 900px) {
   .sidenav-affix {
@@ -82,4 +82,53 @@ li a [class^="icon-"] {
   #content .welcome {
     display: none;
   }
+  #btn-dropdown-menu{
+    display: none;
+  }
 }
+
+div#feed-link {
+  width: 65%;
+  display: inline-block;
+}
+
+.ellipsis {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.btn-group-right {
+  float: right;
+}
+
+.accordion-body{
+  position: initial;
+}
+
+.label-inverse, .badge-inverse {
+  margin-left: 5px;
+  margin-right: -1px;
+}
+
+.nav .dropdown-toggle .caret {
+  margin-top: 11px;
+}
+
+a#dropdown-caret{
+  border: none;
+  height: 10px;
+  padding: 10px;
+}
+
+@media (min-width: 768px) { 
+  .sidebar-nav-fixed {
+    position: fixed;
+    width: 205px;
+  }
+  .row-fluid > .span-fixed-sidebar {
+    margin-left: 240px;
+  }
+}
+
+.hide {display: none;}
