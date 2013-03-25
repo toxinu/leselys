@@ -82,7 +82,7 @@ li a [class^="icon-"] {
   #content .welcome {
     display: none;
   }
-  #feed-caret{
+  #btn-dropdown-menu{
     display: none;
   }
 }
