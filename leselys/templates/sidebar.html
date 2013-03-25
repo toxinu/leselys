@@ -122,10 +122,15 @@
         }
       });
 
-      $(document).click(function(clicked) {
+      $(document).click(function(e) {
         var menuopen = $('[data-toggle="dropdown"]').parent().hasClass('open');
-        if(!menuopen ){
+        if(!menuopen){
           $('span#feed-caret').hide();
+        }
+
+        var clickedFeed = e.target.id == 'feed-link';
+        if(clickedFeed){
+          $(e.target).parent().parent().find('span#feed-caret').show(); 
         }
       });
 
