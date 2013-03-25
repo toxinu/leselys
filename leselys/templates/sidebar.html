@@ -33,7 +33,6 @@
               <div class="btn-group btn-group-right">
                 <a id="dropdown-caret" class="dropdown-toggle" data-toggle="dropdown" href="#">
                   <span style="display:none;" id="feed-caret" class="caret"></span>
-
                 </a>
                 <ul id="feed-dropdown" class="dropdown-menu">
                     <li>
@@ -134,7 +133,7 @@
       var id = $(this).data('id'),
       removeBtn = $(this).find('.danger'),
       click = removeBtn.attr('onClick');
-      removeBtn.attr('onClick', click.replace('feedid', id));
+      removeBtn.attr('onClick', click.replace(/"([^"]*)"/g, '"' + id+'"'));
     })
 
     $('.confirm-delete').click(function(e) {
