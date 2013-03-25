@@ -17,20 +17,20 @@ Two requirements: **Mongodb** and **Python**.
 
 In order to install leselys you'll need some dependencies: ::
 
-	apt-get install build-essential python-dev python-pip
-	apt-get install libxslt1-dev libxml2-dev python-libxml2 python-libxslt1
+  apt-get install build-essential python-dev python-pip
+  apt-get install libxslt1-dev libxml2-dev python-libxml2 python-libxslt1
 
 And install your `MongoDB`_.
 
 
 ::
 
-	pip install leselys
-	leselys init leselys.ini
-	leselys adduser leselys.ini
-	leselys serve leselys.ini
-	# In another terminal
-	leselys worker leselys.ini
+  pip install leselys
+  leselys init leselys.ini
+  leselys adduser leselys.ini
+  leselys serve leselys.ini
+  # In another terminal
+  leselys worker leselys.ini
 
 Open your browser at ``http://localhost:5000``.
 
@@ -45,15 +45,16 @@ All Heroku dependencies like ``Pymongo``, ``gunicorn`` and ``redis`` are in ``re
 
 ::
 
-	git clone git@github.com:socketubs/leselys.git
-	cd leselys
-	heroku create
-	heroku addons:add mongohq:sandbox
-	heroku addons:add redistogo:nano
-	heroku addons:add scheduler:standard
-	heroku addons:open scheduler
-	# Add "sh heroku.sh && leselys refresh heroku.ini" job
-	git push heroku master
+  git clone git@github.com:socketubs/leselys.git
+  cd leselys
+  heroku create
+  heroku addons:add mongohq:sandbox
+  heroku addons:add redistogo:nano
+  heroku addons:add scheduler:standard
+  heroku addons:open scheduler
+  # Add "sh heroku.sh && leselys refresh heroku.ini" job every 10 minutes
+  # And "sh heroku.sh && leselys retention heroku.ini" job every day
+  git push heroku master
 
 Don't forget to create a Leselys account with ``heroku run "bash heroku.sh && leselys adduser heroku.ini"``.
 
