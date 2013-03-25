@@ -35,7 +35,6 @@ nosetests.xml
 .pydevproject
 
 leselys.db
-tests
 venv
 virtualenv
 *.ini
