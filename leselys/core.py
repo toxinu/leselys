@@ -65,6 +65,8 @@ class Core(object):
             sys.exit(1)
         if not self.config.has_option('worker', 'interval'):
             self.config.set('worker', 'interval', '10')
+        if not self.config.has_option('worker', 'retention'):
+            self.config.set('worker', 'retention', '30')
 
     def load_storage(self):
         for item in self.config.items('storage'):
@@ -77,7 +79,7 @@ class Core(object):
     def load_session(self):
         if self.session == "memory":
             return
-        
+
         for item in self.config.items('session'):
             self.session_settings[item[0]] = item[1]
         del self.session_settings['type']

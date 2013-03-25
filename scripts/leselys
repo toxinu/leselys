@@ -16,7 +16,7 @@ Usage:
   leselys (adduser|deluser|passwd) <path>
   leselys init <path>
   leselys worker <path> [--celery-config=<path>]
-  leselys refresh <path>
+  leselys [refresh|retention] <path>
   leselys -h | --help
   leselys -v | --version
 
@@ -49,16 +49,20 @@ type = mongodb
 host = mongodb://localhost:27017
 database = leselys
 
-[worker]
-broker = mongodb://localhost:27017/leselys
-interval = 10 # In minutes
-
 [session]
 type = memory
 #type = redis
 #host = localhost
 #port = 6379
 #db = 0
+
+[worker]
+broker = mongodb://localhost:27017/leselys
+# Interval in minutes
+interval = 10
+# Retention in days
+retention = 30
+
 """
                 config.write(config_default)
                 print('Configuration file created.')
@@ -89,4 +93,9 @@ type = memory
     if args.get('refresh'):
       from leselys.helpers import refresh_all
       refresh_all()
+      sys.exit(0)
+
+    if args.get('retention'):
+      from leselys.helpers import run_retention
+      run_retention(core.config.get('worker', 'retention'))
       sys.exit(0)

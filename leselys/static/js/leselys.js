@@ -326,14 +326,12 @@ function initPage() {
     e.preventDefault();
   });
 
-  // Globals
-  requests = new Array();
-  importer = false;
-
   initAddFeed()
   setInterval(refreshCounters, 120000);
 }
 
 $(document).ready(function() {
-  initPage();
+  // Globals
+  requests = new Array();
+  importer = false;
 });

@@ -154,8 +154,21 @@ def export_to_opml():
 
 def refresh_all():
     from leselys.reader import Refresher
+    print(' :: Run refresh task')
     feeds = leselys.core.storage.get_feeds()
     for feed in feeds:
-        print(" :: %s" % feed['title'].encode('utf-8'))
+        print(feed['title'].encode('utf-8'))
         refresher = Refresher(feed)
         refresher.start()
+
+def run_retention(delta_day):
+    storage = leselys.core.storage
+    print(' :: Run retention task')
+    for feed in storage.get_feeds():
+        print(feed['title'].encode('utf-8'))
+        for story in storage.get_stories(feed['_id']):
+            delta = get_datetime(story['last_update']) - datetime.datetime.now()
+            print('=> %s (%s)' % (story['_id'], delta.days))
+            if delta.days < -int(delta_day):
+                print('deleted.')
+                storage.remove_story(story['_id'])
