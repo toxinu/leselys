@@ -65,6 +65,8 @@ Misc
 
 Storage and session backends are Python modules, you can easily write your own. Take a look at the `MongoDB storage backend`_.
 
+Leselys automagically fetch new stories with it's refresher worker, and automagically (again), purge our stories database with it's retention task.
+
 License
 -------
 
