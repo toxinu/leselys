@@ -122,27 +122,26 @@
         }
       });
 
-      $(document).click(function() {
+      $(document).click(function(clicked) {
         var menuopen = $('[data-toggle="dropdown"]').parent().hasClass('open');
-        if(!menuopen){
+        if(!menuopen ){
           $('span#feed-caret').hide();
         }
       });
 
-    $('#modal-delete-feed').bind('show', function() {
-      var id = $(this).data('id'),
-      removeBtn = $(this).find('.danger'),
-      click = removeBtn.attr('onClick');
-      removeBtn.attr('onClick', click.replace(/"([^"]*)"/g, '"' + id+'"'));
-    })
+      $('#modal-delete-feed').bind('show', function() {
+        var id = $(this).data('id'),
+        removeBtn = $(this).find('.danger'),
+        click = removeBtn.attr('onClick');
+        removeBtn.attr('onClick', click.replace(/"([^"]*)"/g, '"' + id+'"'));
+      })
 
-    $('.confirm-delete').click(function(e) {
-        e.preventDefault();
-        var id = $(this).data('id');
-        $('#modal-delete-feed').data('id', id).modal('show');
-    });
-
-    $('.modal').appendTo($('body'));
+      $('.confirm-delete').click(function(e) {
+          e.preventDefault();
+          var id = $(this).data('id');
+          $('#modal-delete-feed').data('id', id).modal('show');
+      });
+      $('.modal').appendTo($('body'));
 
     });
 </script>
