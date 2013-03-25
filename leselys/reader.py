@@ -14,6 +14,7 @@ from leselys.helpers import get_datetime
 from leselys.helpers import get_dicttime
 from leselys.feed_finder import FeedFinder
 
+feedparser.USER_AGENT = "Leselys/%s +https://github.com/socketubs/leselys" % leselys.__version__
 storage = leselys.core.storage
 
 #########################################################################
