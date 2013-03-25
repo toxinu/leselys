@@ -35,7 +35,7 @@
                   <span style="display:none;" id="feed-caret" class="caret"></span>
 
                 </a>
-                <ul class="dropdown-menu">
+                <ul id="feed-dropdown" class="dropdown-menu">
                     <li>
                       <a onClick="setFeedSetting(&quot;{{ feed.id }}&quot;, &quot;ordering&quot;, &quot;published&quot;)" href="#">
                       {% if feed.ordering == 'published' %}
@@ -86,9 +86,31 @@
 <script type="text/javascript">
     $(document).ready(function(){
       $('.nav>li:hover, .nav>li').mouseenter(function() {
-          $(this).find('span#feed-caret').show(); 
+        var menuopen = $('[data-toggle="dropdown"]').parent().hasClass('open');
+        if(!menuopen){
+          $('span#feed-caret').hide();
+        }
+        $(this).find('span#feed-caret').show(); 
       }).mouseleave(function() {      
-          $(this).find('span#feed-caret').hide();
+        var menuopen = $(this).find('[data-toggle="dropdown"]').parent().hasClass('open');
+        if(!menuopen){
+          $(this).find('span#feed-caret').hide(); 
+        }
+      });
+
+      $('ul#menu').mouseenter(function() {
+      }).mouseleave(function() {  
+        var menuopen = $('[data-toggle="dropdown"]').parent().hasClass('open');
+        if(!menuopen){
+          $('span#feed-caret').hide();    
+        }
+      });
+
+      $(document).click(function() {
+        var menuopen = $('[data-toggle="dropdown"]').parent().hasClass('open');
+        if(!menuopen){
+          $('span#feed-caret').hide();
+        }
       });
     });
 </script>
