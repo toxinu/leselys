@@ -207,8 +207,8 @@ function viewFeed(feedId) {
     storyListAccordion.innerHTML = content;
     document.getElementById('content').innerHTML = storyListAccordion.outerHTML;
 
-    var feedsList = document.getElementById('menu').getElementsByTagName('a')
-    for (i=0;i < feedsList.lenght;i++) {
+    var feedsList = document.getElementById('menu').getElementsByTagName('a');
+    for (i=0;i < feedsList.length;i++) {
       feedsList[i].style.fontWeight = "normal";
     }
     document.getElementById(feedId).getElementsByTagName('a')[0].style.fontWeight = "bold";
