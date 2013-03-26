@@ -196,7 +196,7 @@ function viewFeed(feedId) {
       storyAccordion.getElementsByClassName("accordion-toggle")[0].onclick = 'readStory("' + storyId + '")';
       storyAccordion.getElementsByClassName("accordion-toggle")[0].setAttribute("onclick", 'readStory("' + storyId + '")');
       storyAccordion.getElementsByClassName("accordion-toggle")[0].innerHTML = storyTitle;
-      storyAccordion.getElementsByClassName("accordion-toggle")[0].setAttribute("data-target", "#" + storyId + " .accordion-body");
+      //storyAccordion.getElementsByClassName("accordion-toggle")[0].setAttribute("data-target", "#" + storyId + " .accordion-body");
 
       if (storyRead == false) {
         storyAccordion.getElementsByClassName('accordion-toggle')[0].style.fontWeight = "bold";
@@ -212,6 +212,7 @@ function viewFeed(feedId) {
       feedsList[i].style.fontWeight = "normal";
     }
     document.getElementById(feedId).getElementsByTagName('a')[0].style.fontWeight = "bold";
+    initAccordion();
   });
   requests.push(request);
 }
@@ -260,7 +261,7 @@ function readStory(storyId, ignore) {
     story.getElementsByClassName("story-content")[0].innerHTML = data.content.description;
     story.getElementsByClassName("story-date")[0].innerHTML = published;
 
-    document.getElementById(storyId).getElementsByClassName("accordion-body")[0].innerHTML = story.outerHTML;
+    document.getElementById(storyId).getElementsByClassName("accordion-inner")[0].innerHTML = story.innerHTML;
     document.getElementById(storyId).getElementsByClassName("story-read-toggle")[0].addEventListener(
     'click', function(e) { e.preventDefault() }, false
     );
@@ -329,15 +330,7 @@ function refreshCounters() {
 
 function initAddFeed() {
   var addFeed = getAddFeedTemplate();
-  $('#add').popover({'title': "<center>New feed</center>",
-                     'html': true,
-                     'content': addFeed.outerHTML,
-                     'placement': "bottom"}
-  );
-  document.getElementById("add").addEventListener('click', function (e) {
-    document.getElementById('urlFeed').focus();
-    }, false
-  );
+  document.getElementById('menu').appendChild(addFeed);
 }
 
 function initPage() {
@@ -349,16 +342,68 @@ function initPage() {
   setInterval(refreshCounters, 120000);
 }
 
-$(document).ready(function() {
-  // Globals
-  requests = new Array();
-  importer = false;
-});
+// Accordion for stories
+function initAccordion() {
+  for (var i=0;i < document.getElementsByClassName('accordion').length;i++) {
+    var accordion = document.getElementsByClassName('accordion')[i];
+    for (var j=0;j < accordion.getElementsByClassName('accordion-group').length;j++) {
+      var accordionGroup = accordion.getElementsByClassName('accordion-group')[j];
+      var heading = accordionGroup.getElementsByClassName('accordion-heading')[0];
+      var body = accordionGroup.getElementsByClassName('accordion-inner')[0];
 
+      heading.style.height = "auto";
+      heading.addEventListener('click', function() {
+        var body = this.parentNode.getElementsByClassName('accordion-inner')[0];
+        if (body.style.display == "") {
+          body.style.display = "none";
+
+        } else {
+          body.style.display = "";
+          body.style.height = "auto";
+          collapseIn(this.parentNode);
+        }
+      });
+
+      body.style.display = "none";
+      body.style.height = "0px";
+      body.style.overflow = "hidden";
+    }
+  }
+}
+
+function collapseIn (accordionGroupRoot) {
+  var accordion = accordionGroupRoot.parentNode;
+  for (var i=0;i < accordion.getElementsByClassName('accordion-group').length;i++) {
+    var accordionGroup = accordion.getElementsByClassName('accordion-group')[i];
+    if (accordionGroup != accordionGroupRoot) {
+      var heading = accordionGroup.getElementsByClassName('accordion-heading')[0];
+      var body = accordionGroup.getElementsByClassName('accordion-inner')[0];
+      body.style.display = "none";
+      body.style.height = "0px";
+    }
+    
+  }
+}
 
 // Utils
 function addEventListenerList(list, event, fn) {
   for (var i = 0, len = list.length; i < len; i++) {
     list[i].addEventListener(event, fn, false);
   }
+}
+
+$(document).ready(function() {
+  // Globals
+  requests = new Array();
+  importer = false;
+});
+
+function addToggle() {
+  var add = document.getElementById('add');
+  if (add.style.display == "block" ) {
+    add.style.display = "none";
+  } else {
+    add.style.display = "block";
+  }
+  document.getElementById('urlFeed').focus();
 }

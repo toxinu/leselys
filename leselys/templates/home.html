@@ -16,31 +16,27 @@
 <script type="text/javascript">
     // Template add feed
     var getAddFeedTemplate = function () {
-        return crel('form', 
+        return crel('li', {'id':'add', 'class': 'popover'},crel('form', 
             crel('fieldset',
                 crel('center',
                     crel('input', {'id': 'urlFeed',
                                    'type': 'text',
-                                   'class': 'input-medium',
+                                   'class': 'input-large',
                                    'placeholder': 'Url...'}),
                     crel('button', {'type': 'submit',
                                     'class': 'btn',
                                     'onclick': 'addFeed()'}, 'Submit')
                 )
             )
-        )
+        ))
     }
     // Template story accordion
     var getStoryAccordionTemplate = function() {
         return crel('div', {'class': 'accordion-group'},
             crel('div', {'class': 'accordion-heading'},
-            crel('a', {'class': 'accordion-toggle story',
-                       'data-toggle': 'collapse',
-                       'data-parent': '#story-list-accordion'})
+                crel('a', {'class': 'accordion-toggle story', 'href': '#'})
             ),
-            crel('div', {'class': 'accordion-body collapse'},
-                crel('div', {'class': 'accordion-inner'})
-            )
+            crel('div', {'class': 'accordion-inner'})
         )
     }
     // Template story

@@ -83,3 +83,20 @@ li a [class^="icon-"] {
     display: none;
   }
 }
+
+#add {
+  position: absolute;
+  display: none;
+  z-index: 2;
+  background-color: #eaeaea;
+  top: 15%;
+  padding: 10px 10px; 
+}
+
+#add button {
+  display: block;
+}
+
+#add form {
+  margin: 0px 0px 0px;
+}
