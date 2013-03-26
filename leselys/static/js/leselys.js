@@ -2,6 +2,9 @@ function addFeed() {
   var url = document.getElementById('urlFeed').value;
   if (url == '') { return false }
 
+  // Undisplay add popup
+  document.getElementById('add').style.display = "none";
+
   // Clear help message if no subscriptions
   if (document.getElementById('menu').getElementsByClassName('empty-feed-list')) {
     document.getElementById('menu').getElementsByClassName('empty-feed-list')[0].style.display = "none";
@@ -74,6 +77,7 @@ function handleOPMLImport(evt) {
   var reader = new FileReader();
 
   reader.onload = (function(OPMLFile) {
+
     return function(e) {
       $.post('/api/import/opml', { file: e.target.result }, function(data) {
         if (data.success == true) {
@@ -196,7 +200,6 @@ function viewFeed(feedId) {
       storyAccordion.getElementsByClassName("accordion-toggle")[0].onclick = 'readStory("' + storyId + '")';
       storyAccordion.getElementsByClassName("accordion-toggle")[0].setAttribute("onclick", 'readStory("' + storyId + '")');
       storyAccordion.getElementsByClassName("accordion-toggle")[0].innerHTML = storyTitle;
-      //storyAccordion.getElementsByClassName("accordion-toggle")[0].setAttribute("data-target", "#" + storyId + " .accordion-body");
 
       if (storyRead == false) {
         storyAccordion.getElementsByClassName('accordion-toggle')[0].style.fontWeight = "bold";
@@ -209,9 +212,9 @@ function viewFeed(feedId) {
 
     var feedsList = document.getElementById('menu').getElementsByTagName('a');
     for (i=0;i < feedsList.length;i++) {
-      feedsList[i].style.fontWeight = "normal";
+      feedsList[i].classList.remove('text-error');
     }
-    document.getElementById(feedId).getElementsByTagName('a')[0].style.fontWeight = "bold";
+    document.getElementById(feedId).getElementsByTagName('a')[0].classList.add('text-error');
     initAccordion();
   });
   requests.push(request);

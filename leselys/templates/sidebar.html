@@ -28,9 +28,9 @@
       <li class="nav-header feeds-list-title">Feeds</li>
       {% for feed in feeds %}
         {% if feed.counter > 0 %}
-          <li class="feed" id="{{ feed.id }}"><a onClick="viewFeed(&quot;{{ feed.id }}&quot;)" href="#{{ feed.id }}">{{ feed.title }} <span class="badge badge-inverse unread-counter pull-right">{{ feed.counter }}</span></a></li>
+          <li class="feed unread" id="{{ feed.id }}"><a onClick="viewFeed(&quot;{{ feed.id }}&quot;)" href="#{{ feed.id }}">{{ feed.title }} <span class="unread-counter muted">({{ feed.counter }})</span></a></li>
         {% else %}
-          <li class="feed" id="{{ feed.id }}"><a onClick="viewFeed(&quot;{{ feed.id }}&quot;)" href="#{{ feed.id }}">{{ feed.title }} <span style="display: none" class="badge badge-inverse unread-counter pull-right">{{ feed.counter }}</span></a></li>
+          <li class="feed" id="{{ feed.id }}"><a onClick="viewFeed(&quot;{{ feed.id }}&quot;)" href="#{{ feed.id }}">{{ feed.title }} <span style="display: none" class="unread-counter muted">({{ feed.counter }})</span></a></li>
         {% endif %}
       {% endfor %}
       <li class="empty-feed-list" style="display: none"><center><em>Add your first feed with the little cross icon.</em></center></li>
