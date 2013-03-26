@@ -16,7 +16,7 @@ Usage:
   leselys (adduser|deluser|passwd) <path>
   leselys init <path>
   leselys worker <path> [--celery-config=<path>]
-  leselys [refresh|retention] <path>
+  leselys (refresh|retention) <path>
   leselys -h | --help
   leselys -v | --version
 
