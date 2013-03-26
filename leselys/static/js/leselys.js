@@ -240,6 +240,9 @@ function viewFeed(feedId) {
         storyAccordion.id = storyId;
         storyAccordion.getElementsByClassName("accordion-toggle")[0].setAttribute('onclick', 'readStory("' + storyId + '")');
         storyAccordion.getElementsByClassName("accordion-toggle")[0].innerHTML = storyTitle;
+        storyAccordion.getElementsByClassName("accordion-toggle")[0].addEventListener('click', function(e){
+          e.preventDefault()
+        }, false);
 
         if (storyRead == false) {
           storyAccordion.getElementsByClassName('accordion-toggle')[0].style.fontWeight = "bold";
@@ -254,6 +257,7 @@ function viewFeed(feedId) {
       for (i=0;i < feedsList.length;i++) {
         feedsList[i].classList.remove('text-error');
       }
+
       document.getElementById(feedId).getElementsByTagName('a')[0].classList.add('text-error');
       initAccordion();
     }
@@ -572,7 +576,6 @@ function cleanCounter(counter) {
 // Get XHR Object
 function getXMLHttpRequest() {
     var xhr = null;
-     
     if (window.XMLHttpRequest || window.ActiveXObject) {
         if (window.ActiveXObject) {
             try {
@@ -587,7 +590,6 @@ function getXMLHttpRequest() {
         alert("Browser not supported (XMLHTTPRequest).");
         return null;
     }
-     
     return xhr;
 }
 
