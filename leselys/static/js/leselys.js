@@ -15,50 +15,58 @@ function addFeed() {
   loader.style.display = "none";
   loader = document.getElementById('menu').appendChild(loader);
   loader.style.display = "";
-  $.post("/api/add", {url: url}, function(data) {
-    if (data.success == true) {
-      var feedId = data.feed_id;
-      var feedTitle = data.title;
-      var feedURL = data.url;
-      var feedCounter = data.counter;
 
-      var newFeed = crel('a', {'onClick': 'viewFeed("' + feedId + '")', 'href': '/#' + feedId}, feedTitle + " ",
-            crel('span', {'class': 'unread-counter muted'}, feedCounter));
+  var xhr = getXMLHttpRequest();
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 0)) {
+      var data = JSON.parse(xhr.responseText);
+      if (data.success == true ) {
+        var feedId = data.feed_id;
+        var feedTitle = data.title;
+        var feedURL = data.url;
+        var feedCounter = data.counter;
 
-      loader.style.display = "none";
-      loader.innerHTML = newFeed.outerHTML;
-      loader.id = feedId;
-      loader.classList.add('feed');
-      loader.style.display = "";
+        var newFeed = crel('a', {'onClick': 'viewFeed("' + feedId + '")', 'href': '/#' + feedId}, feedTitle + " ",
+              crel('span', {'class': 'unread-counter muted'}, '(' + feedCounter + ')'));
 
-      if(feedCounter > 0) {
-        loader.classList.add('unread');
-      }
-
-      // Add new feed in settings/feeds if opened
-      if (document.getElementById('feeds-settings')) {
-        // Remove message if feeds list is empty
-        if (document.getElementById('feeds-settings').getElementsByClassName('empty-feed-list')) {
-          document.getElementById('feeds-settings').getElementsByClassName('empty-feed-list')[0].style.display = "none";
-        }
-        var newFeedSetting = crel('li', {'id': feedId + "-feeds-settings"}, feedTitle, 
-              ' (',
-              crel('a', {'class': 'muted', 'href': '#', 'onClick': 'deleteFeed("' + feedId + '")'}, 'remove'),
-              ') - ',
-              crel('a', {'href': feedURL, 'target': '_blank'}, feedURL));
-        newFeedSetting.style.display = "none";
-        newFeedSetting = document.getElementById('feeds-settings').getElementsByTagName('ul')[0].appendChild(newFeedSetting);
-        newFeedSetting.style.display = "";
-      }
-    } else {
-      if ( data.callback == "/api/login" ) { window.location = "/login" }
-      loader.innerHTML = '<li><i class="icon-exclamation-sign"></i> Error: ' + data.output +'</li>';
-      var clearLoader = function() {
         loader.style.display = "none";
+        loader.innerHTML = newFeed.outerHTML;
+        loader.id = feedId;
+        loader.classList.add('feed');
+        loader.style.display = "";
+
+        if(feedCounter > 0) {
+          loader.classList.add('unread');
+        }
+
+        // Add new feed in settings/feeds if opened
+        if (document.getElementById('feeds-settings')) {
+          // Remove message if feeds list is empty
+          if (document.getElementById('feeds-settings').getElementsByClassName('empty-feed-list')) {
+            document.getElementById('feeds-settings').getElementsByClassName('empty-feed-list')[0].style.display = "none";
+          }
+          var newFeedSetting = crel('li', {'id': feedId + "-feeds-settings"}, feedTitle, 
+                ' (',
+                crel('a', {'class': 'muted', 'href': '#', 'onClick': 'deleteFeed("' + feedId + '")'}, 'remove'),
+                ') - ',
+                crel('a', {'href': feedURL, 'target': '_blank'}, feedURL));
+          newFeedSetting.style.display = "none";
+          newFeedSetting = document.getElementById('feeds-settings').getElementsByTagName('ul')[0].appendChild(newFeedSetting);
+          newFeedSetting.style.display = "";
+        }
+      } else {
+        if ( data.callback == "/api/login" ) { window.location = "/login" }
+        loader.innerHTML = '<li><i class="icon-exclamation-sign"></i> Error: ' + data.output +'</li>';
+        var clearLoader = function() {
+          loader.style.display = "none";
+        }
+        setTimeout(clearLoader, 5000);
       }
-      setTimeout(clearLoader, 5000);
     }
-  });
+  }
+  xhr.open('POST', '/api/add', true);
+  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+  xhr.send('url=' + url);
 }
 
 function handleOPMLImport(evt) {
@@ -163,7 +171,6 @@ function deleteFeed(feedId) {
         var _parent = document.getElementById(feedId + "-settings").parentNode;
         _parent.removeChild(_child);
 
-        console.log(feedsNodes.getElementsByTagName('li').length);
         if ( feedsNodes.getElementsByTagName('li').length < 1 ) {
           document.getElementById('feeds-settings').getElementsByClassName('empty-feed-list')[0].style.display = "";
         }
@@ -360,7 +367,6 @@ function initPage() {
 
 // Tabs for settings
 function initTabs() {
-  console.log('Init tabs');
   for (var i=0;i < document.getElementsByClassName('tabbable').length;i++) {
     var table = document.getElementsByClassName('tabbable')[i];
     for (var j=0;j < table.getElementsByClassName('nav-tabs')[0].getElementsByTagName('li').length;j++) {
@@ -513,3 +519,26 @@ function cleanCounter(counter) {
         }
     };
 }(DOMParser));
+
+
+// Get XHR Object
+function getXMLHttpRequest() {
+    var xhr = null;
+     
+    if (window.XMLHttpRequest || window.ActiveXObject) {
+        if (window.ActiveXObject) {
+            try {
+                xhr = new ActiveXObject("Msxml2.XMLHTTP");
+            } catch(e) {
+                xhr = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+        } else {
+            xhr = new XMLHttpRequest();
+        }
+    } else {
+        alert("Votre navigateur ne supporte pas l'objet XMLHTTPRequest...");
+        return null;
+    }
+     
+    return xhr;
+}

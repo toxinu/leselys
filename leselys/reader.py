@@ -16,6 +16,7 @@ from leselys.feed_finder import FeedFinder
 
 feedparser.USER_AGENT = "Leselys/%s +https://github.com/socketubs/leselys" % leselys.__version__
 storage = leselys.core.storage
+config = leselys.core.config
 
 #########################################################################
 # Set defaults settings
@@ -39,12 +40,13 @@ class Retriever(threading.Thread):
     return it to the Reader when a new subscription arrives
     """
 
-    def __init__(self, feed):
+    def __init__(self, feed, do_retention=True):
         threading.Thread.__init__(self)
         # self.feed is raw parsed feed
         self.feed = feed
         self.title = feed.feed['title']
         self.data = feed['entries']
+        self.do_retention = do_retention
 
     def run(self):
         # This feed comes from database
@@ -62,15 +64,17 @@ class Retriever(threading.Thread):
                 last_update = get_dicttime(entry.updated_parsed)
             else:
                 last_update = get_dicttime(datetime.datetime.now().timetuple())
-
             if entry.get('published_parsed', False):
                 published = get_dicttime(entry.published_parsed)
+                published_datetime = get_datetime(entry.published_parsed)
             else:
                 published = get_dicttime(datetime.datetime.now().timetuple())
+                published_datetime = datetime.datetime.now()
 
-            delta = last_update.days - datetime.datetime.now()
-            if delta.days < -int(core.config.get('worker', 'retention')):
-                break
+            if self.do_retention:
+                delta = published_datetime - datetime.datetime.now()
+                if delta.days < -int(config.get('worker', 'retention')):
+                    break
 
             storage.add_story({
                 'title': title,
@@ -199,7 +203,7 @@ class Reader(object):
         else:
             return {'success': False, 'output': 'Feed already exists'}
 
-        retriever = Retriever(feed)
+        retriever = Retriever(feed, do_retention=False)
         retriever.start()
 
         return {
