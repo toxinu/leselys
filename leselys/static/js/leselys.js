@@ -117,6 +117,7 @@ function viewSettings() {
         document.getElementById('OPMLSubmit').addEventListener('click', handleOPMLImport, false);
       }
       initPage();
+      initTabs();
     } else {
       if (data.callback == "/api/login") { window.location = "/login" }
     }
@@ -204,8 +205,7 @@ function viewFeed(feedId) {
       var storyRead = item.read;
 
       storyAccordion.id = storyId;
-      storyAccordion.getElementsByClassName("accordion-toggle")[0].onclick = 'readStory("' + storyId + '")';
-      storyAccordion.getElementsByClassName("accordion-toggle")[0].setAttribute("onclick", 'readStory("' + storyId + '")');
+      storyAccordion.getElementsByClassName("accordion-toggle")[0].setAttribute('onclick', 'readStory("' + storyId + '")');
       storyAccordion.getElementsByClassName("accordion-toggle")[0].innerHTML = storyTitle;
 
       if (storyRead == false) {
@@ -231,8 +231,7 @@ function readStory(storyId, ignore) {
   // Avoid "read" state if story have just been marked unread
   var ignore = ignore || false;
   if (ignore == true) {
-    document.getElementById(storyId).getElementsByClassName("accordion-toggle")[0].onclick = 'readStory("' + storyId + '")';
-    document.getElementById(storyId).getElementsByClassName("accordion-toggle")[0].setAttribute("onclick", 'readStory("' + storyId + '")');
+    document.getElementById(storyId).getElementsByClassName("accordion-toggle")[0].setAttribute('onclick', 'readStory("' + storyId + '")');
     return true
   }
 
@@ -264,8 +263,7 @@ function readStory(storyId, ignore) {
 
 
     story.getElementsByClassName("story-link")[0].href = data.content.link;
-    story.getElementsByClassName("story-read-toggle")[0].onclick = 'unreadStory("' + storyId + '")';
-    story.getElementsByClassName("story-read-toggle")[0].setAttribute("onclick", 'unreadStory("' + storyId + '")');
+    story.getElementsByClassName("story-read-toggle")[0].setAttribute('onclick', 'unreadStory("' + storyId + '")');
     story.getElementsByClassName("story-read-toggle")[0].innerHTML = 'Mark as unread';
     story.getElementsByClassName("story-read-toggle")[0].href = "#" + storyId;
     story.getElementsByClassName("story-content")[0].innerHTML = data.content.description;
@@ -296,11 +294,9 @@ function unreadStory(storyId) {
       var story = document.getElementById(storyId);
 
       // Avoid next click on story title
-      document.getElementById(storyId).getElementsByClassName("accordion-toggle")[0].onclick = 'readStory("' + storyId + '", true)';
-      document.getElementById(storyId).getElementsByClassName("accordion-toggle")[0].setAttribute("onclick", 'readStory("' + storyId + '", true)');
+      document.getElementById(storyId).getElementsByClassName("accordion-toggle")[0].setAttribute('onclick', 'readStory("' + storyId + '", true)');
 
-      story.getElementsByClassName("story-read-toggle")[0].onclick = 'readStory("' + storyId + '")';
-      story.getElementsByClassName("story-read-toggle")[0].setAttribute("onclick", 'readStory("' + storyId + '")');
+      story.getElementsByClassName("story-read-toggle")[0].setAttribute('onclick', 'readStory("' + storyId + '")');
       story.getElementsByClassName("story-read-toggle")[0].innerHTML = 'Mark as read';
 
       var counter = cleanCounter(document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML);
@@ -360,6 +356,49 @@ function initPage() {
 
   initAddFeed()
   setInterval(refreshCounters, 120000);
+}
+
+// Tabs for settings
+function initTabs() {
+  console.log('Init tabs');
+  for (var i=0;i < document.getElementsByClassName('tabbable').length;i++) {
+    var table = document.getElementsByClassName('tabbable')[i];
+    for (var j=0;j < table.getElementsByClassName('nav-tabs')[0].getElementsByTagName('li').length;j++) {
+      var tab = table.getElementsByClassName('nav-tabs')[0].getElementsByTagName('li')[j];
+      var contentId = tab.getElementsByTagName('a')[0].getAttribute('href').substr(1);
+      var content = document.getElementById(contentId);
+
+      if (!content.classList.contains('active')) {
+        content.style.display = "none";
+      }
+
+      tab.getElementsByTagName('a')[0].addEventListener('click', function (e) {
+        var _id = this.getAttribute('href').substr(1);
+        var content = document.getElementById(_id);
+        this.parentNode.classList.add('active');
+        content.classList.add('active');
+        content.style.display = "block";
+        hideTabs(this.parentNode);
+        e.preventDefault();
+      });
+    }
+  }
+}
+
+
+// Hide other tabs
+function hideTabs(tab) {
+  var contentId = tab.getElementsByTagName('a')[0].getAttribute('href').substr(1);
+  var table = tab.parentNode.parentNode;
+  for (var i=0;i < table.getElementsByClassName('nav-tabs')[0].getElementsByTagName('li').length;i++) {
+    var tab = table.getElementsByClassName('nav-tabs')[0].getElementsByTagName('li')[i];
+    var tabId = tab.getElementsByTagName('a')[0].getAttribute('href').substr(1);
+    if (tabId != contentId) {
+      tab.classList.remove('active');
+      document.getElementById(tabId).classList.remove('active');
+      document.getElementById(tabId).style.display = "none";
+    }
+  } 
 }
 
 // Accordion for stories
@@ -431,3 +470,46 @@ function addToggle() {
 function cleanCounter(counter) {
   return parseInt(counter.substr(1, counter.length-2));
 }
+
+/*
+ * DOMParser HTML extension
+ * 2012-09-04
+ *
+ * By Eli Grey, http://eligrey.com
+ * Public domain.
+ * NO WARRANTY EXPRESSED OR IMPLIED. USE AT YOUR OWN RISK.
+ */
+  
+/*! @source https://gist.github.com/1129031 */
+/*global document, DOMParser*/
+  
+(function(DOMParser) {
+    "use strict";
+  
+    var
+      DOMParser_proto = DOMParser.prototype
+    , real_parseFromString = DOMParser_proto.parseFromString
+    ;
+  
+    // Firefox/Opera/IE throw errors on unsupported types
+    try {
+        // WebKit returns null on unsupported types
+        if ((new DOMParser).parseFromString("", "text/html")) {
+            // text/html parsing is natively supported
+            return;
+        }
+    } catch (ex) {}
+  
+    DOMParser_proto.parseFromString = function(markup, type) {
+        if (/^\s*text\/html\s*(?:;|$)/i.test(type)) {
+            var
+              doc = document.implementation.createHTMLDocument("")
+            ;
+  
+            doc.body.innerHTML = markup;
+            return doc;
+        } else {
+            return real_parseFromString.apply(this, arguments);
+        }
+    };
+}(DOMParser));

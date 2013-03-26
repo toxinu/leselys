@@ -1,4 +1,5 @@
 .sidenav-affix {
+    position: fixed;
     width: 14%;
   }
 body {
