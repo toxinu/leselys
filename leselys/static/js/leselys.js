@@ -11,7 +11,7 @@ function addFeed() {
   var loader = crel("li", crel("i", {"class": "icon-tasks"}), " Loading...");
   loader.style.display = "none";
   loader = document.getElementById('menu').appendChild(loader);
-  $(loader).fadeIn();
+  loader.style.display = "";
   $.post("/api/add", {url: url}, function(data) {
     if (data.success == true) {
       var feedId = data.feed_id;
@@ -22,12 +22,11 @@ function addFeed() {
       var newFeed = crel('a', {'onClick': 'viewFeed("' + feedId + '")', 'href': '/#' + feedId}, feedTitle + " ",
             crel('span', {'class': 'badge badge-inverse unread-counter'}, feedCounter));
 
-      $(loader).fadeOut(function () {
-        loader.innerHTML = newFeed.outerHTML;
-        loader.id = feedId;
-        loader.className += " story";
-        $(loader).fadeIn();
-      });
+      loader.style.display = "none";
+      loader.innerHTML = newFeed.outerHTML;
+      loader.id = feedId;
+      loader.className += " story";
+      loader.style.display = "";
 
       // Add new feed in settings/feeds if opened
       if (document.getElementById('feeds-settings')) {
@@ -42,13 +41,13 @@ function addFeed() {
               crel('a', {'href': feedURL, 'target': '_blank'}, feedURL));
         newFeedSetting.style.display = "none";
         newFeedSetting = document.getElementById('feeds-settings').getElementsByTagName('ul')[0].appendChild(newFeedSetting);
-        $(newFeedSetting).fadeIn();
+        newFeedSetting.style.display = "";
       }
     } else {
       if ( data.callback == "/api/login" ) { window.location = "/login" }
       loader.innerHTML = '<li><i class="icon-exclamation-sign"></i> Error: ' + data.output +'</li>';
       var clearLoader = function() {
-        $(loader).hide();
+        loader.style.display = "none";
       }
       setTimeout(clearLoader, 5000);
     }
@@ -80,11 +79,11 @@ function handleOPMLImport(evt) {
         if (data.success == true) {
           importer = false;
           document.getElementById("OPMLSubmit").innerHTML = "Importing, reload page later...";
-          $('#OPMLSubmit').addClass('disabled');
+          document.getElementById("OPMLSubmit").className += " disabled";
         } else {
           if (data.callback == "/api/login") { window.location = "/login" }
           document.getElementById("OPMLSubmit").innerHTML = "Error: " + data.output;
-          $('#OPMLSubmit').addClass('disabled');
+          document.getElementById("OPMLSubmit").className += " disabled";
         }
       });
     }
@@ -95,10 +94,13 @@ function handleOPMLImport(evt) {
 function viewSettings() {
   $.get('/settings?jsonify=true', function(data) {
     if (data.success) {
-      var content = $(data.content).find('#content');
-      var sidebar = $(data.content).find('#menu')
-      document.getElementById("content").innerHTML = content.html();
-      document.getElementById("menu").innerHTML = sidebar.html()
+      var parser = new DOMParser();
+      var div = parser.parseFromString(data.content, "text/html");
+      var content = div.getElementById('content');
+      var sidebar = div.getElementById('menu');
+      document.getElementById("content").innerHTML = content.innerHTML;
+      document.getElementById("menu").innerHTML = sidebar.innerHTML;
+
       if (importer) {
         document.getElementById("OPMLSubmit").innerHTML = "Last import not finished...";
         document.getElementById("OPMLSubmit").className += " disabled";
@@ -117,10 +119,12 @@ function viewSettings() {
 function viewHome() {
   $.get('/?jsonify=true', function(data) {
     if (data.success) {
-      var content = $(data.content).find('#content');
-      var sidebar = $(data.content).find('#menu')
-      document.getElementById("content").innerHTML = content.html();
-      document.getElementById("menu").innerHTML = sidebar.html()
+      var parser = new DOMParser();
+      var div = parser.parseFromString(data.content, "text/html");
+      var content = div.getElementById('content');
+      var sidebar = div.getElementById('menu');
+      document.getElementById("content").innerHTML = content.innerHTML;
+      document.getElementById("menu").innerHTML = sidebar.innerHTML;
       initPage();
     } else {
       if (data.callback == "/api/login") { window.location = "/login" }
@@ -137,28 +141,41 @@ function deleteFeed(feedId) {
         if (result.callback == "/api/login") { window.location = "/login" }
         window.location = "/";
       }
-      $('#feeds-settings ul li#' + feedId).fadeOut(300, function() {
-        $(this).remove();
-        if ($('#feeds-settings ul li').length < 1) {
-          $(document.getElementById('feeds-settings').getElementsByClassName('empty-feed-list')[0]).fadeIn();
+      document.getElementById(feedId).style.display = "none";
+      // Remove feed in sidebar
+      var _child = document.getElementById(feedId);
+      var _parent = document.getElementById(feedId).parentNode;
+      _parent.removeChild(_child);
+
+      // Feeds settings
+      var feedsNodes = document.getElementById('feeds-settings');
+      if ( typeof feedsNodes != 'undefined' ) {
+        // Remove feed in sidebar
+        var _child = document.getElementById(feedId + "-settings");
+        var _parent = document.getElementById(feedId + "-settings").parentNode;
+        _parent.removeChild(_child);
+
+        console.log(feedsNodes.getElementsByTagName('li').length);
+        if ( feedsNodes.getElementsByTagName('li').length < 1 ) {
+          document.getElementById('feeds-settings').getElementsByClassName('empty-feed-list')[0].style.display = "";
         }
-      });
-      $('ul#menu li#' + feedId).fadeOut(300, function() {
-        $(this).remove();
-        if ($('ul#menu li').length < 6) {
-          $(document.getElementById('menu').getElementsByClassName('feeds-list-title')[0]).fadeOut();
-          $(document.getElementById('menu').getElementsByClassName('empty-feed-list')[0]).fadeIn();
-        }
-      });
+      }
+
+      // Sidebar
+      var feedsNodes = document.getElementById('menu').getElementsByClassName('feed')
+      if ( feedsNodes.length < 1 ) {
+          document.getElementById('menu').getElementsByClassName('feeds-list-title')[0].style.display = "none";
+          document.getElementById('menu').getElementsByClassName('empty-feed-list')[0].style.display = "";
+      }
     }
   });
 }
 
 function viewFeed(feedId) {
-  $.each(requests, function(i, request) {
-      request.abort();
-      requests.shift();
-  });
+  for (var i=0;i < requests.length;i++) {
+    requests[i].abort();
+    requests.shift();
+  }
   var request = $.getJSON('/api/get/' + feedId, function(data) {
     if (data.success == false) {
       if (data.callback == "/api/login") { window.location = "/login" }
@@ -168,7 +185,8 @@ function viewFeed(feedId) {
     var storyListAccordion = crel('div', {'class': 'accordion', 'id': 'story-list-accordion'});
     var content = '';
 
-    $.each(data.content, function(i,item){
+    for (var i=0;i < data.content.length;i++) {
+      var item = data.content[i];
       var storyId = item._id;
       var storyTitle = item.title;
       var storyAccordion = getStoryAccordionTemplate();
@@ -185,13 +203,14 @@ function viewFeed(feedId) {
       }
 
       content += storyAccordion.outerHTML;
-    });
+    }
     storyListAccordion.innerHTML = content;
     document.getElementById('content').innerHTML = storyListAccordion.outerHTML;
 
-    $('#menu a').each(function(index) {
-      $(this).css('font-weight', 'normal');
-    });
+    var feedsList = document.getElementById('menu').getElementsByTagName('a')
+    for (i=0;i < feedsList.lenght;i++) {
+      feedsList[i].style.fontWeight = "normal";
+    }
     document.getElementById(feedId).getElementsByTagName('a')[0].style.fontWeight = "bold";
   });
   requests.push(request);
@@ -246,10 +265,10 @@ function readStory(storyId, ignore) {
     'click', function(e) { e.preventDefault() }, false
     );
     if (data.success == true) {
-      var counter = parseInt($("#" + feedId + " .unread-counter").html()) - 1;
+      var counter = parseInt(document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML) - 1;
       document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML = counter;
       if (counter == 0) {
-        $("#" + feedId + " .unread-counter").fadeOut();
+        document.getElementById(feedId).getElementsByClassName('unread-counter')[0].style.display = "none";
       }
     }
   });
@@ -270,14 +289,13 @@ function unreadStory(storyId) {
       story.getElementsByClassName("story-read-toggle")[0].setAttribute("onclick", 'readStory("' + storyId + '")');
       story.getElementsByClassName("story-read-toggle")[0].innerHTML = 'Mark as read';
 
-      var counter = parseInt($("#" + feedId + " .unread-counter").html()) + 1;
+      var counter = parseInt(document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML) + 1;
 
-      $('a[href=#' + storyId + ']').data('unreaded', true);
       if (counter == 1) {
-        $("#" + feedId + " .unread-counter").html(counter);
-        $("#" + feedId + " .unread-counter").fadeIn();
+        document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML = counter;
+        document.getElementById(feedId).getElementsByClassName('unread-counter')[0].style.display = "";
       } else {
-        $("#" + feedId + " .unread-counter").html(counter);
+        document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML = counter;
       }
       document.getElementById(storyId).getElementsByClassName("accordion-toggle")[0].style.fontWeight = 'bold';
     } else {
@@ -297,14 +315,15 @@ function refreshCounters() {
     if (data.success == false) {
       if (data.callback == "/api/login") { window.location = "/login" }
     }
-    $.each(data.content, function(i, feed) {
+    for (i=0;i < data.content.length;i++) {
+      var feed = data.content[i];
       var feedId = feed[0];
       var feedCounter = feed[1];
       if (feedCounter > 1) {
         $(document.getElementById(feedId).getElementsByClassName('badge')[0]).show();
       }
       document.getElementById(feedId).getElementsByClassName('badge')[0].innerHTML = feedCounter;
-    });
+    }
   });
 }
 
@@ -315,16 +334,16 @@ function initAddFeed() {
                      'content': addFeed.outerHTML,
                      'placement': "bottom"}
   );
-  $("#add").on('click', function(){
-    $("#urlFeed").focus();
-  });
+  document.getElementById("add").addEventListener('click', function (e) {
+    document.getElementById('urlFeed').focus();
+    }, false
+  );
 }
 
 function initPage() {
   // Remove anchors binding for mobile view
-  $(".feed").click(function(e) {  
-    e.preventDefault();
-  });
+  var feeds = document.getElementById('menu').getElementsByClassName('feed');
+  addEventListenerList(feeds, 'click', function(e) {e.preventDefault()});
 
   initAddFeed()
   setInterval(refreshCounters, 120000);
@@ -335,3 +354,11 @@ $(document).ready(function() {
   requests = new Array();
   importer = false;
 });
+
+
+// Utils
+function addEventListenerList(list, event, fn) {
+  for (var i = 0, len = list.length; i < len; i++) {
+    list[i].addEventListener(event, fn, false);
+  }
+}

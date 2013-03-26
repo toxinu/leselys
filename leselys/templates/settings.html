@@ -37,7 +37,7 @@
           <ul>
           {% if feeds %}
             {% for feed in feeds %}
-            <li id="{{ feed.id }}">{{ feed.title }} (<a class="muted" onClick="deleteFeed(&quot;{{ feed.id }}&quot;)" href="#">remove</a>) - <a href="{{ feed.url }}">{{ feed.url }}</a></li>
+            <li id="{{ feed.id }}-settings">{{ feed.title }} (<a class="muted" onClick="deleteFeed(&quot;{{ feed.id }}&quot;)" href="#">remove</a>) - <a href="{{ feed.url }}">{{ feed.url }}</a></li>
             {% endfor %}
             <span class="empty-feed-list" style="display: none"><em>No feeds...</em></span>
           {% else %}
