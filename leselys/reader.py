@@ -68,6 +68,10 @@ class Retriever(threading.Thread):
             else:
                 published = get_dicttime(datetime.datetime.now().timetuple())
 
+            delta = last_update.days - datetime.datetime.now()
+            if delta.days < -int(core.config.get('worker', 'retention')):
+                break
+
             storage.add_story({
                 'title': title,
                 'link': link,
