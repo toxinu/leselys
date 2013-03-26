@@ -2,7 +2,7 @@
 {% block body %}	
 <form class="form-signin" method="POST" action="/api/login?jsonify=false" >
   <h2 class="form-signin-heading">Please sign in</h2>
-  <input name="username" type="text" class="input-block-level" placeholder="Username">
+  <input id="username-input" name="username" type="text" class="input-block-level" placeholder="Username">
   <input name="password" type="password" class="input-block-level" placeholder="Password">
   <label class="checkbox">
     <input name="remember" type="checkbox" value="false"> Remember me
@@ -11,8 +11,8 @@
 </form>
 
 <script type="text/javascript">
-	$(document).ready(function() {
-		$('input[name=username]').focus();
-	});
+  window.onload = function () {
+    document.getElementById('username-input').focus();
+  }
 </script>
 {% endblock %}

@@ -1,3 +1,7 @@
+// Globals
+requests = new Array();
+importer = false;
+
 function addFeed() {
   var url = document.getElementById('urlFeed').value;
   if (url == '') { return false }
@@ -88,73 +92,90 @@ function handleOPMLImport(evt) {
   var reader = new FileReader();
 
   reader.onload = (function(OPMLFile) {
-
     return function(e) {
-      $.post('/api/import/opml', { file: e.target.result }, function(data) {
-        if (data.success == true) {
-          importer = false;
-          document.getElementById("OPMLSubmit").innerHTML = "Importing, reload page later...";
-          document.getElementById("OPMLSubmit").className += " disabled";
-        } else {
-          if (data.callback == "/api/login") { window.location = "/login" }
-          document.getElementById("OPMLSubmit").innerHTML = "Error: " + data.output;
-          document.getElementById("OPMLSubmit").className += " disabled";
+      var xhr = getXMLHttpRequest();
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 0)) {
+          var data = JSON.parse(xhr.responseText);
+         if (data.success == true) {
+            importer = false;
+            document.getElementById("OPMLSubmit").innerHTML = "Importing, reload page later...";
+            document.getElementById("OPMLSubmit").className += " disabled";
+          } else {
+            if (data.callback == "/api/login") { window.location = "/login" }
+            document.getElementById("OPMLSubmit").innerHTML = "Error: " + data.output;
+            document.getElementById("OPMLSubmit").className += " disabled";
+          }
         }
-      });
+      }
+      xhr.open('POST', '/api/import/opml', true);
+      xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+      xhr.send('file=' + e.target.result);
     }
   })(file);
   reader.readAsText(file);
 }
 
 function viewSettings() {
-  $.get('/settings?jsonify=true', function(data) {
-    if (data.success) {
-      var parser = new DOMParser();
-      var div = parser.parseFromString(data.content, "text/html");
-      var content = div.getElementById('content');
-      var sidebar = div.getElementById('menu');
-      document.getElementById("content").innerHTML = content.innerHTML;
-      document.getElementById("menu").innerHTML = sidebar.innerHTML;
-
-      if (importer) {
-        document.getElementById("OPMLSubmit").innerHTML = "Last import not finished...";
-        document.getElementById("OPMLSubmit").className += " disabled";
-        return false;
-      }
-      if (document.getElementById("OPMLSubmit")) {
-        document.getElementById('OPMLSubmit').addEventListener('click', handleOPMLImport, false);
-      }
-      initPage();
-      initTabs();
-    } else {
-      if (data.callback == "/api/login") { window.location = "/login" }
+  var xhr = getXMLHttpRequest();
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 0)) {
+      var data = JSON.parse(xhr.responseText);
+        if (data.success) {
+          var parser = new DOMParser();
+          var div = parser.parseFromString(data.content, "text/html");
+          var content = div.getElementById('content');
+          var sidebar = div.getElementById('menu');
+          document.getElementById("content").innerHTML = content.innerHTML;
+          document.getElementById("menu").innerHTML = sidebar.innerHTML;
+          if (importer) {
+            document.getElementById("OPMLSubmit").innerHTML = "Last import not finished...";
+            document.getElementById("OPMLSubmit").className += " disabled";
+            return false;
+          }
+          if (document.getElementById("OPMLSubmit")) {
+            document.getElementById('OPMLSubmit').addEventListener('click', handleOPMLImport, false);
+          }
+          initPage();
+          initTabs();
+        } else {
+          if (data.callback == "/api/login") { window.location = "/login" }
+        }
     }
-  });
+  }
+  xhr.open("GET", "/settings?jsonify=true", true);
+  xhr.send(null);
 }
 
 function viewHome() {
-  $.get('/?jsonify=true', function(data) {
-    if (data.success) {
-      var parser = new DOMParser();
-      var div = parser.parseFromString(data.content, "text/html");
-      var content = div.getElementById('content');
-      var sidebar = div.getElementById('menu');
-      document.getElementById("content").innerHTML = content.innerHTML;
-      document.getElementById("menu").innerHTML = sidebar.innerHTML;
-      initPage();
-    } else {
-      if (data.callback == "/api/login") { window.location = "/login" }
+  var xhr = getXMLHttpRequest();
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 0)) {
+      var data = JSON.parse(xhr.responseText);
+      if (data.success) {
+        var parser = new DOMParser();
+        var div = parser.parseFromString(data.content, "text/html");
+        var content = div.getElementById('content');
+        var sidebar = div.getElementById('menu');
+        document.getElementById("content").innerHTML = content.innerHTML;
+        document.getElementById("menu").innerHTML = sidebar.innerHTML;
+        initPage();
+      } else {
+        if (data.callback == "/api/login") { window.location = "/login" }
+      }
     }
-  });
+  }
+  xhr.open("GET", "/?jsonify=true", true);
+  xhr.send(null);
 }
 
 function deleteFeed(feedId) {
-  $.ajax({
-    url: '/api/remove/' + feedId,
-    type: 'DELETE',
-    success: function(result) {
-      if (result.success = false) {
-        if (result.callback == "/api/login") { window.location = "/login" }
+  var xhr = getXMLHttpRequest();
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 0)) {
+      var data = JSON.parse(xhr.responseText);
+      if (data.success = false) {
+        if (data.callback == "/api/login") { window.location = "/login" }
         window.location = "/";
       }
       document.getElementById(feedId).style.display = "none";
@@ -183,7 +204,9 @@ function deleteFeed(feedId) {
           document.getElementById('menu').getElementsByClassName('empty-feed-list')[0].style.display = "";
       }
     }
-  });
+  }
+  xhr.open("DELETE", "/api/remove/" + feedId, true);
+  xhr.send(null);
 }
 
 function viewFeed(feedId) {
@@ -191,47 +214,54 @@ function viewFeed(feedId) {
     requests[i].abort();
     requests.shift();
   }
-  var request = $.getJSON('/api/get/' + feedId, function(data) {
-    if (data.success == false) {
-      if (data.callback == "/api/login") { window.location = "/login" }
-      window.location = "/";
-    }
-
-    var storyListAccordion = crel('div', {'class': 'accordion', 'id': 'story-list-accordion'});
-    var content = '';
-
-    if (data.content.length == 0) {
-      content = '<p style="text-align:center; margin-top: 50px"><em>Oups, there is no story here...</em></p>';
-    }
-
-    for (var i=0;i < data.content.length;i++) {
-      var item = data.content[i];
-      var storyId = item._id;
-      var storyTitle = item.title;
-      var storyAccordion = getStoryAccordionTemplate();
-      var storyRead = item.read;
-
-      storyAccordion.id = storyId;
-      storyAccordion.getElementsByClassName("accordion-toggle")[0].setAttribute('onclick', 'readStory("' + storyId + '")');
-      storyAccordion.getElementsByClassName("accordion-toggle")[0].innerHTML = storyTitle;
-
-      if (storyRead == false) {
-        storyAccordion.getElementsByClassName('accordion-toggle')[0].style.fontWeight = "bold";
+  var xhr = getXMLHttpRequest();
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 0)) {
+      var data = JSON.parse(xhr.responseText);
+      if (data.success == false) {
+        if (data.callback == "/api/login") { window.location = "/login" }
+        window.location = "/";
       }
 
-      content += storyAccordion.outerHTML;
-    }
-    storyListAccordion.innerHTML = content;
-    document.getElementById('content').innerHTML = storyListAccordion.outerHTML;
+      var storyListAccordion = crel('div', {'class': 'accordion', 'id': 'story-list-accordion'});
+      var content = '';
 
-    var feedsList = document.getElementById('menu').getElementsByTagName('a');
-    for (i=0;i < feedsList.length;i++) {
-      feedsList[i].classList.remove('text-error');
+      if (data.content.length == 0) {
+        content = '<p style="text-align:center; margin-top: 50px"><em>Oups, there is no story here...</em></p>';
+      }
+
+      for (var i=0;i < data.content.length;i++) {
+        var item = data.content[i];
+        var storyId = item._id;
+        var storyTitle = item.title;
+        var storyAccordion = getStoryAccordionTemplate();
+        var storyRead = item.read;
+
+        storyAccordion.id = storyId;
+        storyAccordion.getElementsByClassName("accordion-toggle")[0].setAttribute('onclick', 'readStory("' + storyId + '")');
+        storyAccordion.getElementsByClassName("accordion-toggle")[0].innerHTML = storyTitle;
+
+        if (storyRead == false) {
+          storyAccordion.getElementsByClassName('accordion-toggle')[0].style.fontWeight = "bold";
+        }
+
+        content += storyAccordion.outerHTML;
+      }
+      storyListAccordion.innerHTML = content;
+      document.getElementById('content').innerHTML = storyListAccordion.outerHTML;
+
+      var feedsList = document.getElementById('menu').getElementsByTagName('a');
+      for (i=0;i < feedsList.length;i++) {
+        feedsList[i].classList.remove('text-error');
+      }
+      document.getElementById(feedId).getElementsByTagName('a')[0].classList.add('text-error');
+      initAccordion();
     }
-    document.getElementById(feedId).getElementsByTagName('a')[0].classList.add('text-error');
-    initAccordion();
-  });
-  requests.push(request);
+  }
+  xhr.open("GET", "/api/get/" + feedId, true);
+  xhr.send(null);
+
+  requests.push(xhr);
 }
 
 function readStory(storyId, ignore) {
@@ -242,113 +272,137 @@ function readStory(storyId, ignore) {
     return true
   }
 
-  $.getJSON('/api/read/' + storyId, function(data) {
-    if (data.success == false) {
-      if (data.callback == "/api/login" ) { window.location = "/login" }
-    }
-    if (data.content.last_update == false) {
-      var published = "No date";
-    } else {
-      // Minutes
-      if (data.content.last_update['min'].toString().length == 1) {
-        var minutes = "0" + data.content.last_update['min'];
+  var xhr = getXMLHttpRequest();
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 0)) {
+      var data = JSON.parse(xhr.responseText);
+      if (data.success == false) {
+        if (data.callback == "/api/login" ) { window.location = "/login" }
+      }
+      if (data.content.last_update == false) {
+        var published = "No date";
       } else {
-        var minutes = data.content.last_update['min'];
+        // Minutes
+        if (data.content.last_update['min'].toString().length == 1) {
+          var minutes = "0" + data.content.last_update['min'];
+        } else {
+          var minutes = data.content.last_update['min'];
+        }
+        // Hours
+        if (data.content.last_update['hour'].toString().length == 1) {
+          var hours = "0" + data.content.last_update['hour'];
+        } else {
+          var hours = data.content.last_update['hour'];
+        }
+        var published = data.content.last_update['year'] + '-' + data.content.last_update['month'] +
+                      '-' + data.content.last_update['day'] + "  " + hours + ":" + minutes;
       }
-      // Hours
-      if (data.content.last_update['hour'].toString().length == 1) {
-        var hours = "0" + data.content.last_update['hour'];
-      } else {
-        var hours = data.content.last_update['hour'];
+
+      var feedId = data.content.feed_id;
+      var story = getStoryTemplate();
+
+      story.getElementsByClassName("story-link")[0].href = data.content.link;
+      story.getElementsByClassName("story-read-toggle")[0].setAttribute('onclick', 'unreadStory("' + storyId + '")');
+      story.getElementsByClassName("story-read-toggle")[0].innerHTML = 'Mark as unread';
+      story.getElementsByClassName("story-read-toggle")[0].href = "#" + storyId;
+      story.getElementsByClassName("story-content")[0].innerHTML = data.content.description;
+      story.getElementsByClassName("story-date")[0].innerHTML = published;
+
+      document.getElementById(storyId).getElementsByClassName("accordion-inner")[0].innerHTML = story.innerHTML;
+      document.getElementById(storyId).getElementsByClassName("story-read-toggle")[0].addEventListener(
+      'click', function(e) { e.preventDefault() }, false
+      );
+      if (data.success == true) {
+        var counter = cleanCounter(document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML);
+        var counter = counter - 1;
+        document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML = '(' + counter + ')';
+        if (counter == 0) {
+          document.getElementById(feedId).getElementsByClassName('unread-counter')[0].style.display = "none";
+          document.getElementById(feedId).classList.remove('unread');
+          document.getElementById(feedId).style.fontWeight = 'normal';
+        }
       }
-      var published = data.content.last_update['year'] + '-' + data.content.last_update['month'] +
-                    '-' + data.content.last_update['day'] + "  " + hours + ":" + minutes;
     }
+  }
+  xhr.open('GET', '/api/read/' + storyId, true);
+  xhr.send(null);
 
-    var feedId = data.content.feed_id;
-    var story = getStoryTemplate();
-
-
-    story.getElementsByClassName("story-link")[0].href = data.content.link;
-    story.getElementsByClassName("story-read-toggle")[0].setAttribute('onclick', 'unreadStory("' + storyId + '")');
-    story.getElementsByClassName("story-read-toggle")[0].innerHTML = 'Mark as unread';
-    story.getElementsByClassName("story-read-toggle")[0].href = "#" + storyId;
-    story.getElementsByClassName("story-content")[0].innerHTML = data.content.description;
-    story.getElementsByClassName("story-date")[0].innerHTML = published;
-
-    document.getElementById(storyId).getElementsByClassName("accordion-inner")[0].innerHTML = story.innerHTML;
-    document.getElementById(storyId).getElementsByClassName("story-read-toggle")[0].addEventListener(
-    'click', function(e) { e.preventDefault() }, false
-    );
-    if (data.success == true) {
-      var counter = cleanCounter(document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML);
-      var counter = counter - 1;
-      document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML = '(' + counter + ')';
-      if (counter == 0) {
-        document.getElementById(feedId).getElementsByClassName('unread-counter')[0].style.display = "none";
-        document.getElementById(feedId).classList.remove('unread');
-        document.getElementById(feedId).style.fontWeight = 'normal';
-      }
-    }
-  });
   document.getElementById(storyId).getElementsByClassName("accordion-toggle")[0].style.fontWeight = 'normal';
 }
 
 function unreadStory(storyId) {
-  $.getJSON('/api/unread/' + storyId, function(data) {
-    if (data.success == true) {
-      var feedId = data.content.feed_id;
-      var story = document.getElementById(storyId);
+  var xhr = getXMLHttpRequest();
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 0)) {
+      var data = JSON.parse(xhr.responseText);
+      if (data.success == true) {
+        var feedId = data.content.feed_id;
+        var story = document.getElementById(storyId);
 
-      // Avoid next click on story title
-      document.getElementById(storyId).getElementsByClassName("accordion-toggle")[0].setAttribute('onclick', 'readStory("' + storyId + '", true)');
+        // Avoid next click on story title
+        document.getElementById(storyId).getElementsByClassName("accordion-toggle")[0].setAttribute('onclick', 'readStory("' + storyId + '", true)');
+ 
+        story.getElementsByClassName("story-read-toggle")[0].setAttribute('onclick', 'readStory("' + storyId + '")');
+       story.getElementsByClassName("story-read-toggle")[0].innerHTML = 'Mark as read';
 
-      story.getElementsByClassName("story-read-toggle")[0].setAttribute('onclick', 'readStory("' + storyId + '")');
-      story.getElementsByClassName("story-read-toggle")[0].innerHTML = 'Mark as read';
+        var counter = cleanCounter(document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML);
+        counter = counter + 1;
 
-      var counter = cleanCounter(document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML);
-      counter = counter + 1;
-
-      if (counter == 1) {
-        document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML = '(' + counter + ')';
-        document.getElementById(feedId).getElementsByClassName('unread-counter')[0].style.display = "";
-        if (!document.getElementById(feedId).classList.contains('unread')) {
-          document.getElementById(feedId).classList.add('unread');
+        if (counter > 0) {
+          document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML = '(' + counter + ')';
+          document.getElementById(feedId).getElementsByClassName('unread-counter')[0].style.display = "";
+          if (!document.getElementById(feedId).classList.contains('unread')) {
+            document.getElementById(feedId).classList.add('unread');
+          }
+          document.getElementById(feedId).style.fontWeight = 'bold';
+        } else {
+          document.getElementById(feedId).classList.remove('unread');
+          document.getElementById(feedId).style.fontWeight = 'normal';
+          document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML = '(' + counter + ')';
         }
-        document.getElementById(feedId).style.fontWeight = 'bold';
-      } else {
-        document.getElementById(feedId).classList.remove('unread');
-        document.getElementById(feedId).style.fontWeight = 'normal';
-        document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML = '(' + counter + ')';
+        document.getElementById(storyId).getElementsByClassName("accordion-toggle")[0].style.fontWeight = 'bold';
+      }  else {
+        if (callback == "/api/login") { window.location = "/login" }
       }
-      document.getElementById(storyId).getElementsByClassName("accordion-toggle")[0].style.fontWeight = 'bold';
-    } else {
-      if (callback == "/api/login") { window.location = "/login" }
     }
-  });
+  }
+  xhr.open('GET', '/api/unread/' + storyId, true);
+  xhr.send(null);
 }
 
 function loadTheme(theme, callback) {
-  $.post('/api/settings/theme', {theme: theme}, function (data) {
-    window.location = "/";
-  })
+  var xhr = getXMLHttpRequest();
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 0)) {
+      window.location = "/";
+    }
+  }
+  xhr.open('POST', '/api/settings/theme', true);
+  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+  xhr.send('theme=' + theme);
 }
 
 function refreshCounters() {
-  $.getJSON('/api/counters', function(data) {
-    if (data.success == false) {
-      if (data.callback == "/api/login") { window.location = "/login" }
-    }
-    for (i=0;i < data.content.length;i++) {
-      var feed = data.content[i];
-      var feedId = feed[0];
-      var feedCounter = feed[1];
-      if (feedCounter > 1) {
-        $(document.getElementById(feedId).getElementsByClassName('unread-counter')[0]).show();
+  var xhr = getXMLHttpRequest();
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 0)) {
+      var data = JSON.parse(xhr.responseText);
+      if (data.success == false) {
+        if (data.callback == "/api/login") { window.location = "/login" }
       }
-      document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML = '(' + feedCounter + ')';
+      for (i=0;i < data.content.length;i++) {
+        var feed = data.content[i];
+        var feedId = feed[0];
+        var feedCounter = feed[1];
+        if (feedCounter > 1) {
+          document.getElementById(feedId).getElementsByClassName('unread-counter')[0].style.display = "";
+        }
+        document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML = '(' + feedCounter + ')';
+      }
     }
-  });
+  }
+  xhr.open('GET', '/api/counters', true);
+  xhr.send(null);
 }
 
 function initAddFeed() {
@@ -390,7 +444,6 @@ function initTabs() {
     }
   }
 }
-
 
 // Hide other tabs
 function hideTabs(tab) {
@@ -446,7 +499,6 @@ function collapseIn (accordionGroupRoot) {
       body.style.display = "none";
       body.style.height = "0px";
     }
-    
   }
 }
 
@@ -457,11 +509,7 @@ function addEventListenerList(list, event, fn) {
   }
 }
 
-$(document).ready(function() {
-  // Globals
-  requests = new Array();
-  importer = false;
-});
+
 
 function addToggle() {
   var add = document.getElementById('add');
@@ -536,9 +584,11 @@ function getXMLHttpRequest() {
             xhr = new XMLHttpRequest();
         }
     } else {
-        alert("Votre navigateur ne supporte pas l'objet XMLHTTPRequest...");
+        alert("Browser not supported (XMLHTTPRequest).");
         return null;
     }
      
     return xhr;
 }
+
+
