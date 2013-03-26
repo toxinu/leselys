@@ -23,13 +23,17 @@ function addFeed() {
       var feedCounter = data.counter;
 
       var newFeed = crel('a', {'onClick': 'viewFeed("' + feedId + '")', 'href': '/#' + feedId}, feedTitle + " ",
-            crel('span', {'class': 'badge badge-inverse unread-counter'}, feedCounter));
+            crel('span', {'class': 'unread-counter muted'}, feedCounter));
 
       loader.style.display = "none";
       loader.innerHTML = newFeed.outerHTML;
       loader.id = feedId;
-      loader.className += " story";
+      loader.classList.add('feed');
       loader.style.display = "";
+
+      if(feedCounter > 0) {
+        loader.classList.add('unread');
+      }
 
       // Add new feed in settings/feeds if opened
       if (document.getElementById('feeds-settings')) {
@@ -37,7 +41,7 @@ function addFeed() {
         if (document.getElementById('feeds-settings').getElementsByClassName('empty-feed-list')) {
           document.getElementById('feeds-settings').getElementsByClassName('empty-feed-list')[0].style.display = "none";
         }
-        var newFeedSetting = crel('li', {'id': feedId}, feedTitle, 
+        var newFeedSetting = crel('li', {'id': feedId + "-feeds-settings"}, feedTitle, 
               ' (',
               crel('a', {'class': 'muted', 'href': '#', 'onClick': 'deleteFeed("' + feedId + '")'}, 'remove'),
               ') - ',
@@ -55,7 +59,6 @@ function addFeed() {
       setTimeout(clearLoader, 5000);
     }
   });
-  $('#add').popover('hide')
 }
 
 function handleOPMLImport(evt) {
@@ -189,6 +192,10 @@ function viewFeed(feedId) {
     var storyListAccordion = crel('div', {'class': 'accordion', 'id': 'story-list-accordion'});
     var content = '';
 
+    if (data.content.length == 0) {
+      content = '<p style="text-align:center; margin-top: 50px"><em>Oups, there is no story here...</em></p>';
+    }
+
     for (var i=0;i < data.content.length;i++) {
       var item = data.content[i];
       var storyId = item._id;
@@ -269,10 +276,13 @@ function readStory(storyId, ignore) {
     'click', function(e) { e.preventDefault() }, false
     );
     if (data.success == true) {
-      var counter = parseInt(document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML) - 1;
-      document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML = counter;
+      var counter = cleanCounter(document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML);
+      var counter = counter - 1;
+      document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML = '(' + counter + ')';
       if (counter == 0) {
         document.getElementById(feedId).getElementsByClassName('unread-counter')[0].style.display = "none";
+        document.getElementById(feedId).classList.remove('unread');
+        document.getElementById(feedId).style.fontWeight = 'normal';
       }
     }
   });
@@ -293,13 +303,20 @@ function unreadStory(storyId) {
       story.getElementsByClassName("story-read-toggle")[0].setAttribute("onclick", 'readStory("' + storyId + '")');
       story.getElementsByClassName("story-read-toggle")[0].innerHTML = 'Mark as read';
 
-      var counter = parseInt(document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML) + 1;
+      var counter = cleanCounter(document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML);
+      counter = counter + 1;
 
       if (counter == 1) {
-        document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML = counter;
+        document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML = '(' + counter + ')';
         document.getElementById(feedId).getElementsByClassName('unread-counter')[0].style.display = "";
+        if (!document.getElementById(feedId).classList.contains('unread')) {
+          document.getElementById(feedId).classList.add('unread');
+        }
+        document.getElementById(feedId).style.fontWeight = 'bold';
       } else {
-        document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML = counter;
+        document.getElementById(feedId).classList.remove('unread');
+        document.getElementById(feedId).style.fontWeight = 'normal';
+        document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML = '(' + counter + ')';
       }
       document.getElementById(storyId).getElementsByClassName("accordion-toggle")[0].style.fontWeight = 'bold';
     } else {
@@ -324,9 +341,9 @@ function refreshCounters() {
       var feedId = feed[0];
       var feedCounter = feed[1];
       if (feedCounter > 1) {
-        $(document.getElementById(feedId).getElementsByClassName('badge')[0]).show();
+        $(document.getElementById(feedId).getElementsByClassName('unread-counter')[0]).show();
       }
-      document.getElementById(feedId).getElementsByClassName('badge')[0].innerHTML = feedCounter;
+      document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML = '(' + feedCounter + ')';
     }
   });
 }
@@ -409,4 +426,8 @@ function addToggle() {
     add.style.display = "block";
   }
   document.getElementById('urlFeed').focus();
+}
+
+function cleanCounter(counter) {
+  return parseInt(counter.substr(1, counter.length-2));
 }
