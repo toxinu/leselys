@@ -1,11 +1,11 @@
 Leselys
 =======
 
-I'm Leselys, your very elegant RSS reader.
+I'm Leselys, your very elegant RSS reader. Try me `right now`_ (demo/demo)!
 
 No `bullshit apps`_ for Android, iPhone, etc. Just a responsive design and for every device.
 
-Leselys is Heroku ready. There is a `demo here`_ (demo/demo).
+Leselys is Heroku ready.
 
 Installation
 ------------
@@ -74,7 +74,7 @@ License is `AGPL3`_. See `LICENSE`_.
 
 .. _MongoDB: http://docs.mongodb.org/manual/installation/
 .. _bullshit apps: http://tommorris.org/posts/8070
-.. _demo here: https://leselys.herokuapp.com
+.. _right now: https://leselys.herokuapp.com
 .. _MongoDB storage backend: https://github.com/socketubs/leselys/blob/master/leselys/backends/_mongodb.py
 .. _Ubuntu: https://github.com/socketubs/leselys/wiki/Ubuntu
 .. _Heroku: https://github.com/socketubs/leselys/wiki/Heroku
