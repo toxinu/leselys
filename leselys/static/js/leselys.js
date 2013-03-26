@@ -1,6 +1,7 @@
 // Globals
 requests = new Array();
 importer = false;
+setKeyboard();
 
 function addFeed() {
   var url = document.getElementById('urlFeed').value;
@@ -138,6 +139,7 @@ function viewSettings() {
           }
           initPage();
           initTabs();
+          initSettingsView();
         } else {
           if (data.callback == "/api/login") { window.location = "/login" }
         }
@@ -243,6 +245,7 @@ function viewFeed(feedId) {
 
         if (storyRead == false) {
           storyAccordion.getElementsByClassName('accordion-toggle')[0].style.fontWeight = "bold";
+          storyAccordion.classList.add('unread-story');
         }
 
         content += storyAccordion.outerHTML;
@@ -273,13 +276,22 @@ function readStory(storyId, ignore) {
     return true
   }
 
+  var storyHeading = document.getElementById(storyId);
+  storyHeading.classList.add('selected-story');
+  for (var i=0;i < document.getElementsByClassName('accordion-group').length;i++) {
+    var story = document.getElementsByClassName('accordion-group')[i];
+    if (story.getAttribute('id') != storyId) {
+      story.classList.remove('selected-story');
+    }
+  }
+
   var xhr = getXMLHttpRequest();
   xhr.onreadystatechange = function() {
     if (xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 0)) {
       var data = JSON.parse(xhr.responseText);
       if (data.success == false) {
         if (data.callback == "/api/login" ) { window.location = "/login" }
-      }
+      } 
       if (data.content.last_update == false) {
         var published = "No date";
       } else {
@@ -298,7 +310,7 @@ function readStory(storyId, ignore) {
         var published = data.content.last_update['year'] + '-' + data.content.last_update['month'] +
                       '-' + data.content.last_update['day'] + "  " + hours + ":" + minutes;
       }
-
+        
       var feedId = data.content.feed_id;
       var story = getStoryTemplate();
 
@@ -309,11 +321,15 @@ function readStory(storyId, ignore) {
       story.getElementsByClassName("story-content")[0].innerHTML = data.content.description;
       story.getElementsByClassName("story-date")[0].innerHTML = published;
 
+  
       document.getElementById(storyId).getElementsByClassName("accordion-inner")[0].innerHTML = story.innerHTML;
       document.getElementById(storyId).getElementsByClassName("story-read-toggle")[0].addEventListener(
-      'click', function(e) { e.preventDefault() }, false
+        'click', function(e) { e.preventDefault() }, false
       );
+  
       if (data.success == true) {
+        document.getElementById(storyId).classList.remove('unread-story');
+
         var counter = cleanCounter(document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML);
         var counter = counter - 1;
         document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML = '(' + counter + ')';
@@ -339,19 +355,21 @@ function unreadStory(storyId) {
       if (data.success == true) {
         var feedId = data.content.feed_id;
         var story = document.getElementById(storyId);
+        story.classList.add('unread-story');
 
         // Avoid next click on story title
         document.getElementById(storyId).getElementsByClassName("accordion-toggle")[0].setAttribute('onclick', 'readStory("' + storyId + '", true)');
  
-        story.getElementsByClassName("story-read-toggle")[0].setAttribute('onclick', 'readStory("' + storyId + '")');
+       story.getElementsByClassName("story-read-toggle")[0].setAttribute('onclick', 'readStory("' + storyId + '")');
        story.getElementsByClassName("story-read-toggle")[0].innerHTML = 'Mark as read';
 
         var counter = cleanCounter(document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML);
         counter = counter + 1;
+        console.log(counter);
 
         if (counter > 0) {
           document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML = '(' + counter + ')';
-          document.getElementById(feedId).getElementsByClassName('unread-counter')[0].style.display = "";
+          document.getElementById(feedId).getElementsByClassName('unread-counter')[0].style.display = "block";
           if (!document.getElementById(feedId).classList.contains('unread')) {
             document.getElementById(feedId).classList.add('unread');
           }
@@ -363,7 +381,7 @@ function unreadStory(storyId) {
         }
         document.getElementById(storyId).getElementsByClassName("accordion-toggle")[0].style.fontWeight = 'bold';
       }  else {
-        if (callback == "/api/login") { window.location = "/login" }
+        if (data.callback == "/api/login") { window.location = "/login" }
       }
     }
   }
@@ -409,6 +427,13 @@ function refreshCounters() {
 function initAddFeed() {
   var addFeed = getAddFeedTemplate();
   document.getElementById('menu').appendChild(addFeed);
+}
+
+function initSettingsView() {
+ document.getElementById('OPMLSubmit').addEventListener('click', handleOPMLImport, false);
+ document.getElementById('OPMLFile').addEventListener('change', function() {
+   document.getElementById('upload-file-info').innerHTML = document.getElementById('OPMLFile').value.replace("C:\\fakepath\\", ""); 
+ });
 }
 
 function initPage() {
@@ -503,14 +528,70 @@ function collapseIn (accordionGroupRoot) {
   }
 }
 
+function getCurrentStory() {
+  var story = document.getElementsByClassName('selected-story')[0];
+  if (typeof story === "undefined") { return false }
+  return story;
+}
+
+function getNextStory() {
+  var story = document.getElementsByClassName('selected-story')[0];
+  if (typeof story === "undefined") { return false }
+  if (story.nextSibling == null) { return false }
+  return story.nextSibling;
+}
+
+function getPreviousStory() {
+  var story = document.getElementsByClassName('selected-story')[0];
+  if (typeof story === "undefined") { return false }
+  if (story.previousSibling == null) { return false }
+  return story.previousSibling;
+}
+
+function toggleReadState(storyId) {
+  console.log(storyId);
+  var story = document.getElementById(storyId);
+  if (story.classList.contains('unread-story')) {
+    readStory(storyId);
+  } else {
+    unreadStory(storyId);
+  }
+}
+
+// Keyboard
+function setKeyboard(){
+   Mousetrap.bind('g h', function() { viewHome(); });
+   Mousetrap.bind('r', function() { refreshCounters(); });
+   Mousetrap.bind('a', function() { addToggle(); });
+   Mousetrap.bind('m', function() {
+     var story = getCurrentStory();
+     if (story == false) { return }
+     toggleReadState(story.getAttribute('id'));
+   });
+   Mousetrap.bind('o', function() {
+     var story = getCurrentStory();
+     if (story == false) { return }
+     story.getElementsByTagName('a')[0].click()
+   });
+   Mousetrap.bind('k', function() { 
+     var nextStory = getNextStory();
+     if (nextStory == false) { return }
+     nextStory.getElementsByTagName('a')[0].click();
+   }); 
+   Mousetrap.bind('j', function() { 
+     var previousStory = getPreviousStory();
+     if (previousStory == false) { return }
+     previousStory.getElementsByTagName('a')[0].click();
+   }); 
+
+}
+
 // Utils
 function addEventListenerList(list, event, fn) {
   for (var i = 0, len = list.length; i < len; i++) {
     list[i].addEventListener(event, fn, false);
   }
 }
-
-
 
 function addToggle() {
   var add = document.getElementById('add');
@@ -568,7 +649,6 @@ function cleanCounter(counter) {
         }
     };
 }(DOMParser));
-
 
 // Get XHR Object
 function getXMLHttpRequest() {

@@ -51,7 +51,7 @@
               <div style="position:relative;">
                 <a id="OPMLButton" class='btn' href='javascript:;'>
                   Choose OPML File here
-                  <input id="OPMLFile" type="file" style='position:absolute;z-index:2;top:0;left:0;filter: alpha(opacity=0);-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";opacity:0;background-color:transparent;color:transparent;' name="files[]" size="40"  onchange='$("#upload-file-info").html($(this).val().replace("C:\\fakepath\\", ""));' multiple />
+                  <input id="OPMLFile" type="file" style='position:absolute;z-index:2;top:0;left:0;filter: alpha(opacity=0);-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";opacity:0;background-color:transparent;color:transparent;' name="files[]" size="40" multiple />
                 </a>
                 <output id="list"></output>
                 &nbsp;
@@ -83,10 +83,4 @@
     </div>
   </div>
 </div>
-
-<script type="text/javascript">
-  $(document).ready(function(){
-    document.getElementById('OPMLSubmit').addEventListener('click', handleOPMLImport, false);
-  });
-</script>
 {% endblock %}

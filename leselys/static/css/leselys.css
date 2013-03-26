@@ -105,3 +105,7 @@ li a [class^="icon-"] {
 .feed.unread {
   font-weight: bold;
 }
+
+.selected-story {
+  border: 2px solid #e5e5e5;
+}
