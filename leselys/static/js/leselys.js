@@ -240,9 +240,6 @@ function viewFeed(feedId) {
         storyAccordion.id = storyId;
         storyAccordion.getElementsByClassName("accordion-toggle")[0].setAttribute('onclick', 'readStory("' + storyId + '")');
         storyAccordion.getElementsByClassName("accordion-toggle")[0].innerHTML = storyTitle;
-        storyAccordion.getElementsByClassName("accordion-toggle")[0].addEventListener('click', function(e){
-          e.preventDefault()
-        }, false);
 
         if (storyRead == false) {
           storyAccordion.getElementsByClassName('accordion-toggle')[0].style.fontWeight = "bold";
