@@ -418,6 +418,7 @@ function refreshCounters() {
           document.getElementById(feedId).classList.add('unread');
           document.getElementById(feedId).getElementsByClassName('unread-counter')[0].style.display = "";
         } else {
+          document.getElementById(feedId).classList.remove('unread');
           document.getElementById(feedId).getElementsByClassName('unread-counter')[0].style.display = "none";
         }
       }
