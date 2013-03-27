@@ -413,10 +413,12 @@ function refreshCounters() {
         var feed = data.content[i];
         var feedId = feed[0];
         var feedCounter = feed[1];
-        if (feedCounter > 1) {
-          document.getElementById(feedId).getElementsByClassName('unread-counter')[0].style.display = "";
-        }
         document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML = '(' + feedCounter + ')';
+        if (feedCounter > 0) {
+          document.getElementById(feedId).getElementsByClassName('unread-counter')[0].style.display = "";
+        } else {
+          document.getElementById(feedId).getElementsByClassName('unread-counter')[0].style.display = "none";
+        }
       }
     }
   }
