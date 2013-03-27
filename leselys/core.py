@@ -22,6 +22,7 @@ class Core(object):
 
         self.app = Flask(__name__)
         self.app.config['SECRET_KEY'] = os.urandom(24)
+        self.app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 31536000
         self.signer = TimestampSigner(self.app.config['SECRET_KEY'])
         self.cache = SimpleCache()
 
