@@ -365,7 +365,6 @@ function unreadStory(storyId) {
 
         var counter = cleanCounter(document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML);
         counter = counter + 1;
-        console.log(counter);
 
         if (counter > 0) {
           document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML = '(' + counter + ')';
@@ -373,10 +372,8 @@ function unreadStory(storyId) {
           if (!document.getElementById(feedId).classList.contains('unread')) {
             document.getElementById(feedId).classList.add('unread');
           }
-          document.getElementById(feedId).style.fontWeight = 'bold';
         } else {
           document.getElementById(feedId).classList.remove('unread');
-          document.getElementById(feedId).style.fontWeight = 'normal';
           document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML = '(' + counter + ')';
         }
         document.getElementById(storyId).getElementsByClassName("accordion-toggle")[0].style.fontWeight = 'bold';
