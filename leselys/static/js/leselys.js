@@ -415,6 +415,7 @@ function refreshCounters() {
         var feedCounter = feed[1];
         document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML = '(' + feedCounter + ')';
         if (feedCounter > 0) {
+          document.getElementById(feedId).classList.add('unread');
           document.getElementById(feedId).getElementsByClassName('unread-counter')[0].style.display = "";
         } else {
           document.getElementById(feedId).getElementsByClassName('unread-counter')[0].style.display = "none";
