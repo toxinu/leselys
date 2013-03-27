@@ -369,7 +369,7 @@ function unreadStory(storyId) {
 
         if (counter > 0) {
           document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML = '(' + counter + ')';
-          document.getElementById(feedId).getElementsByClassName('unread-counter')[0].style.display = "block";
+          document.getElementById(feedId).getElementsByClassName('unread-counter')[0].style.display = "";
           if (!document.getElementById(feedId).classList.contains('unread')) {
             document.getElementById(feedId).classList.add('unread');
           }
