@@ -44,9 +44,13 @@ class Retriever(threading.Thread):
         threading.Thread.__init__(self)
         # self.feed is raw parsed feed
         self.feed = feed
-        self.title = feed.feed['title']
         self.data = feed['entries']
         self.do_retention = do_retention
+
+        if feed.feed.get('title'):
+            self.title = feed.feed['title']
+        elif feed.get('title'):
+            self.title = feed['title']
 
     def run(self):
         # This feed comes from database
@@ -131,7 +135,7 @@ class Refresher(threading.Thread):
                     readed.append(entry['title'])
                 storage.remove_story(entry['_id'])
 
-            retriever = Retriever(self.data)
+            retriever = Retriever(self.data, do_retention=False)
             retriever.start()
             retriever.join()
 
@@ -162,7 +166,7 @@ class Reader(object):
         resp = requests.get(stripped)
         feed = feedparser.parse(resp.text)
         if feed.version != '':
-            return feed
+            return feed, stripped
 
         urls = FeedFinder.parse(resp.text)
         feed_url = ''
@@ -174,10 +178,10 @@ class Reader(object):
             if urlparse(feed_url)[1] == '':
                 # We have empty 'netloc', meaning we have relative url
                 feed_url = urljoin(stripped, feed_url)
-        return feedparser.parse(feed_url)
+        return feedparser.parse(feed_url), feed_url
 
     def add(self, url):
-        feed = self.get_feed(url)
+        feed, url = self.get_feed(url)
 
         # Bad feed
         if feed.version == '' or not feed.feed.get('title'):
