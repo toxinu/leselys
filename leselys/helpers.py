@@ -167,8 +167,8 @@ def run_retention(delta_day):
     for feed in storage.get_feeds():
         print(feed['title'].encode('utf-8'))
         for story in storage.get_stories(feed['_id']):
-            delta = get_datetime(story['last_update']) - datetime.datetime.now()
+            delta = datetime.datetime.now() - get_datetime(story['last_update'])
             print('=> %s (%s)' % (story['_id'], delta.days))
-            if delta.days < -int(delta_day):
+            if delta.days > int(delta_day):
                 print('deleted.')
                 storage.remove_story(story['_id'])

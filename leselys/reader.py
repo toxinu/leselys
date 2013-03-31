@@ -72,8 +72,8 @@ class Retriever(threading.Thread):
                 published_datetime = datetime.datetime.now()
 
             if self.do_retention:
-                delta = published_datetime - datetime.datetime.now()
-                if delta.days < -int(config.get('worker', 'retention')):
+                delta = datetime.datetime.now() - published_datetime
+                if delta.days > int(config.get('worker', 'retention')):
                     break
 
             storage.add_story({
