@@ -40,17 +40,13 @@ class Retriever(threading.Thread):
     return it to the Reader when a new subscription arrives
     """
 
-    def __init__(self, feed, do_retention=True):
+    def __init__(self, feed, feed_from_db=None, do_retention=True):
         threading.Thread.__init__(self)
         # self.feed is raw parsed feed
-        self.feed = feed
         self.data = feed['entries']
         self.do_retention = do_retention
-
-        if feed.feed.get('title'):
-            self.title = feed.feed['title']
-        elif feed.get('title'):
-            self.title = feed['title']
+        if feed_from_db:
+            self.title = feed_from_db['title']
 
     def run(self):
         # This feed comes from database
@@ -78,7 +74,7 @@ class Retriever(threading.Thread):
             if self.do_retention:
                 delta = datetime.datetime.now() - published_datetime
                 if delta.days > int(config.get('worker', 'retention')):
-                    break
+                    continue
 
             storage.add_story({
                 'title': title,
@@ -135,7 +131,7 @@ class Refresher(threading.Thread):
                     readed.append(entry['title'])
                 storage.remove_story(entry['_id'])
 
-            retriever = Retriever(self.data, do_retention=False)
+            retriever = Retriever(self.data, self.feed, do_retention=False)
             retriever.start()
             retriever.join()
 
