@@ -42,6 +42,18 @@ class Mongodb(Storage):
         return str(self.db.users.save({'username': username,
                                        'password': password}))
 
+    def set_feed_setting(self, feed_id, setting_type, value):
+        setting = self.db.feedsettings.find_one({'feed_id': feed_id, 'setting_type': setting_type})
+        if setting:
+            self.db.feedsettings.remove(setting['_id'])
+        self.db.feedsettings.save({'feed_id':feed_id, 'setting_type': setting_type, 'value': value}) 
+
+    def get_feed_setting(self, feed_id, setting_type):
+        setting = self.db.feedsettings.find_one({'feed_id': feed_id, 'setting_type': setting_type})
+        if setting:
+            setting['_id'] = str(setting['_id'])
+        return setting
+
     def set_setting(self, key, value):
         return str(self.db.settings.save({key: value}))
 

@@ -33,6 +33,15 @@ class Sofart(Storage):
     def set_password(self, username, password):
         return self.db.users.save({'username': username, 'password': password})
 
+    def set_feed_setting(self, feed_id, setting_type, value):
+        setting = self.db.feedsettings.find_one({'feed_id': feed_id, 'setting_type': setting_type})
+        if setting:
+            self.db.feedsettings.remove(setting['_id'])
+        self.db.feedsettings.save({'feed_id':feed_id, 'setting_type': setting_type, 'value': value}) 
+
+    def get_feed_setting(self, feed_id, setting_type):
+        return self.db.feedsettings.find_one({'feed_id': feed_id, 'setting_type': setting_type}) 
+
     def set_setting(self, key, value):
         self.db.settings.save({key: value})
 

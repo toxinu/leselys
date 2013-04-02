@@ -74,6 +74,21 @@ function addFeed() {
   xhr.send('url=' + url);
 }
 
+function setFeedSetting(feedId, settingKey, settingValue) {
+  var xhr = getXMLHttpRequest();
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 0)) {
+      var data = JSON.parse(xhr.responseText);
+      if (data.success == true) {
+        viewFeed(feedId);
+      }
+    }
+  }
+  xhr.open('POST', '/api/feedsettings', true);
+  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+  xhr.send('feed_id=' + feedId + "&key=" + settingKey + "&value=" + settingValue);
+}
+
 function handleOPMLImport(evt) {
   if (document.getElementById("upload-file-info").innerHTML == "") { return false }
   if (importer) { return false }
@@ -224,6 +239,8 @@ function viewFeed(feedId) {
     requests[i].abort();
     requests.shift();
   }
+  console.log('----');
+  console.log(feedId);
   var xhr = getXMLHttpRequest();
   xhr.onreadystatechange = function() {
     if (xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 0)) {
@@ -240,8 +257,8 @@ function viewFeed(feedId) {
         content = '<p style="text-align:center; margin-top: 50px"><em>Oups, there is no story here...</em></p>';
       }
 
-      for (var i=0;i < data.content.length;i++) {
-        var item = data.content[i];
+      for (var i=0;i < data.content.entries.length;i++) {
+        var item = data.content.entries[i];
         var storyId = item._id;
         var storyTitle = item.title;
         var storyAccordion = getStoryAccordionTemplate();
@@ -268,7 +285,7 @@ function viewFeed(feedId) {
 
       document.getElementById(feedId).getElementsByTagName('a')[0].classList.add('text-error');
       initAccordion();
-      enableRibbon();
+      enableRibbon(feedId, data.content.ordering);
     }
   }
   xhr.open("GET", "/api/get/" + feedId, true);
@@ -538,10 +555,18 @@ function collapseIn (accordionGroupRoot) {
   }
 }
 
-function enableRibbon() {
+function enableRibbon(feedId, ordering) {
   var ribbon = document.getElementById('ribbon');
   ribbon.style.display = "";
-  //ribbon.style.display = "none";
+  if (ordering == "unreaded") {
+    ribbon.getElementsByClassName('order-unreaded')[0].classList.add('active');
+    ribbon.getElementsByClassName('order-published')[0].classList.remove('active');
+  } else if (ordering == "published") {
+    ribbon.getElementsByClassName('order-unreaded')[0].classList.remove('active');
+    ribbon.getElementsByClassName('order-published')[0].classList.add('active');
+  }
+  ribbon.getElementsByClassName('order-unreaded')[0].getElementsByTagName('a')[0].onclick = function () {setFeedSetting(feedId, 'ordering', 'unreaded')};
+  ribbon.getElementsByClassName('order-published')[0].getElementsByTagName('a')[0].onclick = function () {setFeedSetting(feedId, 'ordering', 'published')};
 }
 
 function disableRibbon() {
