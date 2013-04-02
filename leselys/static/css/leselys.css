@@ -4,6 +4,7 @@
 }
 #content {
   padding-left: 10px;
+  margin-top: 5px;
 }
 .divider-vertical {
   border-left:1px solid rgb(255, 255, 255, 0.2);
@@ -106,7 +107,20 @@ li a [class^="icon-"] {
     display: none;
   }
   #ribbon {
-    height: 90px;
+    height: 170px;
+    width: 45px;
+  }
+  #ribbon li {
+    display: block;
+  }
+  #ribbon .divider-vertical {
+    height: 1px;
+    border-bottom: 1px solid rgb(255, 255, 255);
+    background-color: rgb(229, 229, 229);
+    border-right: none;
+    border-left: none;
+    margin-top: 8px;
+    margin-bottom: 8px;
   }
   .sidenav-affix {
     position: static;
