@@ -7,33 +7,15 @@
   <div id="content" class="span10">
     <div class="tabbable">
       <ul class="nav nav-tabs">
-        <!-- <li class="active"><a href="#settings" data-toggle="tab">Settings</a></li> -->
         <li class="active"><a href="#feeds-settings">Feeds</a></li>
-        <li><a href="#import-export">Import/Export</a></li>
-        <li><a href="#themes">Themes</a></li>
+        <li><a href="#settings">Settings</a></li>
+        <li><a href="#help">Help</a></li>
+        <li><a href="#about">About</a></li>
       </ul>
 
       <div class="tab-content">
-        <!-- <div class="tab-pane active" id="settings">
-        	<form class="form-inline">
-            <fieldset>
-            <legend>Settings</legend>
-            {% for setting, value in settings.items() %}
-            	{% if setting == "acceptable_elements" %}
-            		<label>Acceptable elements</label>
-		            <input type="text" value="{{ ','.join(value) }}">
-          	  {% else %}
-  	          	<label>{{ setting|title }}</label>
-	  	          <input type="text" placeholder="{{ value }}">
-            	{% endif %}
-        	  {% endfor %}
-	          <br />
-  	        <br />
-            <button type="submit" class="btn btn-info">Save</button>
-            </fieldset>
-          </form>
-        </div> -->
         <div class="tab-pane active" id="feeds-settings">
+          <h3>Feed settings</h3>
           <ul>
           {% if feeds %}
             {% for feed in feeds %}
@@ -45,9 +27,20 @@
           {% endif %}
           </ul>
         </div>
-        <div class="tab-pane" id="import-export">
+        <div class="tab-pane" id="settings">
+          <h3>Themes</h3>
+          <ul>
+            {% for theme_name in themes.keys() %}
+                 {% if theme_name.lower() == current_theme_name.lower() %}
+                   <li style="font-weight: bold" >{{ theme_name }}</li>
+                 {% else %}
+                   <li><a href="#" onclick="loadTheme('{{ theme_name|lower }}')">{{ theme_name }}</a></li>
+                 {% endif %}
+            {% endfor %}
+          </ul>
+          <hr>
           <div class="form-inline">
-            <legend>Import</legend>
+            <h3>Import</h3>
               <div style="position:relative;">
                 <a id="OPMLButton" class='btn' href='javascript:;'>
                   Choose OPML File here
@@ -60,24 +53,43 @@
                 <button id="OPMLSubmit" type="submit" class="btn btn-info">Upload</button>
               </div>
           </div>
-          <br />
+          <hr>
           <form class="form-inline" method="GET" action="/api/export/opml">
-            <legend>Export</legend>
+            <h3>Export</h3>
               <div style="position:relative;">
                 <button type="submit" class="btn btn-info">Download</button>
               </div>
           </form> 
         </div>
-        <div class="tab-pane" id="themes">
+        <div class="tab-pane" id="help">
+          <h3>Keyboard</h3>
           <ul>
-            {% for theme_name in themes.keys() %}
-                 {% if theme_name.lower() == current_theme_name.lower() %}
-                   <li style="font-weight: bold" >{{ theme_name }}</li>
-                 {% else %}
-                   <li><a href="#" onclick="loadTheme('{{ theme_name|lower }}')">{{ theme_name }}</a></li>
-                 {% endif %}
-            {% endfor %}
+            <li><code>g then h</code> Go to Home view</li>
+            <li><code>?</code> Show this help</li>
+            <li><code>r</code> Refresh feeds list</li>
+            <li><code>a</code> Add feed popup</li>
+            <li><code>m</code> Toggle read/unread state of selected story</li>
+            <li><code>o</code> Toggle open/close selected story</li>
+            <li><code>k</code> Select and open next story</li>
+            <li><code>j</code> Select and open previous story</li>
           </ul>
+          <h3>More</h3>
+          <p>You can find more help on <a href="https://github.com/socketubs/leselys" target="_blank">Github</a></p>
+        </div>
+        <div class="tab-pane" id="about">
+          <h3>About</h3>
+          <h4>Dependencies</h4>
+          <ul>
+          {% for dep, version in app_config.versions.items() %}
+            <li>{{ dep }} ({{ version }})</li>
+          {% endfor %}
+          </ul>
+          <h4>Configuration</h4>
+          <ul>
+            <li>Storage: <em>{{ config.get('storage', 'type') }}</em></li>
+            <li>Session: <em>{{ config.get('session', 'type') }}</em></li>
+          </ul>
+          Please copy paste all this informations if you fill a bug on <a href="https://github.com/socketubs/leselys/issues?state=open" target="_blank">Github</a>.</p>
         </div>
       </div>
     </div>

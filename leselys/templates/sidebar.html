@@ -6,7 +6,6 @@
         <a href="#" onclick="viewHome()"><i class="icon-home"></i></a>
         <a href="#" onclick="viewSettings()"><i class="icon-wrench"></i></a>
         <a href="#" onclick="addToggle()"><i class="icon-plus-sign"></i></a>
-        <a href="https://github.com/socketubs/leselys" target="_blank"><i class="icon-github-alt"></i></a>
         <a href="/logout"><i class="icon-off"></i></a>
       </li>
     </center>
@@ -28,9 +27,9 @@
       <li class="nav-header feeds-list-title">Feeds</li>
       {% for feed in feeds %}
         {% if feed.counter > 0 %}
-          <li class="feed unread" id="{{ feed.id }}"><a onclick="viewFeed(&quot;{{ feed.id }}&quot;)" href="#{{ feed.id }}">{{ feed.title }} <span class="unread-counter muted">({{ feed.counter }})</span></a></li>
+        <li class="feed unread" id="{{ feed.id }}"><a onclick="viewFeed(&quot;{{ feed.id }}&quot;)" href="#{{ feed.id }}"><span class="feed-title">{{ feed.title }}</span> <span class="unread-counter muted">({{ feed.counter }})</span></a></li>
         {% else %}
-          <li class="feed" id="{{ feed.id }}"><a onclick="viewFeed(&quot;{{ feed.id }}&quot;)" href="#{{ feed.id }}">{{ feed.title }} <span style="display: none" class="unread-counter muted">({{ feed.counter }})</span></a></li>
+        <li class="feed" id="{{ feed.id }}"><a onclick="viewFeed(&quot;{{ feed.id }}&quot;)" href="#{{ feed.id }}"><span class="feed-title">{{ feed.title }}</span> <span style="display: none" class="unread-counter muted">({{ feed.counter }})</span></a></li>
         {% endif %}
       {% endfor %}
       <li class="empty-feed-list" style="display: none"><center><em>Add your first feed with the little cross icon.</em></center></li>

@@ -117,7 +117,7 @@ function handleOPMLImport(evt) {
   reader.readAsText(file);
 }
 
-function viewSettings() {
+function viewSettings(callback) {
   var xhr = getXMLHttpRequest();
   xhr.onreadystatechange = function() {
     if (xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 0)) {
@@ -140,6 +140,10 @@ function viewSettings() {
           initPage();
           initTabs();
           initSettingsView();
+          if (typeof callback != "undefined" ) {
+            callback();
+          }
+          disableRibbon();
         } else {
           if (data.callback == "/api/login") { window.location = "/login" }
         }
@@ -149,7 +153,7 @@ function viewSettings() {
   xhr.send(null);
 }
 
-function viewHome() {
+function viewHome(callback) {
   var xhr = getXMLHttpRequest();
   xhr.onreadystatechange = function() {
     if (xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 0)) {
@@ -162,6 +166,10 @@ function viewHome() {
         document.getElementById("content").innerHTML = content.innerHTML;
         document.getElementById("menu").innerHTML = sidebar.innerHTML;
         initPage();
+        if (typeof callback != "undefined" ) {
+            callback();
+        }
+        disableRibbon();
       } else {
         if (data.callback == "/api/login") { window.location = "/login" }
       }
@@ -260,6 +268,7 @@ function viewFeed(feedId) {
 
       document.getElementById(feedId).getElementsByTagName('a')[0].classList.add('text-error');
       initAccordion();
+      enableRibbon();
     }
   }
   xhr.open("GET", "/api/get/" + feedId, true);
@@ -529,6 +538,18 @@ function collapseIn (accordionGroupRoot) {
   }
 }
 
+function enableRibbon() {
+  var ribbon = document.getElementById('ribbon');
+  //ribbon.style.display = "";
+  ribbon.style.display = "none";
+}
+
+function disableRibbon() {
+  var ribbon = document.getElementById('ribbon');
+  ribbon.style.display = "none";
+}
+
+
 function getCurrentStory() {
   var story = document.getElementsByClassName('selected-story')[0];
   if (typeof story === "undefined") { return false }
@@ -564,6 +585,22 @@ function setKeyboard(){
    Mousetrap.bind('g h', function() { viewHome(); });
    Mousetrap.bind('r', function() { refreshCounters(); });
    Mousetrap.bind('a', function() { addToggle(); });
+   Mousetrap.bind('?', function() {
+     viewSettings(function () {
+       var navList = document.getElementById('content').getElementsByClassName('nav-tabs')[0].getElementsByTagName('li');
+       var contentList = document.getElementById('content').getElementsByClassName('tab-content')[0].getElementsByClassName('tab-pane');
+       for (i=0;i<navList.length;i++) {
+         navList[i].classList.remove('active');
+         contentList[i].classList.remove('active');
+
+         if (navList[i].getElementsByTagName('a')[0].getAttribute('href') == '#help') {
+           navList[i].classList.add('active');
+           contentList[i].classList.add('active');
+           contentList[i].style.display = "block";
+         }
+       }
+     });
+   });
    Mousetrap.bind('m', function() {
      var story = getCurrentStory();
      if (story == false) { return }

@@ -3,6 +3,12 @@ import os
 import sys
 import ConfigParser
 
+import leselys
+import werkzeug
+import flask
+import celery
+import requests
+
 from itsdangerous import TimestampSigner
 from flask import Flask
 from werkzeug.contrib.cache import SimpleCache
@@ -23,6 +29,16 @@ class Core(object):
         self.app = Flask(__name__)
         self.app.config['SECRET_KEY'] = os.urandom(24)
         self.app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 31536000
+
+        py_v = sys.version_info
+        py_v = "%s.%s.%s" % (py_v[0], py_v[1], py_v[2])
+        self.app.config.versions = {'python': py_v,
+                                    'leselys': leselys.__version__,
+                                    'flask': flask.__version__,
+                                    'werkzeug': werkzeug.__version__,
+                                    'celery': celery.__version__,
+                                    'requests': requests.__version__}
+
         self.signer = TimestampSigner(self.app.config['SECRET_KEY'])
         self.cache = SimpleCache()
 
@@ -47,6 +63,8 @@ class Core(object):
         self.host = self.host or self.args.get('--host')
         self.port = self.port or self.args.get('--port')
         self.debug = self.debug or self.args.get('--debug')
+
+        self.app.config['DEBUG'] = self.debug
 
         if not self.config.has_section('storage'):
             print('Missing storage section in configuration file')
@@ -102,4 +120,4 @@ class Core(object):
 
         from leselys import views
         from leselys import api
-        self.app.run(host=self.host, port=int(self.port), debug=self.debug, use_reloader=self.debug)
+        self.app.run(host=self.host, port=int(self.port), use_reloader=self.debug)

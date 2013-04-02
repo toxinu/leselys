@@ -23,6 +23,13 @@
   <script src="{{ url_for('static', filename='js/leselys.js') }}"></script>
 </head>
 <body>
+  <div id="ribbon" style="display: none;" class="navbar">
+    <ul class="navbar-inner">
+      <li><i class="icon-magic"></i></li>
+      <li class="divider-vertical"></li>
+      <li><i class="icon-time"></i></li>
+    </ul>
+  </div>
   <div class="container-fluid">
     {% block body %}{% endblock %}
   </div>

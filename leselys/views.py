@@ -40,7 +40,7 @@ def get_theme():
 
 @app.context_processor
 def env():
-    return dict(debug=leselys.core.debug)
+    return dict(app_config=app.config, debug=leselys.core.debug, config=leselys.core.config)
 
 #######################################################################
 # VIEWS
