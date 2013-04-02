@@ -23,11 +23,13 @@
   <script src="{{ url_for('static', filename='js/leselys.js') }}"></script>
 </head>
 <body>
-  <div id="ribbon" style="display: none;" class="navbar">
-    <ul class="navbar-inner">
-      <li><i class="icon-magic"></i></li>
+  <div id="ribbon" class="navbar" style="display: none;">
+    <ul>
+      <li><a title="Mark all as read" href="#"><i class="icon-eye-open"></i></a></li>
+      <li><a title="Mark all as unread" href="#"><i class="icon-eye-close"></i></a></li>
       <li class="divider-vertical"></li>
-      <li><i class="icon-time"></i></li>
+      <li><a title="Ordered by unread" href="#"><i class="icon-magic"></i></a></li>
+      <li><a title="Ordered by publication" href="#"><i class="icon-time"></i></a></li>
     </ul>
   </div>
   <div class="container-fluid">

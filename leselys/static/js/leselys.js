@@ -540,8 +540,8 @@ function collapseIn (accordionGroupRoot) {
 
 function enableRibbon() {
   var ribbon = document.getElementById('ribbon');
-  //ribbon.style.display = "";
-  ribbon.style.display = "none";
+  ribbon.style.display = "";
+  //ribbon.style.display = "none";
 }
 
 function disableRibbon() {

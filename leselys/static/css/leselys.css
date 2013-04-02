@@ -5,25 +5,29 @@
 #content {
   padding-left: 10px;
 }
-
+.divider-vertical {
+  border-left:1px solid rgb(255, 255, 255, 0.2);
+  margin-left:4px;
+  margin-right:4px;
+}
 #ribbon {
   position: fixed;
   top: 0px;
   right: 30px;
-  height: 20px;
-  width: 73px;
+  height: 30px;
+  width: 135px;
   z-index:10;
+  background-color: rgba(255,255,255, 0.8);
   -webkit-border-bottom-left-radius: 5px;
   -webkit-border-bottom-right-radius: 5px;
   -moz-border-radius-bottomright: 5px;
   -moz-border-radius-bottomleft: 5px;
   border-bottom-right-radius: 5px;
   border-bottom-left-radius: 5px;
-  -webkit-box-shadow: 0px 2px 3px 2px rgba(0, 0, 0, 0.3);
-  box-shadow: 0px 2px 3px 2px rgba(0, 0, 0, 0.3);
-  transition: height 0.5s;
-  word-wrap: keep-all;
-  overflow: hidden;
+  -webkit-box-shadow: 1px 1px 3px 1px rgba(0, 0, 0, 0.2);
+  box-shadow: 1px 1px 3px 1px rgba(0, 0, 0, 0.2);
+  padding-left: 4px;
+  padding-right: 4px;
 }
 
 #ribbon li {
@@ -31,29 +35,15 @@
   vertical-align: middle;
 }
 #ribbon ul {
-  background-color: grey;
-  margin-left: 2px ;
-  margin-right: 2px ;
-  margin-top: 5px;
+  margin-left: 2px;
+  margin-right: 2px;
+  margin-top: 1px;
   text-align:center;
 }
 #ribbon i {
-  overflow: hidden;
   position: relative;
-  visibility:hidden;
-
-  opacity:0;
-  transition:visibility 0s linear 0.1s,opacity 0.5s linear
-}
-#ribbon:hover i {
-  visibility:visible;
-  overflow: hidden;
-  opacity:1;
-  transition-delay:0s;
-}
-#ribbon:hover {
-  height: 30px;
-  opacity: 1;
+  margin:4px;
+  text-decoration: none;
 }
 body {
   padding-top: 15px;
@@ -114,6 +104,9 @@ li a [class^="icon-"] {
 @media handheld, only screen and (max-width: 768px) {
   #menu a i.icon-github-alt, #menu a i.icon-plus-sign  {
     display: none;
+  }
+  #ribbon {
+    height: 90px;
   }
   .sidenav-affix {
     position: static;
