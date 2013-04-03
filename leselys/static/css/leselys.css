@@ -169,6 +169,10 @@ li a [class^="icon-"] {
 .selected-story {
   border: 2px solid #e5e5e5;
 }
+.confirmation-box {
+  -webkit-border-radius: 10px;
+  border-radius: 10px; 
+}
 .confirmation-body {
   margin-bottom: 5px;
   text-align: center;
