@@ -678,12 +678,12 @@ function setKeyboard(){
      if (story == false) { return }
      story.getElementsByTagName('a')[0].click()
    });
-   Mousetrap.bind('k', function() { 
+   Mousetrap.bind('j', function() { 
      var nextStory = getNextStory();
      if (nextStory == false) { return }
      nextStory.getElementsByTagName('a')[0].click();
    }); 
-   Mousetrap.bind('j', function() { 
+   Mousetrap.bind('k', function() { 
      var previousStory = getPreviousStory();
      if (previousStory == false) { return }
      previousStory.getElementsByTagName('a')[0].click();
