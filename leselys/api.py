@@ -51,11 +51,15 @@ def remove(feed_id):
 
 
 # Return list of entries for given feed_id
-@app.route('/api/get/<feed_id>', defaults={'order_type': 'user'})
-@app.route('/api/get/<feed_id>/<order_type>')
+# Or all if feed_id not specified
+@app.route('/api/get', defaults={'feed_id': False})
+@app.route('/api/get/<feed_id>')
 @login_required
-def get(feed_id, order_type):
-    return jsonify(content=reader.get(feed_id, order_type))
+def get(feed_id):
+    order_type = request.args.get('order_type', 'user')
+    start = request.args.get('start', 0)
+    end = request.args.get('end', 100)
+    return jsonify(content=reader.get(feed_id, order_type, start, end))
 
 
 # Set story as readed

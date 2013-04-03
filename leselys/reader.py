@@ -220,24 +220,41 @@ class Reader(object):
         storage.remove_feed(feed_id)
         return {"success": True, "output": "Feed removed"}
 
-    def get(self, feed_id, order_type="user"):
-        if order_type == "user" or order_type not in ['unreaded', 'published']:
-            setting_order_type = storage.get_feed_setting(feed_id, 'ordering')
-            if not setting_order_type:
-                storage.set_feed_setting(feed_id, 'ordering', 'unreaded')
-                order_type = 'unreaded'
-            else:
-                order_type = setting_order_type['value']
+    def get(self, feed_id=False, order_type="user", start=0, end=100):
+        if not feed_id:
+            if order_type == "user" or order_type not in ['unreaded', 'published']:
+                order_type = storage.get_setting('all_items_ordering')
+                if not order_type:
+                    storage.set_setting('all_items_ordering', 'unreaded')
+                    order_type = storage.get_setting('all_items_ordering')
+        else:
+            if order_type == "user" or order_type not in ['unreaded', 'published']:
+                setting_order_type = storage.get_feed_setting(feed_id, 'ordering')
+                if not setting_order_type:
+                    storage.set_feed_setting(feed_id, 'ordering', 'unreaded')
+                    order_type = 'unreaded'
+                else:
+                    order_type = setting_order_type['value']
+
+        if not feed_id:
+            stories = storage.all_stories()
+        else:
+            stories = storage.get_stories(feed_id)
+
 
         res = []
         entries = []
         if order_type == 'unreaded':
-            for entry in storage.get_stories(feed_id):
-                res.append({
+            for entry in stories:
+                story = {
                     "title": entry['title'],
                     "_id": entry['_id'],
                     "read": entry['read'],
-                    'last_update': entry['last_update']})
+                    'last_update': entry['last_update']}
+                if not feed_id:
+                    story['feed_id'] = entry['feed_id']
+
+                res.append(story)
 
             # Readed
             readed = []
@@ -256,12 +273,16 @@ class Reader(object):
             entries = unreaded + readed
 
         elif order_type == 'published':
-            for entry in storage.get_stories(feed_id):
-                res.append({
+            for entry in stories:
+                story = {
                     "title": entry['title'],
                     "_id": entry['_id'],
                     "read": entry['read'],
-                    'last_update': entry['published']})
+                    'last_update': entry['published']}
+                if not feed_id:
+                    story['feed_id'] = entry['feed_id']
+
+                res.append(story)
 
             res.sort(key=lambda r: get_datetime(r['last_update']),
                           reverse=True)
@@ -339,3 +360,4 @@ class Reader(object):
         story['read'] = False
         storage.update_story(story['_id'], copy.copy(story))
         return {'success': True, 'content': story}
+

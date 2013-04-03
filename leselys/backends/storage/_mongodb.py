@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 import sys
+import pymongo
 
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from _storage import Storage
+from leselys.helpers import get_datetime
 
 
 class Mongodb(Storage):
@@ -55,16 +57,14 @@ class Mongodb(Storage):
         return setting
 
     def set_setting(self, key, value):
+        self.db.settings.remove({key: {'$exists':True}})
         return str(self.db.settings.save({key: value}))
 
     def get_setting(self, key):
-        if not self.db.settings.find_one():
-            return False
-        if not self.db.settings.find_one().get(key, False):
-            return False
-        else:
-            setting = self.db.settings.find_one()[key]
-            return setting
+        setting = self.db.settings.find_one({key: {'$exists': True}})
+        if setting:
+            return setting[key]
+        return False
 
     def get_settings(self):
         settings = {}
@@ -111,6 +111,13 @@ class Mongodb(Storage):
         for feed in self.db.feeds.find():
             feed['_id'] = str(feed['_id'])
             res.append(feed)
+        return res
+
+    def all_stories(self):
+        res = []
+        for story in self.db.stories.find():
+            story['_id'] = str(story['_id'])
+            res.append(story)
         return res
 
     def add_story(self, content):

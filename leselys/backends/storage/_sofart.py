@@ -46,10 +46,10 @@ class Sofart(Storage):
         self.db.settings.save({key: value})
 
     def get_setting(self, key):
-        if not self.db.settings.find_one({key: {'$exists': True}}):
-            return False
-        else:
-            return self.db.settings.find_one({key : {'$exists': True}})[key]
+        setting = self.db.settings.find_one({key: {'$exists': True}}):
+        if setting:
+            return setting[key]
+        return False
 
     def get_settings(self):
         settings = {}
