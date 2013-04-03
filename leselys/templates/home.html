@@ -53,6 +53,20 @@
             crel('div', {'class': 'story-content'})
         ) 
     }
+    // Mark all confirmation
+    var getMarkAllConfirmationTemplate = function(sentence, feedId, onclick) {
+      return crel('div', {'class': 'confirmation-box well'},
+          crel('div', {'class': 'confirmation-body'}, sentence),
+          crel('div', {'class': 'confirmation-actions'},
+            crel('button', {'type': 'submit',
+                            'class': 'btn btn-warning',
+                            'onclick': 'TINY.box.hide()'}, 'No'),
+            crel('button', {'type': 'submit',
+                            'class': 'btn',
+                            'onclick': onclick}, 'Yes')
+          )
+       )
+    }
     window.onload = function() {
       initPage();
     }

@@ -37,10 +37,10 @@ class Sofart(Storage):
         setting = self.db.feedsettings.find_one({'feed_id': feed_id, 'setting_type': setting_type})
         if setting:
             self.db.feedsettings.remove(setting['_id'])
-        self.db.feedsettings.save({'feed_id':feed_id, 'setting_type': setting_type, 'value': value}) 
+        self.db.feedsettings.save({'feed_id':feed_id, 'setting_type': setting_type, 'value': value})
 
     def get_feed_setting(self, feed_id, setting_type):
-        return self.db.feedsettings.find_one({'feed_id': feed_id, 'setting_type': setting_type}) 
+        return self.db.feedsettings.find_one({'feed_id': feed_id, 'setting_type': setting_type})
 
     def set_setting(self, key, value):
         self.db.settings.save({key: value})
@@ -65,6 +65,8 @@ class Sofart(Storage):
         self.db.feeds.remove(_id)
         for entry in self.db.stories.find({'feed_id': _id}):
             self.db.stories.remove(entry['_id'])
+        for setting in self.db.feedsettings.find({'feed_id': _id}):
+            self.db.feedsettings.remove(setting['_id'])
 
     def get_feed_by_id(self, _id):
         return self.db.feeds.find_one({'_id': _id})

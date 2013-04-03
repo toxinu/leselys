@@ -234,13 +234,11 @@ function deleteFeed(feedId) {
   xhr.send(null);
 }
 
-function viewFeed(feedId) {
+function viewFeed(feedId, callback) {
   for (var i=0;i < requests.length;i++) {
     requests[i].abort();
     requests.shift();
   }
-  console.log('----');
-  console.log(feedId);
   var xhr = getXMLHttpRequest();
   xhr.onreadystatechange = function() {
     if (xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 0)) {
@@ -286,6 +284,9 @@ function viewFeed(feedId) {
       document.getElementById(feedId).getElementsByTagName('a')[0].classList.add('text-error');
       initAccordion();
       enableRibbon(feedId, data.content.ordering);
+      if (typeof callback != "undefined" ) {
+        callback();
+      }
     }
   }
   xhr.open("GET", "/api/get/" + feedId, true);
@@ -428,7 +429,12 @@ function refreshCounters() {
   var xhr = getXMLHttpRequest();
   xhr.onreadystatechange = function() {
     if (xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 0)) {
-      var data = JSON.parse(xhr.responseText);
+      try {
+        var data = JSON.parse(xhr.responseText);
+      } catch(err) {
+        window.location = "/";
+        return
+      }
       if (data.success == false) {
         if (data.callback == "/api/login") { window.location = "/login" }
       }
@@ -554,6 +560,32 @@ function collapseIn (accordionGroupRoot) {
     }
   }
 }
+function markAllAsRead(feedId){
+  var xhr = getXMLHttpRequest();
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 0)) {
+      var data = JSON.parse(xhr.responseText);
+      if (data.success == true) {
+        viewFeed(feedId, refreshCounters);
+      }
+    }
+  }
+  xhr.open('GET', '/api/all_read/' + feedId, true);
+  xhr.send(null);
+}
+function markAllAsUnread(feedId){
+  var xhr = getXMLHttpRequest();
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 0)) {
+      var data = JSON.parse(xhr.responseText);
+      if (data.success == true) {
+        viewFeed(feedId, refreshCounters);
+      }
+    }
+  }
+  xhr.open('GET', '/api/all_unread/' + feedId, true);
+  xhr.send(null);
+}
 
 function enableRibbon(feedId, ordering) {
   var ribbon = document.getElementById('ribbon');
@@ -567,6 +599,16 @@ function enableRibbon(feedId, ordering) {
   }
   ribbon.getElementsByClassName('order-unreaded')[0].getElementsByTagName('a')[0].onclick = function () {setFeedSetting(feedId, 'ordering', 'unreaded')};
   ribbon.getElementsByClassName('order-published')[0].getElementsByTagName('a')[0].onclick = function () {setFeedSetting(feedId, 'ordering', 'published')};
+  ribbon.getElementsByClassName('mark-all-as-read')[0].getElementsByTagName('a')[0].onclick = function () {
+    var onclick = "markAllAsRead(\"" + feedId + "\");TINY.box.hide();";
+    var box = getMarkAllConfirmationTemplate('Mark all as read ?', feedId, onclick);
+    TINY.box.show({'html': box.outerHTML,maskopacity:40,maskid:'confirmation-mask'});
+  }
+  ribbon.getElementsByClassName('mark-all-as-unread')[0].getElementsByTagName('a')[0].onclick = function () {
+    var onclick = "markAllAsUnread(\"" + feedId + "\");TINY.box.hide();";
+    var box = getMarkAllConfirmationTemplate('Mark all as unread ?', feedId, onclick);
+    TINY.box.show({'html': box.outerHTML,maskopacity:40,maskid:'confirmation-mask'});
+  }
 }
 
 function disableRibbon() {

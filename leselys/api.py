@@ -29,7 +29,6 @@ signer = leselys.core.signer
 # Get unreaded counters
 @app.route('/api/counters')
 @login_required
-@cached(10)
 def get_counters():
     feeds = reader.get_feeds()
     res = []

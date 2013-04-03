@@ -169,7 +169,28 @@ li a [class^="icon-"] {
 .selected-story {
   border: 2px solid #e5e5e5;
 }
-
+.confirmation-body {
+  margin-bottom: 5px;
+  text-align: center;
+}
+.confirmation-actions {
+  text-align: center;
+}
+.confirmation-actions .btn {
+  margin-right: 5px;
+}
 .tab-pane {
   margin-left: 20px;
 }
+.tmask {
+  position:absolute;
+  display:none;
+  background:#000;
+  top:0px;
+  left:0px;
+  height:100%;
+  width:100%;
+  z-index:800
+}
+.tbox {position:absolute; display:none; z-index:900}
+.tinner {padding:15px; -moz-border-radius:5px; border-radius:5px; background:#fff url(images/preload.gif) no-repeat 50% 5

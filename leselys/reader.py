@@ -238,7 +238,7 @@ class Reader(object):
                     "_id": entry['_id'],
                     "read": entry['read'],
                     'last_update': entry['last_update']})
-                
+
             # Readed
             readed = []
             for entry in res:
@@ -252,9 +252,9 @@ class Reader(object):
                     unreaded.append(entry)
             unreaded.sort(key=lambda r: get_datetime(r['last_update']),
                           reverse=True)
-            
+
             entries = unreaded + readed
-                
+
         elif order_type == 'published':
             for entry in storage.get_stories(feed_id):
                 res.append({
@@ -262,7 +262,7 @@ class Reader(object):
                     "_id": entry['_id'],
                     "read": entry['read'],
                     'last_update': entry['published']})
-            
+
             res.sort(key=lambda r: get_datetime(r['last_update']),
                           reverse=True)
             entries = res
@@ -276,9 +276,9 @@ class Reader(object):
             if not ordering:
                 storage.set_feed_setting(feed['_id'], 'ordering', 'unreaded')
                 ordering = storage.get_feed_setting(feed['_id'], 'ordering')
-            
+
             ordering = ordering['value']
-                
+
             feeds.append({'title': feed['title'],
                           'id': feed['_id'],
                           'url': feed['url'],
