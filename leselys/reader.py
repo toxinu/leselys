@@ -47,6 +47,8 @@ class Retriever(threading.Thread):
         self.do_retention = do_retention
         if feed_from_db:
             self.title = feed_from_db['title']
+        else:
+            self.title = feed['feed']['title']
 
     def run(self):
         # This feed comes from database

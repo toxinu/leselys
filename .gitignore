@@ -43,3 +43,4 @@ tools
 requirements.txt
 *.db
 celerybeat-schedule
+tests/*.xml
