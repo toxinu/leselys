@@ -26,6 +26,7 @@ signer = leselys.core.signer
 # API
 #######################################################################
 
+
 # Get unreaded counters
 @app.route('/api/counters')
 @login_required
@@ -35,6 +36,7 @@ def get_counters():
     for feed in feeds:
         res.append((feed['id'], feed['counter']))
     return jsonify(success=True, content=res)
+
 
 # Add feed
 @app.route('/api/add', methods=['POST'])
@@ -159,18 +161,20 @@ def logout():
     rsp.set_cookie('remember', False)
     return rsp
 
+
 # Set theme
 @app.route('/api/settings/theme', methods=['POST'])
 @login_required
 def set_theme():
     theme_name = request.form['theme'].lower()
-    _themes = dict((k.lower(), v) for k,v in themes.iteritems())
+    _themes = dict((k.lower(), v) for k, v in themes.iteritems())
     if not theme_name in _themes.keys():
         return jsonify(success=False, output='Theme not exists')
 
     storage.set_setting('theme_name', theme_name)
     session['theme_name'] = theme_name
     return jsonify(success=True, output='Theme changed')
+
 
 # Set settings
 @app.route('/api/settings', methods=['POST'])
@@ -180,6 +184,7 @@ def change_setting():
     value = request.form['value']
     storage.set_setting(setting, value)
     return jsonify(success=True, output="%s setting have been set at %s" % (setting, value))
+
 
 # Set feedsettings
 @app.route('/api/feedsettings', methods=['POST'])

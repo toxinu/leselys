@@ -243,7 +243,6 @@ class Reader(object):
         else:
             stories = storage.get_stories(feed_id)
 
-
         res = []
         entries = []
         if order_type == 'unreaded':
@@ -286,8 +285,7 @@ class Reader(object):
 
                 res.append(story)
 
-            res.sort(key=lambda r: get_datetime(r['last_update']),
-                          reverse=True)
+            res.sort(key=lambda r: get_datetime(r['last_update']), reverse=True)
             entries = res
 
         return {'entries': entries, 'ordering': order_type}
@@ -362,4 +360,3 @@ class Reader(object):
         story['read'] = False
         storage.update_story(story['_id'], copy.copy(story))
         return {'success': True, 'content': story}
-

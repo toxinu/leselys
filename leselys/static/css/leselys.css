@@ -144,14 +144,16 @@ li a [class^="icon-"] {
     display: none;
   }
 }
-
+.checkbox input {
+  opacity: 1;
+}
 #add {
   position: absolute;
   display: none;
   z-index: 2;
   background-color: #eaeaea;
   top: 45px;
-  padding: 10px 10px; 
+  padding: 10px 10px;
 }
 
 #add button {
@@ -171,7 +173,7 @@ li a [class^="icon-"] {
 }
 .confirmation-box {
   -webkit-border-radius: 10px;
-  border-radius: 10px; 
+  border-radius: 10px;
 }
 .confirmation-body {
   margin-bottom: 5px;

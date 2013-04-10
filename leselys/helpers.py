@@ -152,6 +152,7 @@ def export_to_opml():
 
     return header + body + footer
 
+
 def refresh_all():
     from leselys.reader import Refresher
     print(' :: Run refresh task')
@@ -160,6 +161,7 @@ def refresh_all():
         print(feed['title'].encode('utf-8'))
         refresher = Refresher(feed)
         refresher.start()
+
 
 def run_retention(delta_day):
     storage = leselys.core.storage

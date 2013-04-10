@@ -16,6 +16,7 @@ from werkzeug.contrib.cache import SimpleCache
 from leselys.backends.storage import _load_storage
 from leselys.backends.session import _load_session
 
+
 class Core(object):
     def __init__(self):
         self.host = "127.0.0.1"
@@ -93,7 +94,7 @@ class Core(object):
         del self.storage_settings['type']
 
         self.storage_module = _load_storage(self.config.get('storage', 'type'))
-        self.storage =  self.storage_module(**self.storage_settings)
+        self.storage = self.storage_module(**self.storage_settings)
 
     def load_session(self):
         if self.config.get('session', 'type') == "memory":

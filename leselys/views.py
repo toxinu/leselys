@@ -28,7 +28,7 @@ def get_feeds():
 
 @app.context_processor
 def get_theme():
-    _themes = dict((k.lower(), v) for k,v in themes.iteritems())
+    _themes = dict((k.lower(), v) for k, v in themes.iteritems())
     theme = session.get('theme_name')
     if not theme:
         theme = storage.get_setting('theme_name')

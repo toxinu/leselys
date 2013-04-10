@@ -48,7 +48,7 @@ class Mongodb(Storage):
         setting = self.db.feedsettings.find_one({'feed_id': feed_id, 'setting_type': setting_type})
         if setting:
             self.db.feedsettings.remove(setting['_id'])
-        self.db.feedsettings.save({'feed_id':feed_id, 'setting_type': setting_type, 'value': value})
+        self.db.feedsettings.save({'feed_id': feed_id, 'setting_type': setting_type, 'value': value})
 
     def get_feed_setting(self, feed_id, setting_type):
         setting = self.db.feedsettings.find_one({'feed_id': feed_id, 'setting_type': setting_type})
@@ -57,7 +57,7 @@ class Mongodb(Storage):
         return setting
 
     def set_setting(self, key, value):
-        self.db.settings.remove({key: {'$exists':True}})
+        self.db.settings.remove({key: {'$exists': True}})
         return str(self.db.settings.save({key: value}))
 
     def get_setting(self, key):

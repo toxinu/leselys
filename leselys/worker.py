@@ -20,7 +20,6 @@ def run(config_path, args):
     interval = core.config.get('worker', 'interval')
     retention = core.config.get('worker', 'retention')
 
-
     celery = Celery('tasks', broker=broker)
 
     @celery.task
@@ -46,4 +45,3 @@ def run(config_path, args):
 
     print('Args: %s' % ' '.join(args))
     celery.start(args)
-
