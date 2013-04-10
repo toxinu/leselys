@@ -1,6 +1,8 @@
 .sidenav-affix {
-    position: fixed;
-    width: 14%;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: 14%;
 }
 #content {
   padding-left: 10px;
@@ -150,7 +152,7 @@ li a [class^="icon-"] {
 #add {
   position: absolute;
   display: none;
-  z-index: 2;
+  z-index: 5;
   background-color: #eaeaea;
   top: 45px;
   padding: 10px 10px;
@@ -167,7 +169,8 @@ li a [class^="icon-"] {
 .feed.unread {
   font-weight: bold;
 }
-
+.combined-feed {
+}
 .selected-story {
   border: 2px solid #e5e5e5;
 }

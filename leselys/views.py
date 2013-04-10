@@ -23,7 +23,7 @@ signer = leselys.core.signer
 
 @app.context_processor
 def get_feeds():
-    return dict(feeds=reader.get_feeds())
+    return dict(feeds=reader.get_feeds(), combined_feed=reader.get_combined_feed())
 
 
 @app.context_processor

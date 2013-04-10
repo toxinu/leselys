@@ -161,10 +161,15 @@ class Reader(object):
         of http document, we try to find first feed auto discovery url.
         """
         stripped = url.strip()
-        resp = requests.get(stripped)
+
+        try:
+            resp = requests.get(stripped)
+        except Exception as err:
+            return {'success': False, 'output': str(err)}
+
         feed = feedparser.parse(resp.text)
         if feed.version != '':
-            return feed, stripped
+            return {'success': True, 'output': (feed, stripped)}
 
         urls = FeedFinder.parse(resp.text)
         feed_url = ''
@@ -176,10 +181,14 @@ class Reader(object):
             if urlparse(feed_url)[1] == '':
                 # We have empty 'netloc', meaning we have relative url
                 feed_url = urljoin(stripped, feed_url)
-        return feedparser.parse(feed_url), feed_url
+        return {'success': True, 'output': (feedparser.parse(feed_url), feed_url)}
 
     def add(self, url):
-        feed, url = self.get_feed(url)
+        feed_guesser = self.get_feed(url)
+        if feed_guesser['success']:
+            feed, url = feed_guesser['output']
+        else:
+            return feed_guesser
 
         # Bad feed
         if feed.version == '' or not feed.feed.get('title'):
@@ -290,6 +299,16 @@ class Reader(object):
 
         return {'entries': entries, 'ordering': order_type}
 
+    def get_combined_feed(self):
+        order_type = storage.get_setting('all_items_ordering')
+        if not order_type:
+            storage.set_setting('all_items_ordering', 'unreaded')
+            order_type = storage.get_setting('all_items_ordering')
+        return {'title': 'All stories',
+                'id': 'combined_feed',
+                'counter': self.get_unread(),
+                'ordering': order_type}
+
     def get_feeds(self):
         feeds = []
         for feed in storage.get_feeds():
@@ -316,7 +335,13 @@ class Reader(object):
         feed['counter'] = self.get_unread(feed_id)
         return {'success': True, 'content': feed}
 
-    def get_unread(self, feed_id):
+    def get_unread(self, feed_id=False):
+        if not feed_id:
+            stories = 0
+            for story in storage.all_stories():
+                if not story['read']:
+                    stories += 1
+            return stories
         return len(storage.get_feed_unread(feed_id))
 
     def mark_all_read(self, feed_id):
