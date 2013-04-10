@@ -10,6 +10,7 @@ from flask import render_template
 from flask import url_for
 
 from threading import Thread
+from datetime import datetime
 
 from leselys.themes import themes
 from leselys.helpers import login_required
@@ -119,6 +120,8 @@ def import_opml():
 def export_opml():
     rsp = make_response(export_to_opml())
     rsp.headers['Content-Type'] = "application/atom+xml"
+    file_date = datetime.today().strftime("%m-%d-%Y")
+    rsp.headers['Content-Disposition'] = "attachment; filename=\"%s_export.opml\"" % file_date
     return rsp
 
 
