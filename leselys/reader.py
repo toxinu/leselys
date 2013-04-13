@@ -103,7 +103,7 @@ class Refresher(threading.Thread):
         # Update title if it change (yes some guys change it...)
         if self.data.feed['title'] != self.feed['title']:
             self.feed['title'] = self.data.feed['title']
-            storage.update_feed(self.feed['_id'], self.feed)
+            storage.update_feed(self.feed['_id'], copy.copy(self.feed))
 
         local_update = get_datetime(self.feed['last_update'])
         remote_update = False
