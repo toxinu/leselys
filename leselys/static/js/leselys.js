@@ -313,7 +313,9 @@ function readStory(storyId, ignore) {
     }
   }
 
-  document.getElementById(storyId).getElementsByClassName('accordion-inner')[0].innerHTML = '<center><i class="icon-spinner icon-spin icon-3x"></i></center>';
+  if (document.getElementById(storyId).getElementsByClassName('accordion-inner')[0].innerHTML == "") {
+    document.getElementById(storyId).getElementsByClassName('accordion-inner')[0].innerHTML = '<center><i class="icon-spinner icon-spin icon-3x"></i></center>';
+  }
 
   var xhr = getXMLHttpRequest();
   xhr.onreadystatechange = function() {
