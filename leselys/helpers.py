@@ -158,7 +158,6 @@ def refresh_all():
     print(' :: Run refresh task')
     feeds = leselys.core.storage.get_feeds()
     for feed in feeds:
-        print(feed['title'].encode('utf-8'))
         refresher = Refresher(feed)
         refresher.start()
 
@@ -167,10 +166,14 @@ def run_retention(delta_day):
     storage = leselys.core.storage
     print(' :: Run retention task')
     for feed in storage.get_feeds():
-        print(feed['title'].encode('utf-8'))
-        for story in storage.get_stories(feed['_id']):
+        print("=> %s" % feed['title'].encode('utf-8'))
+        stories = storage.get_stories(feed['_id'])
+        if len(stories) <= 50:
+            print('   | No many stories, so I keept it.')
+            continue
+        for story in stories:
             delta = datetime.datetime.now() - get_datetime(story['last_update'])
-            print('=> %s (%s)' % (story['_id'], delta.days))
+            print('  | %s (%s days)' % (story['_id'], delta.days))
             if delta.days > int(delta_day):
-                print('deleted.')
+                print('    | deleted.')
                 storage.remove_story(story['_id'])

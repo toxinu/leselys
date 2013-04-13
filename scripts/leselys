@@ -84,8 +84,11 @@ retention = 30"""
 
     if args.get('worker'):
       from leselys import worker
-      args = [arg for arg in sys.argv if arg != config_path]
-      worker.run(config_path, args)
+      try:
+        worker.run(config_path)
+      except KeyboardInterrupt:
+        print('Stopping...')
+        sys.exit(1)
       sys.exit(0)
 
     if args.get('refresh'):

@@ -100,6 +100,10 @@ class Refresher(threading.Thread):
     def run(self):
         self.data = feedparser.parse(self.feed['url'])
 
+        # Update title if it change (yes some guys change it...)
+        if self.data.feed['title'] != self.feed['title']:
+            storage.update_feed(self.feed['_id'], self.feed)
+
         local_update = get_datetime(self.feed['last_update'])
         remote_update = False
         if self.data.feed.get('updated_parsed'):
@@ -126,14 +130,19 @@ class Refresher(threading.Thread):
             remote_update_raw = get_dicttime(remote_update.timetuple())
 
         if remote_update > local_update:
-            print(':: %s is outdated' % self.feed['title'].encode('utf-8'))
+            print('!! %s is outdated.' % self.feed['title'].encode('utf-8'))
             readed = []
             for entry in storage.get_stories(self.feed['_id']):
                 if entry['read']:
                     readed.append(entry['title'])
                 storage.remove_story(entry['_id'])
 
-            retriever = Retriever(self.data, self.feed, do_retention=False)
+            if len(self.data.entries) <= 50:
+                do_retention = False
+            else:
+                do_retention = True
+
+            retriever = Retriever(self.data, self.feed, do_retention=do_retention)
             retriever.start()
             retriever.join()
 
@@ -145,6 +154,9 @@ class Refresher(threading.Thread):
 
             self.feed['last_update'] = remote_update_raw
             storage.update_feed(self.feed_id, self.feed)
+
+        else:
+            print('=> %s is up-to-date.' % self.feed['title'].encode('utf-8'))
 
 #########################################################################
 # Reader object

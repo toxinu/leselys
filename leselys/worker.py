@@ -1,47 +1,60 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
-
+import threading
 import sys
-from celery import Celery
+import time
+
 from leselys import core
 from leselys import helpers
-from datetime import timedelta
 
 
-def run(config_path, args):
-    args.append('-B')
-    args.append('-l')
-    args.append('INFO')
+class PeriodicTask(threading.Thread):
+
+    def __init__(self, sleep, func, params):
+        """ execute func(params) every 'sleep' seconds """
+        self.func = func
+        self.params = params
+        self.sleep = sleep
+        threading.Thread.__init__(self, name = "PeriodicExecutor")
+        self.setDaemon(1)
+
+    def run(self):
+        while True:
+            time.sleep(self.sleep)
+            apply(self.func, self.params)
+
+def run(config_path):
     core.load_config(config_path)
     core.load_storage()
     core.load_session()
 
-    broker = core.config.get('worker', 'broker')
-    interval = core.config.get('worker', 'interval')
-    retention = core.config.get('worker', 'retention')
+    interval = int(core.config.get('worker', 'interval'))
+    retention = int(core.config.get('worker', 'retention'))
 
-    celery = Celery('tasks', broker=broker)
+    refresh_task = PeriodicTask(10, helpers.refresh_all, [])
+    retention_task = PeriodicTask(10, helpers.run_retention, retention)
 
-    @celery.task
+    refresh_task.run()
+    retention_task.run()
+
+def run_old(config_path):
+    core.load_config(config_path)
+    core.load_storage()
+    core.load_session()
+
+    interval = int(core.config.get('worker', 'interval'))
+    retention = int(core.config.get('worker', 'retention'))
+
     def refresh_all():
+        print('=> Refresh task')
         helpers.refresh_all()
+        #threading.Timer(interval*60, refresh_all).start()
+        threading.Timer(10, refresh_all).start()
 
-    @celery.task
-    def run_retention(delta):
-        helpers.run_retention(delta)
+    def run_retention():
+        print('=> Retention task')
+        helpers.run_retention(retention)
+        #threading.Timer(24*60*60, run_retention, retention).start()
+        threading.Timer(10, run_retention, args=[retention]).start()
 
-    celery.conf.CELERYBEAT_SCHEDULE = {
-        'refresh-job': {
-            'task': 'leselys.worker.refresh_all',
-            'schedule': timedelta(minutes=int(interval))
-        },
-        'retention-job': {
-            'task': 'leselys.worker.run_retention',
-            'schedule': timedelta(days=1),
-            'args': (retention,)
-        }
-    }
-    celery.conf.INSTALLED_APPS = ('tasks.refresh_all', 'tasks.run_retention')
-
-    print('Args: %s' % ' '.join(args))
-    celery.start(args)
+    refresh_all()
+    run_retention()
