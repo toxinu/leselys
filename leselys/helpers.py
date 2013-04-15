@@ -162,18 +162,21 @@ def refresh_all():
         refresher.start()
 
 
-def run_retention(delta_day):
+def run_retention(delta_day, story_before_retention):
     storage = leselys.core.storage
     print(' :: Run retention task')
     for feed in storage.get_feeds():
         print("=> %s" % feed['title'].encode('utf-8'))
+
         stories = storage.get_stories(feed['_id'])
-        if len(stories) <= 50:
-            print('   | No many stories, so I keept it.')
-            continue
+        nb_stories = len(stories)
         for story in stories:
+            if nb_stories <= story_before_retention:
+                print('   | No many stories, so I keept it.')
+                break
             delta = datetime.datetime.now() - get_datetime(story['last_update'])
             print('  | %s (%s days)' % (story['_id'], delta.days))
-            if delta.days > int(delta_day):
+            if delta.days > delta_day:
                 print('    | deleted.')
                 storage.remove_story(story['_id'])
+                nb_stories -= 1

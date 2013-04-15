@@ -61,7 +61,9 @@ broker = mongodb://localhost:27017/leselys
 # Interval in minutes
 interval = 10
 # Retention in days
-retention = 30"""
+retention = 30
+# No retention will be done before this number of story
+story_before_retention = 100"""
                 config.write(config_default)
                 print('Configuration file created.')
                 sys.exit(0)
@@ -98,5 +100,7 @@ retention = 30"""
 
     if args.get('retention'):
       from leselys.helpers import run_retention
-      run_retention(core.config.get('worker', 'retention'))
+      run_retention(
+        int(core.config.get('worker', 'retention')),
+        int(core.config.get('worker', 'story_before_retention')))
       sys.exit(0)

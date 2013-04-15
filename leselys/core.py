@@ -84,6 +84,8 @@ class Core(object):
             self.config.set('worker', 'interval', '10')
         if not self.config.has_option('worker', 'retention'):
             self.config.set('worker', 'retention', '30')
+        if not self.config.has_option('worker', 'story_before_retention'):
+            self.config.set('worker', 'story_before_retention', '50')
 
     def load_storage(self):
         for item in self.config.items('storage'):

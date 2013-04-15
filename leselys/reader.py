@@ -57,6 +57,10 @@ class Retriever(threading.Thread):
         for entry in self.data:
             title = entry['title']
             link = entry['link']
+
+            if storage.get_story_by_title(title):
+                storage.remove_story(storage.get_story_by_title(title)['_id'])
+
             try:
                 description = entry['content'][0]['value']
             except KeyError:
@@ -136,9 +140,8 @@ class Refresher(threading.Thread):
             for entry in storage.get_stories(self.feed['_id']):
                 if entry['read']:
                     readed.append(entry['title'])
-                storage.remove_story(entry['_id'])
 
-            if len(self.data.entries) <= 50:
+            if len(self.data.entries) <= int(config.get('worker', 'story_before_retention')):
                 do_retention = False
             else:
                 do_retention = True
