@@ -137,13 +137,13 @@ class Mongodb(Storage):
         return str(self.db.stories.save(content))
 
     def get_story_by_id(self, _id):
-        story = self.db.stories.find_one(ObjectId(_id))
+        story = self.db.stories.find_one({'_id': ObjectId(_id)})
         if story:
             story['_id'] = str(story['_id'])
         return story
 
-    def get_story_by_title(self, title):
-        story = self.db.stories.find_one({'title': title})
+    def get_story_by_title(self, feed_id, title):
+        story = self.db.stories.find_one({'title': title, 'feed_id': feed_id})
         if story:
             story['_id'] = str(story['_id'])
         return story

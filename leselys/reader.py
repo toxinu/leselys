@@ -58,8 +58,8 @@ class Retriever(threading.Thread):
             title = entry['title']
             link = entry['link']
 
-            if storage.get_story_by_title(title):
-                storage.remove_story(storage.get_story_by_title(title)['_id'])
+            if storage.get_story_by_title(feed['_id'], title):
+                storage.remove_story(storage.get_story_by_title(feed['_id'], title)['_id'])
 
             try:
                 description = entry['content'][0]['value']
@@ -151,8 +151,8 @@ class Refresher(threading.Thread):
             retriever.join()
 
             for entry in readed:
-                if storage.get_story_by_title(entry):
-                    entry = storage.get_story_by_title(entry)
+                if storage.get_story_by_title(feed['_id'], entry):
+                    entry = storage.get_story_by_title(feed['_id'], entry)
                     entry['read'] = True
                     storage.update_story(entry['_id'], copy.copy(entry))
 

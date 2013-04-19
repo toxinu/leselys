@@ -97,8 +97,8 @@ class Sofart(Storage):
     def get_story_by_id(self, _id):
         return self.db.stories.find_one({'_id': _id})
 
-    def get_story_by_title(self, title):
-        return self.db.stories.find_one({'title': title})
+    def get_story_by_title(self, feed_id, title):
+        return self.db.stories.find_one({'title': title, 'feed_id': feed_id})
 
     def get_feed_unread(self, feed_id):
         res = []
