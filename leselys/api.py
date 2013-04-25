@@ -62,7 +62,7 @@ def get(feed_id):
     order_type = request.args.get('order_type', 'user')
     start = request.args.get('start', 0)
     end = request.args.get('end', 100)
-    return jsonify(content=reader.get(feed_id, order_type, start, end))
+    return jsonify(success=True, content=reader.get(feed_id, order_type, start, end))
 
 
 # Set story as readed

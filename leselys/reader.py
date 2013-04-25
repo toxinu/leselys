@@ -151,8 +151,8 @@ class Refresher(threading.Thread):
             retriever.join()
 
             for entry in readed:
-                if storage.get_story_by_title(feed['_id'], entry):
-                    entry = storage.get_story_by_title(feed['_id'], entry)
+                if storage.get_story_by_title(self.feed['_id'], entry):
+                    entry = storage.get_story_by_title(self.feed['_id'], entry)
                     entry['read'] = True
                     storage.update_story(entry['_id'], copy.copy(entry))
 

@@ -22,60 +22,57 @@ function addFeed() {
   loader = document.getElementById('menu').appendChild(loader);
   loader.style.display = "";
 
-  var xhr = getXMLHttpRequest();
-  xhr.onreadystatechange = function() {
-    if (xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 0)) {
-      var data = JSON.parse(xhr.responseText);
-      if (data.success == true ) {
-        var feedId = data.feed_id;
-        var feedTitle = data.title;
-        var feedURL = data.url;
-        var feedCounter = data.counter;
+  api.addFeed(url, function(req, data) {
+    if (data.success) {
+      var feedId = data.feed_id;
+      var feedTitle = data.title;
+      var feedURL = data.url;
+      var feedCounter = data.counter;
 
-        var newFeed = crel('a', {'onClick': 'viewFeed("' + feedId + '")', 'href': '/#' + feedId}, feedTitle + " ",
-              crel('span', {'class': 'unread-counter muted'}, '(' + feedCounter + ')'));
+      var newFeed = crel('a', {'onClick': 'viewFeed("' + feedId + '")', 'href': '/#' + feedId}, feedTitle + " ",
+            crel('span', {'class': 'unread-counter muted'}, '(' + feedCounter + ')'));
 
-        loader.style.display = "none";
-        loader.innerHTML = newFeed.outerHTML;
-        loader.id = feedId;
-        loader.classList.add('feed');
-        loader.style.display = "";
+      loader.style.display = "none";
+      loader.innerHTML = newFeed.outerHTML;
+      loader.id = feedId;
+      loader.classList.add('feed');
+      loader.style.display = "";
 
-        if(feedCounter > 0) {
-          loader.classList.add('unread');
-        }
-
-        // Add new feed in settings/feeds if opened
-        if (document.getElementById('feeds-settings')) {
-          // Remove message if feeds list is empty
-          if (document.getElementById('feeds-settings').getElementsByClassName('empty-feed-list')) {
-            document.getElementById('feeds-settings').getElementsByClassName('empty-feed-list')[0].style.display = "none";
-          }
-          var newFeedSetting = crel('li', {'id': feedId + "-feeds-settings"}, feedTitle,
-                ' (',
-                crel('a', {'class': 'muted', 'href': '#', 'onClick': 'deleteFeed("' + feedId + '")'}, 'remove'),
-                ') - ',
-                crel('a', {'href': feedURL, 'target': '_blank'}, feedURL));
-          newFeedSetting.style.display = "none";
-          newFeedSetting = document.getElementById('feeds-settings').getElementsByTagName('ul')[0].appendChild(newFeedSetting);
-          newFeedSetting.style.display = "";
-        }
-      } else {
-        if ( data.callback == "/api/login" ) { window.location = "/login" }
-        loader.innerHTML = '<li><i class="icon-exclamation-sign"></i> Error: ' + data.output +'</li>';
-        var clearLoader = function() {
-          loader.style.display = "none";
-        }
-        setTimeout(clearLoader, 5000);
+      if(feedCounter > 0) {
+        loader.classList.add('unread');
       }
+
+      // Add new feed in settings/feeds if opened
+      if (document.getElementById('feeds-settings')) {
+        // Remove message if feeds list is empty
+        if (document.getElementById('feeds-settings').getElementsByClassName('empty-feed-list')) {
+          document.getElementById('feeds-settings').getElementsByClassName('empty-feed-list')[0].style.display = "none";
+        }
+        var newFeedSetting = crel('li', {'id': feedId + "-feeds-settings"}, feedTitle,
+              ' (',
+              crel('a', {'class': 'muted', 'href': '#', 'onClick': 'deleteFeed("' + feedId + '")'}, 'remove'),
+              ') - ',
+              crel('a', {'href': feedURL, 'target': '_blank'}, feedURL));
+        newFeedSetting.style.display = "none";
+        newFeedSetting = document.getElementById('feeds-settings').getElementsByTagName('ul')[0].appendChild(newFeedSetting);
+        newFeedSetting.style.display = "";
+      }
+    } else {
+      if (data.callback == "/api/login") { window.location = "/login" }
+      loader.innerHTML = '<li><i class="icon-exclamation-sign"></i> Error: ' + data.output +'</li>';
+      var clearLoader = function() {
+        loader.style.display = "none";
+      }
+      setTimeout(clearLoader, 5000);
     }
-  }
-  xhr.open('POST', '/api/add', true);
-  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-  xhr.send('url=' + url);
+  });
 }
 
 function setFeedSetting(feedId, settingKey, settingValue) {
+  api.setFeedSetting(feedId, settingKey, settingValue, function(req, data) {
+    if (data.success)
+      viewFeed(feedId);
+  })
   var xhr = getXMLHttpRequest();
   xhr.onreadystatechange = function() {
     if (xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 0)) {
@@ -85,9 +82,6 @@ function setFeedSetting(feedId, settingKey, settingValue) {
       }
     }
   }
-  xhr.open('POST', '/api/feedsettings', true);
-  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-  xhr.send('feed_id=' + feedId + "&key=" + settingKey + "&value=" + settingValue);
 }
 
 function handleOPMLImport(evt) {
@@ -110,100 +104,78 @@ function handleOPMLImport(evt) {
 
   reader.onload = (function(OPMLFile) {
     return function(e) {
-      var xhr = getXMLHttpRequest();
-      xhr.onreadystatechange = function() {
-        if (xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 0)) {
-          var data = JSON.parse(xhr.responseText);
-         if (data.success == true) {
-            importer = false;
-            document.getElementById("OPMLSubmit").innerHTML = "Importing, reload page later...";
-            document.getElementById("OPMLSubmit").className += " disabled";
-          } else {
-            if (data.callback == "/api/login") { window.location = "/login" }
-            document.getElementById("OPMLSubmit").innerHTML = "Error: " + data.output;
-            document.getElementById("OPMLSubmit").className += " disabled";
-          }
+      api.importOPML(e.target.result, function(req, data) {
+        if (data.success) {
+          importer = false;
+          document.getElementById("OPMLSubmit").innerHTML = "Importing, reload page later...";
+          document.getElementById("OPMLSubmit").className += " disabled";
+        } else {
+          if (data.callback == "/api/login")
+            window.location = "/login"
+          document.getElementById("OPMLSubmit").innerHTML = "Error: " + data.output;
+          document.getElementById("OPMLSubmit").className += " disabled";
         }
-      }
-      xhr.open('POST', '/api/import/opml', true);
-      xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-      xhr.send('file=' + e.target.result);
+      });
     }
   })(file);
   reader.readAsText(file);
 }
 
 function viewSettings(callback) {
-  var xhr = getXMLHttpRequest();
-  xhr.onreadystatechange = function() {
-    if (xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 0)) {
-      var data = JSON.parse(xhr.responseText);
-        if (data.success) {
-          var parser = new DOMParser();
-          var div = parser.parseFromString(data.content, "text/html");
-          var content = div.getElementById('content');
-          var sidebar = div.getElementById('menu');
-          document.getElementById("content").innerHTML = content.innerHTML;
-          document.getElementById("menu").innerHTML = sidebar.innerHTML;
-          if (importer) {
-            document.getElementById("OPMLSubmit").innerHTML = "Last import not finished...";
-            document.getElementById("OPMLSubmit").className += " disabled";
-            return false;
-          }
-          if (document.getElementById("OPMLSubmit")) {
-            document.getElementById('OPMLSubmit').addEventListener('click', handleOPMLImport, false);
-          }
-          initPage();
-          initTabs();
-          initSettingsView();
-          if (typeof callback != "undefined" ) {
-            callback();
-          }
-          disableRibbon();
-        } else {
-          if (data.callback == "/api/login") { window.location = "/login" }
-        }
+  api.getSettings(function(req, data) {
+    if (data.success) {
+      var parser = new DOMParser();
+      var div = parser.parseFromString(data.content, "text/html");
+      var content = div.getElementById('content');
+      var sidebar = div.getElementById('menu');
+      document.getElementById("content").innerHTML = content.innerHTML;
+      document.getElementById("menu").innerHTML = sidebar.innerHTML;
+      if (importer) {
+        document.getElementById("OPMLSubmit").innerHTML = "Last import not finished...";
+        document.getElementById("OPMLSubmit").className += " disabled";
+        return false;
+      }
+      if (document.getElementById("OPMLSubmit")) {
+        document.getElementById('OPMLSubmit').addEventListener('click', handleOPMLImport, false);
+      }
+      initPage();
+      initTabs();
+      initSettingsView();
+      if (typeof callback != "undefined" ) {
+        callback();
+      }
+      disableRibbon();
+    } else {
+      if (data.callback == "/api/login")
+        window.location = "/login"
     }
-  }
-  xhr.open("GET", "/settings?jsonify=true", true);
-  xhr.send(null);
+  });
 }
 
 function viewHome(callback) {
-  var xhr = getXMLHttpRequest();
-  xhr.onreadystatechange = function() {
-    if (xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 0)) {
-      var data = JSON.parse(xhr.responseText);
-      if (data.success) {
-        var parser = new DOMParser();
-        var div = parser.parseFromString(data.content, "text/html");
-        var content = div.getElementById('content');
-        var sidebar = div.getElementById('menu');
-        document.getElementById("content").innerHTML = content.innerHTML;
-        document.getElementById("menu").innerHTML = sidebar.innerHTML;
-        initPage();
-        if (typeof callback != "undefined" ) {
-            callback();
-        }
-        disableRibbon();
-      } else {
-        if (data.callback == "/api/login") { window.location = "/login" }
+  api.getHome(function(req, data) {
+    if (data.sucess) {
+      var parser = new DOMParser();
+      var div = parser.parseFromString(data.content, "text/html");
+      var content = div.getElementById('content');
+      var sidebar = div.getElementById('menu');
+      document.getElementById("content").innerHTML = content.innerHTML;
+      document.getElementById("menu").innerHTML = sidebar.innerHTML;
+      initPage();
+      if (typeof callback != "undefined" ) {
+          callback();
       }
+      disableRibbon();
+    } else {
+      if (data.callback == "/api/login")
+        window.location = "/login"
     }
-  }
-  xhr.open("GET", "/?jsonify=true", true);
-  xhr.send(null);
+  });
 }
 
 function deleteFeed(feedId) {
-  var xhr = getXMLHttpRequest();
-  xhr.onreadystatechange = function() {
-    if (xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 0)) {
-      var data = JSON.parse(xhr.responseText);
-      if (data.success = false) {
-        if (data.callback == "/api/login") { window.location = "/login" }
-        window.location = "/";
-      }
+  api.deleteFeed(feedId, function(req, data) {
+    if (data.success) {
       document.getElementById(feedId).style.display = "none";
       // Remove feed in sidebar
       var _child = document.getElementById(feedId);
@@ -229,10 +201,12 @@ function deleteFeed(feedId) {
           document.getElementById('menu').getElementsByClassName('feeds-list-title')[0].style.display = "none";
           document.getElementById('menu').getElementsByClassName('empty-feed-list')[0].style.display = "";
       }
+    } else {
+      if (data.callback == "/api/login")
+        window.location = "/login"
+      window.location = "/";
     }
-  }
-  xhr.open("DELETE", "/api/remove/" + feedId, true);
-  xhr.send(null);
+  });
 }
 
 function viewFeed(feedId, callback) {
@@ -240,15 +214,8 @@ function viewFeed(feedId, callback) {
     requests[i].abort();
     requests.shift();
   }
-  var xhr = getXMLHttpRequest();
-  xhr.onreadystatechange = function() {
-    if (xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 0)) {
-      var data = JSON.parse(xhr.responseText);
-      if (data.success == false) {
-        if (data.callback == "/api/login") { window.location = "/login" }
-        window.location = "/";
-      }
-
+  var xhr = api.getFeed(feedId, function(req, data) {
+    if (data.success) {
       var storyListAccordion = crel('div', {'class': 'accordion', 'id': 'story-list-accordion'});
       var content = '';
 
@@ -288,10 +255,12 @@ function viewFeed(feedId, callback) {
       if (typeof callback != "undefined" ) {
         callback();
       }
+    } else {
+      if (data.callback == "/api/login")
+        window.location = "/login"
+      window.location = "/";
     }
-  }
-  xhr.open("GET", "/api/get/" + feedId, true);
-  xhr.send(null);
+  });
 
   requests.push(xhr);
 }
@@ -317,132 +286,106 @@ function readStory(storyId, ignore) {
     document.getElementById(storyId).getElementsByClassName('accordion-inner')[0].innerHTML = '<center><i class="icon-spinner icon-spin icon-3x"></i></center>';
   }
 
-  var xhr = getXMLHttpRequest();
-  xhr.onreadystatechange = function() {
-    if (xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 0)) {
-      var data = JSON.parse(xhr.responseText);
-      if (data.success == false) {
-        if (data.callback == "/api/login" ) { window.location = "/login" }
-      }
-      if (data.content.last_update == false) {
-        var published = "No date";
+  api.readStory(storyId, function(req, data) {
+    if (!data.success) {
+      if (data.callback == "/api/login")
+        window.location = "/login"
+    }
+    if (data.content.last_update == false) {
+      var published = "No date";
+    } else {
+      // Minutes
+      if (data.content.last_update['min'].toString().length == 1) {
+        var minutes = "0" + data.content.last_update['min'];
       } else {
-        // Minutes
-        if (data.content.last_update['min'].toString().length == 1) {
-          var minutes = "0" + data.content.last_update['min'];
-        } else {
-          var minutes = data.content.last_update['min'];
-        }
-        // Hours
-        if (data.content.last_update['hour'].toString().length == 1) {
-          var hours = "0" + data.content.last_update['hour'];
-        } else {
-          var hours = data.content.last_update['hour'];
-        }
-        var published = data.content.last_update['year'] + '-' + data.content.last_update['month'] +
-                      '-' + data.content.last_update['day'] + "  " + hours + ":" + minutes;
+        var minutes = data.content.last_update['min'];
       }
+      // Hours
+      if (data.content.last_update['hour'].toString().length == 1) {
+        var hours = "0" + data.content.last_update['hour'];
+      } else {
+        var hours = data.content.last_update['hour'];
+      }
+      var published = data.content.last_update['year'] + '-' + data.content.last_update['month'] +
+                    '-' + data.content.last_update['day'] + "  " + hours + ":" + minutes;
+    }
 
-      var feedId = data.content.feed_id;
-      var story = getStoryTemplate();
+    var feedId = data.content.feed_id;
+    var story = getStoryTemplate();
 
-      story.getElementsByClassName("story-link")[0].href = data.content.link;
-      story.getElementsByClassName("story-read-toggle")[0].setAttribute('onclick', 'unreadStory("' + storyId + '")');
-      story.getElementsByClassName("story-read-toggle")[0].innerHTML = 'Mark as unread';
-      story.getElementsByClassName("story-read-toggle")[0].href = "#" + storyId;
-      story.getElementsByClassName("story-content")[0].innerHTML = data.content.description;
-      story.getElementsByClassName("story-date")[0].innerHTML = published;
+    story.getElementsByClassName("story-link")[0].href = data.content.link;
+    story.getElementsByClassName("story-read-toggle")[0].setAttribute('onclick', 'unreadStory("' + storyId + '")');
+    story.getElementsByClassName("story-read-toggle")[0].innerHTML = 'Mark as unread';
+    story.getElementsByClassName("story-read-toggle")[0].href = "#" + storyId;
+    story.getElementsByClassName("story-content")[0].innerHTML = data.content.description;
+    story.getElementsByClassName("story-date")[0].innerHTML = published;
 
 
-      document.getElementById(storyId).getElementsByClassName("accordion-inner")[0].innerHTML = story.innerHTML;
-      document.getElementById(storyId).getElementsByClassName("story-read-toggle")[0].addEventListener(
-        'click', function(e) { e.preventDefault() }, false
-      );
+    document.getElementById(storyId).getElementsByClassName("accordion-inner")[0].innerHTML = story.innerHTML;
+    document.getElementById(storyId).getElementsByClassName("story-read-toggle")[0].addEventListener(
+      'click', function(e) { e.preventDefault() }, false
+    );
 
-      if (data.success == true) {
-        document.getElementById(storyId).classList.remove('unread-story');
+    if (data.success) {
+      document.getElementById(storyId).classList.remove('unread-story');
 
-        var counter = cleanCounter(document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML);
-        var counter = counter - 1;
-        document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML = '(' + counter + ')';
-        if (counter == 0) {
-          document.getElementById(feedId).getElementsByClassName('unread-counter')[0].style.display = "none";
-          document.getElementById(feedId).classList.remove('unread');
-          document.getElementById(feedId).style.fontWeight = 'normal';
-        }
+      var counter = cleanCounter(document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML);
+      var counter = counter - 1;
+      document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML = '(' + counter + ')';
+      if (counter == 0) {
+        document.getElementById(feedId).getElementsByClassName('unread-counter')[0].style.display = "none";
+        document.getElementById(feedId).classList.remove('unread');
+        document.getElementById(feedId).style.fontWeight = 'normal';
       }
     }
-  }
-  xhr.open('GET', '/api/read/' + storyId, true);
-  xhr.send(null);
+  });
 
   document.getElementById(storyId).getElementsByClassName("accordion-toggle")[0].style.fontWeight = 'normal';
 }
 
 function unreadStory(storyId) {
-  var xhr = getXMLHttpRequest();
-  xhr.onreadystatechange = function() {
-    if (xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 0)) {
-      var data = JSON.parse(xhr.responseText);
-      if (data.success == true) {
-        var feedId = data.content.feed_id;
-        var story = document.getElementById(storyId);
-        story.classList.add('unread-story');
+  api.unreadStory(storyId, function(req, data) {
+    if (data.success) {
+      var feedId = data.content.feed_id;
+      var story = document.getElementById(storyId);
+      story.classList.add('unread-story');
 
-        // Avoid next click on story title
-        document.getElementById(storyId).getElementsByClassName("accordion-toggle")[0].setAttribute('onclick', 'readStory("' + storyId + '", true)');
+      // Avoid next click on story title
+      document.getElementById(storyId).getElementsByClassName("accordion-toggle")[0].setAttribute('onclick', 'readStory("' + storyId + '", true)');
 
-       story.getElementsByClassName("story-read-toggle")[0].setAttribute('onclick', 'readStory("' + storyId + '")');
-       story.getElementsByClassName("story-read-toggle")[0].innerHTML = 'Mark as read';
+     story.getElementsByClassName("story-read-toggle")[0].setAttribute('onclick', 'readStory("' + storyId + '")');
+     story.getElementsByClassName("story-read-toggle")[0].innerHTML = 'Mark as read';
 
-        var counter = cleanCounter(document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML);
-        counter = counter + 1;
+      var counter = cleanCounter(document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML);
+      counter = counter + 1;
 
-        if (counter > 0) {
-          document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML = '(' + counter + ')';
-          document.getElementById(feedId).getElementsByClassName('unread-counter')[0].style.display = "";
-          if (!document.getElementById(feedId).classList.contains('unread')) {
-            document.getElementById(feedId).classList.add('unread');
-          }
-        } else {
-          document.getElementById(feedId).classList.remove('unread');
-          document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML = '(' + counter + ')';
+      if (counter > 0) {
+        document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML = '(' + counter + ')';
+        document.getElementById(feedId).getElementsByClassName('unread-counter')[0].style.display = "";
+        if (!document.getElementById(feedId).classList.contains('unread')) {
+          document.getElementById(feedId).classList.add('unread');
         }
-        document.getElementById(storyId).getElementsByClassName("accordion-toggle")[0].style.fontWeight = 'bold';
-      }  else {
-        if (data.callback == "/api/login") { window.location = "/login" }
+      } else {
+        document.getElementById(feedId).classList.remove('unread');
+        document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML = '(' + counter + ')';
       }
+      document.getElementById(storyId).getElementsByClassName("accordion-toggle")[0].style.fontWeight = 'bold';
+    } else {
+      if (data.callback == "/api/login")
+        window.location = "/login"
     }
-  }
-  xhr.open('GET', '/api/unread/' + storyId, true);
-  xhr.send(null);
+  });
 }
 
-function loadTheme(theme, callback) {
-  var xhr = getXMLHttpRequest();
-  xhr.onreadystatechange = function() {
-    if (xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 0)) {
-      window.location = "/";
-    }
-  }
-  xhr.open('POST', '/api/settings/theme', true);
-  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-  xhr.send('theme=' + theme);
+function loadTheme(themeName, callback) {
+  api.setTheme(themeName, function(req, data) {
+    window.location = "/";
+  });
 }
 
 function refreshCounters() {
-  var xhr = getXMLHttpRequest();
-  xhr.onreadystatechange = function() {
-    if (xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 0)) {
-      try {
-        var data = JSON.parse(xhr.responseText);
-      } catch(err) {
-        window.location = "/";
-        return
-      }
-      if (data.success == false) {
-        if (data.callback == "/api/login") { window.location = "/login" }
-      }
+  api.getCounters(function(req, data) {
+    if (data.success) {
       for (i=0;i < data.content.length;i++) {
         var feed = data.content[i];
         var feedId = feed[0];
@@ -456,10 +399,11 @@ function refreshCounters() {
           document.getElementById(feedId).getElementsByClassName('unread-counter')[0].style.display = "none";
         }
       }
+    } else {
+      if (data.callback == "/api/login")
+        window.location = "/login"
     }
-  }
-  xhr.open('GET', '/api/counters', true);
-  xhr.send(null);
+  });
 }
 
 function initAddFeed() {
@@ -565,31 +509,17 @@ function collapseIn (accordionGroupRoot) {
     }
   }
 }
+
 function markAllAsRead(feedId){
-  var xhr = getXMLHttpRequest();
-  xhr.onreadystatechange = function() {
-    if (xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 0)) {
-      var data = JSON.parse(xhr.responseText);
-      if (data.success == true) {
-        viewFeed(feedId, refreshCounters);
-      }
-    }
-  }
-  xhr.open('GET', '/api/all_read/' + feedId, true);
-  xhr.send(null);
+  api.markAllAsRead(feedId, function(req, data) {
+    viewFeed(feedId, refreshCounters);
+  });
 }
+
 function markAllAsUnread(feedId){
-  var xhr = getXMLHttpRequest();
-  xhr.onreadystatechange = function() {
-    if (xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 0)) {
-      var data = JSON.parse(xhr.responseText);
-      if (data.success == true) {
-        viewFeed(feedId, refreshCounters);
-      }
-    }
-  }
-  xhr.open('GET', '/api/all_unread/' + feedId, true);
-  xhr.send(null);
+  api.markAllAsUnread(feedId, function(req, data) {
+    viewFeed(feedId, refreshCounters);
+  });
 }
 
 function enableRibbon(feedId, ordering) {
@@ -620,7 +550,6 @@ function disableRibbon() {
   var ribbon = document.getElementById('ribbon');
   ribbon.style.display = "none";
 }
-
 
 function getCurrentStory() {
   var story = document.getElementsByClassName('selected-story')[0];
@@ -759,27 +688,6 @@ function cleanCounter(counter) {
         }
     };
 }(DOMParser));
-
-// Get XHR Object
-function getXMLHttpRequest() {
-    var xhr = null;
-    if (window.XMLHttpRequest || window.ActiveXObject) {
-        if (window.ActiveXObject) {
-            try {
-                xhr = new ActiveXObject("Msxml2.XMLHTTP");
-            } catch(e) {
-                xhr = new ActiveXObject("Microsoft.XMLHTTP");
-            }
-        } else {
-            xhr = new XMLHttpRequest();
-        }
-    } else {
-        alert("Browser not supported (XMLHTTPRequest).");
-        return null;
-    }
-    return xhr;
-}
-
 
 /* @source http://purl.eligrey.com/github/classList.js/blob/master/classList.js*/
 "use strict";if(typeof document!=="undefined"&&!("classList" in document.createElement("a"))){(function(a){var f="classList",d="prototype",e=(a.HTMLElement||a.Element)[d],g=Object;strTrim=String[d].trim||function(){return this.replace(/^\s+|\s+$/g,"")},arrIndexOf=Array[d].indexOf||function(k){for(var j=0,h=this.length;j<h;j++){if(j in this&&this[j]===k){return j}}return -1},DOMEx=function(h,i){this.name=h;this.code=DOMException[h];this.message=i},checkTokenAndGetIndex=function(i,h){if(h===""){throw new DOMEx("SYNTAX_ERR","An invalid or illegal string was specified")}if(/\s/.test(h)){throw new DOMEx("INVALID_CHARACTER_ERR","String contains an invalid character")}return arrIndexOf.call(i,h)},ClassList=function(m){var l=strTrim.call(m.className),k=l?l.split(/\s+/):[];for(var j=0,h=k.length;j<h;j++){this.push(k[j])}this._updateClassName=function(){m.className=this.toString()}},classListProto=ClassList[d]=[],classListGetter=function(){return new ClassList(this)};DOMEx[d]=Error[d];classListProto.item=function(h){return this[h]||null};classListProto.contains=function(h){h+="";return checkTokenAndGetIndex(this,h)!==-1};classListProto.add=function(h){h+="";if(checkTokenAndGetIndex(this,h)===-1){this.push(h);this._updateClassName()}};classListProto.remove=function(i){i+="";var h=checkTokenAndGetIndex(this,i);if(h!==-1){this.splice(h,1);this._updateClassName()}};classListProto.toggle=function(h){h+="";if(checkTokenAndGetIndex(this,h)===-1){this.add(h)}else{this.remove(h)}};classListProto.toString=function(){return this.join(" ")};if(g.defineProperty){var c={get:classListGetter,enumerable:true,configurable:true};try{g.defineProperty(e,f,c)}catch(b){if(b.number===-2146823252){c.enumerable=false;g.defineProperty(e,f,c)}}}else{if(g[d].__defineGetter__){e.__defineGetter__(f,classListGetter)}}}(self))};

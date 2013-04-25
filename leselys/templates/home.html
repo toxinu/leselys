@@ -1,5 +1,10 @@
-{% extends "layout.html" %}
-{% block body %}	
+{% if debug %}
+  {% extends "layout.debug.html" %}
+{% else %}
+  {% extends "layout.html" %}
+{% endif %}
+
+{% block body %}
 <div class="row-fluid">
   <div class="span2">
     {% include 'sidebar.html' %}
@@ -16,7 +21,7 @@
 <script type="text/javascript">
     // Template add feed
     var getAddFeedTemplate = function () {
-        return crel('li', {'id':'add', 'class': 'popover'},crel('form', 
+        return crel('li', {'id':'add', 'class': 'popover'},crel('form',
             crel('fieldset',
                 crel('center',
                     crel('input', {'id': 'urlFeed',
@@ -51,7 +56,7 @@
                 crel('br'), crel('br')
             ),
             crel('div', {'class': 'story-content'})
-        ) 
+        )
     }
     // Mark all confirmation
     var getMarkAllConfirmationTemplate = function(sentence, feedId, onclick) {

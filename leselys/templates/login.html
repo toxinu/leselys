@@ -1,5 +1,10 @@
-{% extends "layout.html" %}
-{% block body %}	
+{% if debug %}
+  {% extends "layout.debug.html" %}
+{% else %}
+  {% extends "layout.html" %}
+{% endif %}
+
+{% block body %}
 <form class="form-signin" method="POST" action="/api/login?jsonify=false" >
   <h2 class="form-signin-heading">Please sign in</h2>
   <input id="username-input" name="username" type="text" class="input-block-level" placeholder="Username">

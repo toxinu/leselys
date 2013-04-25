@@ -15,7 +15,7 @@ Usage:
   leselys serve <path> [--host=<address>] [--port=<port>] [--debug]
   leselys (adduser|deluser|passwd) <path>
   leselys init <path>
-  leselys worker <path> [--celery-config=<path>]
+  leselys worker <path>
   leselys (refresh|retention) <path>
   leselys -h | --help
   leselys -v | --version
@@ -87,7 +87,8 @@ story_before_retention = 100"""
     if args.get('worker'):
       from leselys import worker
       try:
-        worker.run(config_path)
+        args = [arg for arg in sys.argv if arg != config_path]
+        worker.run(config_path, args)
       except KeyboardInterrupt:
         print('Stopping...')
         sys.exit(1)
