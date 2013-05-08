@@ -1,13 +1,14 @@
 Leselys
 =======
 
-I'm Leselys, your very elegant RSS reader. Try me `right now`_ (demo/demo)!
+I'm Leselys, your very elegant RSS reader. Try me `right now`_ (password: demo)!
 
 No `bullshit apps`_ for Android, iPhone, etc. Just a responsive design and for every device.
 
 Leselys is Heroku ready.
 
 .. image:: https://dl.dropboxusercontent.com/u/79447684/Github/Leselys/screenshot_01.png
+.. image:: https://dl.dropboxusercontent.com/u/79447684/Github/Leselys/screenshot_02.png
 
 Installation
 ------------
