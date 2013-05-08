@@ -33,7 +33,7 @@ def get_theme():
     if not theme:
         theme = storage.get_setting('theme_name')
         if not theme:
-            theme = 'journal'
+            theme = 'flat ui'
             storage.set_setting('theme_name', theme)
     return dict(current_theme_name=theme, current_theme_url=_themes[theme])
 
@@ -45,6 +45,11 @@ def env():
 #######################################################################
 # VIEWS
 #######################################################################
+
+
+@app.route('/welcome')
+def welcome():
+    return render_template('welcome.html')
 
 
 @app.route('/')
@@ -68,17 +73,18 @@ def settings():
 
 @app.route('/login')
 def login_view():
+    if not storage.get_password():
+        return redirect('welcome')
+
     if session.get('logged_in'):
         return redirect(url_for('home'))
     if request.cookies.get('remember'):
-        username = request.cookies.get('username')
         password_md5 = request.cookies.get('password')
-        if username in storage.get_users():
-            try:
-                password_unsigned = signer.unsign(
-                    password_md5, max_age=15 * 24 * 60 * 60)
-            except:
-                return render_template('login.html')
-            if password_unsigned == storage.get_password(username):
-                return redirect(url_for('home'))
+        try:
+            password_unsigned = signer.unsign(
+                password_md5, max_age=15 * 24 * 60 * 60)
+        except:
+            return render_template('login.html')
+        if password_unsigned == storage.get_password():
+            return redirect(url_for('home'))
     return render_template('login.html')

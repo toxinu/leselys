@@ -6,36 +6,24 @@ class Storage(object):
     def _hash_string(self, string):
         return bcrypt.hashpw(string, bcrypt.gensalt())
 
-    def is_valid_login(self, username, password):
+    def is_valid_password(self, password):
         """
-        Check if username/password combination is valid login.
+        Check if password is valid.
 
-        username : plaintext username
         password : plaintext password
         """
-        if username in self.get_users():
-            stored = self.get_password(username)
-            if bcrypt.hashpw(password, stored) == stored:
-                return True
-        else:
+        stored = self.get_password()
+        if not stored:
             return False
+        if bcrypt.hashpw(password, stored) == stored:
+            return True
+        return False
 
-    def create_user(self, username, password):
+    def update_password(self, password):
         """
-        Create new user to DB. Hashes password with bcrypt.
+        Update password. Hashes password with bcrypt.
 
-        username : plaintext username
         password : plaintext password
         """
         hashed = self._hash_string(password)
-        return self.add_user(username, hashed)
-
-    def update_password(self, username, password):
-        """
-        Update password for given username. Hashes password with bcrypt.
-
-        username : plaintext username
-        password : plaintext password
-        """
-        hashed = self._hash_string(password)
-        return self.set_password(username, hashed)
+        return self.set_password(hashed)

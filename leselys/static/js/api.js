@@ -56,7 +56,7 @@ api.getSettings = function(callback) {
 
 api.getHome = function(callback) {
     return ajaxRequest({
-        url: '/',
+        url: '/?jsonify=true',
         method: 'GET',
         params: {
             jsonify: true

@@ -27,6 +27,26 @@ signer = leselys.core.signer
 # API
 #######################################################################
 
+# Set password
+@app.route('/api/set_password', methods=['POST'])
+def set_password():
+    if storage.get_password():
+        if not session.get('logged_in'):
+            if request.args.get('jsonify', "true") == "false":
+                return redirect(url_for('home'))
+            else:
+                return jsonify(success=False, content="Not allowed")
+
+    password = request.form.get('password')
+    storage.set_password(password)
+
+    session['logged_in'] = True
+    if request.args.get('jsonify', "true") == "false":
+        rsp = redirect(url_for('home'))
+    else:
+        rsp = make_response(jsonify(success=True, output="Password setted."))
+    return rsp
+
 
 # Get unreaded counters
 @app.route('/api/counters')
@@ -128,10 +148,9 @@ def export_opml():
 # Login
 @app.route('/api/login', methods=['POST'])
 def login():
-    username = request.form['username']
     password = request.form['password']
     remember = request.form.get('remember', False)
-    if storage.is_valid_login(username, password):
+    if storage.is_valid_password(password):
             session['logged_in'] = True
             if request.args.get('jsonify', "true") == "false":
                 rsp = redirect(url_for('home'))
@@ -140,14 +159,13 @@ def login():
             if remember:
                 session.permanent = True
                 rsp.set_cookie('remember', True)
-                rsp.set_cookie('username', username)
                 rsp.set_cookie('token', signer.sign(password))
             return rsp
     else:
         if request.args.get('jsonify', "true") == "false":
             return redirect(url_for('login_view'))
         else:
-            return jsonify(success=False, output="Bad credentials.", callback="/api/login")
+            return jsonify(success=False, output="Bad password.", callback="/api/login")
 
 
 # Logout
@@ -159,7 +177,6 @@ def logout():
         rsp = make_response(redirect(url_for('login_view')))
     else:
         rsp = make_response(jsonify(success=True, output="Successfully logged out."))
-    rsp.set_cookie('username', None)
     rsp.set_cookie('token', None)
     rsp.set_cookie('remember', False)
     return rsp

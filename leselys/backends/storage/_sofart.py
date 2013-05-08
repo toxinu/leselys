@@ -9,29 +9,14 @@ class Sofart(Storage):
         self.mode = kwargs['mode']
         self.db = Database(self.path, self.mode)
 
-    def get_users(self):
-        res = []
-        for user in self.db.users.find():
-            res.append(user['username'])
-        return res
+   def get_password(self):
+        password = self.get_setting('password')
+        if password:
+            return password
+        return False
 
-    def add_user(self, username, password):
-        return str(self.db.users.save({'username': username,
-                                       'password': password}))
-
-    def remove_user(self, username):
-        user = self.db.users.find_one({'username': username})
-        if user:
-            self.db.users.remove(user['_id'])
-
-    def get_password(self, username):
-        user = self.db.users.find_one({'username': username})
-        if user:
-            return user['password']
-        return None
-
-    def set_password(self, username, password):
-        return self.db.users.save({'username': username, 'password': password})
+    def set_password(self, password):
+        return self.set_setting('password', self._hash_string(password))
 
     def set_feed_setting(self, feed_id, setting_type, value):
         setting = self.db.feedsettings.find_one({'feed_id': feed_id, 'setting_type': setting_type})

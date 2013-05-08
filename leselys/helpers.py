@@ -60,6 +60,13 @@ def login_required(f):
 
     @wraps(f)
     def decorated_function(*args, **kwargs):
+        # No password setted
+        if not storage.get_password():
+            if request.args.get('jsonify', "false") == "false":
+                return redirect(url_for('welcome'))
+            else:
+                return jsonify(success=False, output="You need to set a password.")
+
         # Not in cache
         if not session.get('logged_in'):
             # No cookie
@@ -69,25 +76,17 @@ def login_required(f):
                 else:
                     return jsonify(success=False, output="Failed to log in.")
             else:
-                username = request.cookies.get('username')
                 password_md5 = request.cookies.get('password')
-
-                if username in storage.get_users():
-                    try:
-                        password_unsigned = signer.unsign(
-                            password_md5, max_age=15 * 24 * 60 * 60)
-                    except:
-                        if request.args.get('jsonify', "false") == "false":
-                            return redirect(url_for('login_view'))
-                        else:
-                            return jsonify(success=False, output="Failed to log in.")
-                    if password_unsigned == storage.get_password(username):
-                        return f(*args, **kwargs)
+                try:
+                    password_unsigned = signer.unsign(
+                        password_md5, max_age=15 * 24 * 60 * 60)
+                except:
+                    if request.args.get('jsonify', "false") == "false":
+                        return redirect(url_for('login_view'))
                     else:
-                        if request.args.get('jsonify', "false") == "false":
-                            return redirect(url_for('login_view'))
-                        else:
-                            return jsonify(success=False, output="Failed to log in.")
+                        return jsonify(success=False, output="Failed to log in.")
+                if password_unsigned == storage.get_password():
+                    return f(*args, **kwargs)
                 else:
                     if request.args.get('jsonify', "false") == "false":
                         return redirect(url_for('login_view'))
