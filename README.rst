@@ -7,6 +7,8 @@ No `bullshit apps`_ for Android, iPhone, etc. Just a responsive design and for e
 
 Leselys is Heroku ready.
 
+.. image:: https://dl.dropboxusercontent.com/u/79447684/Github/Leselys/screenshot_01.png
+
 Installation
 ------------
 
