@@ -44,7 +44,7 @@ Heroku
 Advanced setup with MongoDB for storage and Redis for session on Heroku.
 You will also need the Heroku Scheduler add-on to refresh your feeds.
 
-All Heroku dependencies like ``Pymongo``, ``gunicorn`` and ``redis`` are in ``requirements-heroku.txt`` file.
+All Heroku dependencies like ``Pymongo``, ``gunicorn`` and ``redis`` are in ``requirements.txt`` file, so everything will be installed automagically.
 
 ::
 

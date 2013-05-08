@@ -46,8 +46,7 @@ setup(
         'py-bcrypt',
         'requests',
         'celery',
-        'celery-with-mongodb',
-        'minify'
+        'celery-with-mongodb'
     ],
     include_package_data=True,
     classifiers=(
