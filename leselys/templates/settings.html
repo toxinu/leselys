@@ -39,11 +39,12 @@
             {% endfor %}
           </ul>
           <hr>
-          <div class="form-inline">
+          <div id="password-form" class="control-group">
             <h3>Password</h3>
-            <div id="password-status" style="display: none"></div>
-            <input id="password1" type="password" placeholder="Type your password…">
-            <input id="password2" type="password" placeholder="Type it again…"><br /><br />
+            
+            <input id="password1" type="password" placeholder="Type your new password…">
+            <input id="password2" type="password" placeholder="Type it again…">
+            <div id="password-status"></div><br /><br />
             <button id="change-password-submit" type="submit" onclick="changePassword()" class="btn">Change password</button>
           </div>
           <hr>

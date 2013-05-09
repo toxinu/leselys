@@ -4,13 +4,30 @@ importer = false;
 setKeyboard();
 
 function changePassword() {
-  var password1 = document.getElementById('password1').value;
-  var password2 = document.getElementById('password2').value;
-  console.log(password1 + ' and ' + password2);
-  if (password1 != password2) {
+  var password1 = document.getElementById('password1');
+  var password2 = document.getElementById('password2');
+
+  document.getElementById('password-status').innerHTML = "";
+  document.getElementById('password-status').style.display = "none";
+  document.getElementById('password-form').classList.remove('warning');
+  document.getElementById('password-form').classList.remove('success');
+
+  if (password1.value != password2.value) {
     document.getElementById('password-status').innerHTML = "Not same password";
-    document.getElementById('password-status').style.display = "";
+    document.getElementById('password-form').classList.add('warning');
+  } else {
+    api.changePassword(password1.value);
+    document.getElementById('password-status').innerHTML = "Password changed!";
+    password1.value = "";
+    password2.value = "";
+    document.getElementById('password-form').classList.add('success');
   }
+
+  document.getElementById('password-status').style.display = "block";
+  setInterval(function() {
+    document.getElementById('password-form').classList.remove('warning');
+    document.getElementById('password-form').classList.remove('success');
+  }, 1500);
 }
 
 function addFeed() {

@@ -277,3 +277,9 @@ li a [class^="icon-"] {
 #welcome-form {
   margin-top: -60px;
 }
+
+#password-status {
+  display: none;
+  margin-left: 10px;
+  margin-bottom: -17px;
+}
