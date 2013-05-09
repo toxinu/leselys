@@ -247,24 +247,45 @@ class Reader(object):
         storage.remove_feed(feed_id)
         return {"success": True, "output": "Feed removed"}
 
-    def get(self, feed_id=False, order_type="user", start=0, end=100):
+    def get(self, feed_id=False, feed_type="combined-ffed", order_type="user"):
+        # Special feeds
         if not feed_id:
-            if order_type == "user" or order_type not in ['unreaded', 'published']:
-                order_type = storage.get_setting('all_items_ordering')
-                if not order_type:
-                    storage.set_setting('all_items_ordering', 'unreaded')
-                    order_type = storage.get_setting('all_items_ordering')
+            if feed_type == "combined-feed":
+                if order_type == "user" or order_type not in ['unreaded', 'published']:
+                    order_type = storage.get_feed_setting('combined-feed' , 'ordering')
+                    if not order_type:
+                        storage.set_feed_setting('combined-feed', 'ordering', 'unreaded')
+                        order_type = 'unreaded'
+                    else:
+                        order_type = order_type['value']
+            elif feed_type == "stared-feed":
+                if order_type == "user" or order_type not in ['unreaded', 'published']:
+                    order_type = storage.get_feed_setting('stared-feed', 'ordering')
+                    if not order_type:
+                        storage.set_feed_setting('stared-feed', 'ordering', 'unreaded')
+                        order_type = 'unreaded'
+                    else:
+                        order_type = order_type['value']
+            else:
+                raise Exception('Unknown feed type (%s)' % feed_type)
+        # Normal feed
         else:
             if order_type == "user" or order_type not in ['unreaded', 'published']:
-                setting_order_type = storage.get_feed_setting(feed_id, 'ordering')
-                if not setting_order_type:
+                order_type = storage.get_feed_setting(feed_id, 'ordering')
+                if not order_type:
                     storage.set_feed_setting(feed_id, 'ordering', 'unreaded')
                     order_type = 'unreaded'
                 else:
-                    order_type = setting_order_type['value']
+                    order_type = order_type['value']
 
+        # Get stories
         if not feed_id:
-            stories = storage.all_stories()
+            if feed_type == "combined-feed":
+                stories = storage.all_stories()
+            elif feed_type == "stared-feed":
+                stories = storage.all_stared()
+            else:
+                raise Exception('Unknown feed type (%s)' % feed_type)
         else:
             stories = storage.get_stories(feed_id)
 
@@ -279,6 +300,7 @@ class Reader(object):
                     'last_update': entry['last_update']}
                 if not feed_id:
                     story['feed_id'] = entry['feed_id']
+                    story['feed_title'] = entry['feed_title']
 
                 res.append(story)
 
@@ -307,6 +329,7 @@ class Reader(object):
                     'last_update': entry['published']}
                 if not feed_id:
                     story['feed_id'] = entry['feed_id']
+                    story['feed_title'] = entry['feed_title']
 
                 res.append(story)
 
@@ -316,10 +339,10 @@ class Reader(object):
         return {'entries': entries, 'ordering': order_type}
 
     def get_combined_feed(self):
-        order_type = storage.get_setting('all_items_ordering')
+        order_type = storage.get_feed_setting('combined-feed', 'ordering')
         if not order_type:
-            storage.set_setting('all_items_ordering', 'unreaded')
-            order_type = storage.get_setting('all_items_ordering')
+            storage.set_feed_setting('combined-feed', 'ordering', 'unreaded')
+            order_type = storage.get_feed_setting('combined-feed', 'ordering')
         return {'title': 'All stories',
                 'id': 'combined_feed',
                 'counter': self.get_unread(),
@@ -361,10 +384,12 @@ class Reader(object):
         return len(storage.get_feed_unread(feed_id))
 
     def mark_all_read(self, feed_id):
-        stories = storage.get_stories(feed_id)
-        if not stories:
-            return {'success': False, "content": "Feed not found"}
-        for story in storage.get_stories(feed_id):
+        if feed_id == "combined-feed":
+            stories = storage.all_stories()
+        else:
+            stories = storage.get_stories(feed_id)
+
+        for story in stories:
             story['read'] = True
             storage.update_story(story['_id'], copy.copy(story))
         return {'success': True, "content": "All feed stories updated"}

@@ -84,6 +84,28 @@ api.getFeed = function(feedId, callback) {
     });
 }
 
+api.getCombinedFeed = function(callback) {
+    return ajaxRequest({
+        url: '/api/get',
+        method: 'GET',
+        params: {
+            feed_type: 'combined-feed'
+        },
+        callback: callback
+    });
+}
+
+api.getStaredFeed = function(callback) {
+    return ajaxRequest({
+        url: '/api/get_stared',
+        method: 'GET',
+        params: {
+            feed_type: 'stared-ffed'
+        },
+        callback: callback
+    });
+}
+
 api.readStory = function(storyId, callback) {
     return ajaxRequest({
         url: '/api/read/' + storyId,

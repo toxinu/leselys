@@ -171,6 +171,15 @@ li a [class^="icon-"] {
 }
 .combined-feed {
 }
+.combined-feed.unread {
+  font-weight: bold;
+}
+.feed-title-combined {
+  font-size: 12px;
+}
+.stared-feed.unread {
+  font-weight: bold;
+}
 .selected-story {
   border: 2px solid #e5e5e5;
 }

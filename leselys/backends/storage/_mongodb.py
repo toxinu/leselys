@@ -98,8 +98,13 @@ class Mongodb(Storage):
 
     def all_stories(self):
         res = []
+        feeds = {}
+        for feed in self.db.feeds.find():
+            feeds[str(feed['_id'])] = feed['title']
+
         for story in self.db.stories.find():
             story['_id'] = str(story['_id'])
+            story['feed_title'] = feeds[story['feed_id']]
             res.append(story)
         return res
 

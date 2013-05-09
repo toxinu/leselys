@@ -56,6 +56,8 @@ def get_counters():
     res = []
     for feed in feeds:
         res.append((feed['id'], feed['counter']))
+
+    res.append(('combined-feed', reader.get_combined_feed().get('counter', 0)))
     return jsonify(success=True, content=res)
 
 
@@ -79,10 +81,13 @@ def remove(feed_id):
 @app.route('/api/get/<feed_id>')
 @login_required
 def get(feed_id):
+    if not feed_id:
+        feed_type = request.args.get('feed_type', 'combined-feed')
+    else:
+        feed_type = None
+
     order_type = request.args.get('order_type', 'user')
-    start = request.args.get('start', 0)
-    end = request.args.get('end', 100)
-    return jsonify(success=True, content=reader.get(feed_id, order_type, start, end))
+    return jsonify(success=True, content=reader.get(feed_id, feed_type, order_type))
 
 
 # Set story as readed

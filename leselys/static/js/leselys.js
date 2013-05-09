@@ -98,17 +98,13 @@ function addFeed() {
 function setFeedSetting(feedId, settingKey, settingValue) {
   api.setFeedSetting(feedId, settingKey, settingValue, function(req, data) {
     if (data.success)
-      viewFeed(feedId);
-  })
-  var xhr = getXMLHttpRequest();
-  xhr.onreadystatechange = function() {
-    if (xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 0)) {
-      var data = JSON.parse(xhr.responseText);
-      if (data.success == true) {
+      if (feedId == "combined-feed")
+        viewCombinedFeed();
+      else if (feedId == "stared-feed")
+        viewStaredFeed();
+      else 
         viewFeed(feedId);
-      }
-    }
-  }
+  })
 }
 
 function handleOPMLImport(evt) {
@@ -236,53 +232,14 @@ function deleteFeed(feedId) {
   });
 }
 
-function viewFeed(feedId, callback) {
+function viewCombinedFeed(callback) {
   for (var i=0;i < requests.length;i++) {
     requests[i].abort();
     requests.shift();
   }
-  var xhr = api.getFeed(feedId, function(req, data) {
+  var xhr = api.getCombinedFeed(function(req, data) {
     if (data.success) {
-      var storyListAccordion = crel('div', {'class': 'accordion', 'id': 'story-list-accordion'});
-      var content = '';
-
-      if (data.content.length == 0) {
-        content = '<p style="text-align:center; margin-top: 50px"><em>Oups, there is no story here...</em></p>';
-      }
-
-      for (var i=0;i < data.content.entries.length;i++) {
-        var item = data.content.entries[i];
-        var storyId = item._id;
-        var storyTitle = item.title;
-        var storyAccordion = getStoryAccordionTemplate();
-        var storyRead = item.read;
-
-        storyAccordion.id = storyId;
-        storyAccordion.getElementsByClassName("accordion-toggle")[0].setAttribute('onclick', 'readStory("' + storyId + '")');
-        storyAccordion.getElementsByClassName("accordion-toggle")[0].innerHTML = storyTitle;
-        storyAccordion.getElementsByClassName("accordion-toggle")[0].setAttribute('name', storyId);
-
-        if (storyRead == false) {
-          storyAccordion.getElementsByClassName('accordion-toggle')[0].style.fontWeight = "bold";
-          storyAccordion.classList.add('unread-story');
-        }
-
-        content += storyAccordion.outerHTML;
-      }
-      storyListAccordion.innerHTML = content;
-      document.getElementById('content').innerHTML = storyListAccordion.outerHTML;
-
-      var feedsList = document.getElementById('menu').getElementsByTagName('a');
-      for (i=0;i < feedsList.length;i++) {
-        feedsList[i].classList.remove('text-error');
-      }
-
-      document.getElementById(feedId).getElementsByTagName('a')[0].classList.add('text-error');
-      initAccordion();
-      enableRibbon(feedId, data.content.ordering);
-      if (typeof callback != "undefined" ) {
-        callback();
-      }
+      listStories("combined-feed", data, callback);
     } else {
       if (data.callback == "/api/login")
         window.location = "/login"
@@ -291,6 +248,88 @@ function viewFeed(feedId, callback) {
   });
 
   requests.push(xhr);
+}
+
+function listStories(feedId, data, callback) {
+  var storyListAccordion = crel('div', {'class': 'accordion', 'id': 'story-list-accordion'});
+  var content = '';
+
+  if (data.content.length == 0) {
+    content = '<p style="text-align:center; margin-top: 50px"><em>Oups, there is no story here...</em></p>';
+  }
+
+  for (var i=0;i < data.content.entries.length;i++) {
+    var item = data.content.entries[i];
+    var storyId = item._id;
+    var storyTitle = item.title;
+    var storyAccordion = getStoryAccordionTemplate();
+    var storyRead = item.read;
+
+    if (item.feed_title)
+      storyTitle = storyTitle + "<span class=\"feed-title-combined muted\"> - " + item.feed_title + "</span>";
+
+    storyAccordion.id = storyId;
+    storyAccordion.getElementsByClassName("accordion-toggle")[0].setAttribute('onclick', 'readStory("' + storyId + '")');
+    storyAccordion.getElementsByClassName("accordion-toggle")[0].innerHTML = storyTitle;
+    storyAccordion.getElementsByClassName("accordion-toggle")[0].setAttribute('name', storyId);
+
+    if (storyRead == false) {
+      storyAccordion.getElementsByClassName('accordion-toggle')[0].style.fontWeight = "bold";
+      storyAccordion.classList.add('unread-story');
+    }
+
+    content += storyAccordion.outerHTML;
+  }
+  storyListAccordion.innerHTML = content;
+  document.getElementById('content').innerHTML = storyListAccordion.outerHTML;
+
+  var feedsList = document.getElementById('menu').getElementsByTagName('a');
+  for (i=0;i < feedsList.length;i++) {
+    feedsList[i].classList.remove('text-error');
+  }
+
+  document.getElementById(feedId).getElementsByTagName('a')[0].classList.add('text-error');
+  initAccordion();
+  enableRibbon(feedId, data.content.ordering);
+  if (typeof callback != "undefined" ) {
+    callback();
+  }
+}
+
+function viewFeed(feedId, callback) {
+  for (var i=0;i < requests.length;i++) {
+    requests[i].abort();
+    requests.shift();
+  }
+  var xhr = api.getFeed(feedId, function(req, data) {
+    if (data.success) {
+      listStories(feedId, data, callback);
+    } else {
+      if (data.callback == "/api/login")
+        window.location = "/login"
+      window.location = "/";
+    }
+  });
+
+  requests.push(xhr);
+}
+
+function updateCounter(feedId, number) {
+  var counter = cleanCounter(document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML);
+  var counter = counter + number;
+  document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML = '(' + counter + ')';
+  if (counter == 0) {
+    document.getElementById(feedId).getElementsByClassName('unread-counter')[0].style.display = "none";
+    document.getElementById(feedId).classList.remove('unread');
+    document.getElementById(feedId).style.fontWeight = 'normal';
+  } else {
+    document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML = '(' + counter + ')';
+    document.getElementById(feedId).getElementsByClassName('unread-counter')[0].style.display = "";
+      document.getElementById(feedId).classList.add('unread');
+  }
+  if (feedId != "combined-feed" && feedId != "stared-feed") {
+    updateCounter("combined-feed", number);
+  }
 }
 
 function readStory(storyId, ignore) {
@@ -314,7 +353,7 @@ function readStory(storyId, ignore) {
     document.getElementById(storyId).getElementsByClassName('accordion-inner')[0].innerHTML = '<center><i class="icon-spinner icon-spin icon-3x"></i></center>';
   }
 
-  window.location.hash = storyId;
+  // window.location.hash = storyId;
   api.readStory(storyId, function(req, data) {
     if (!data.success) {
       if (data.callback == "/api/login")
@@ -357,15 +396,7 @@ function readStory(storyId, ignore) {
 
     if (data.success) {
       document.getElementById(storyId).classList.remove('unread-story');
-
-      var counter = cleanCounter(document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML);
-      var counter = counter - 1;
-      document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML = '(' + counter + ')';
-      if (counter == 0) {
-        document.getElementById(feedId).getElementsByClassName('unread-counter')[0].style.display = "none";
-        document.getElementById(feedId).classList.remove('unread');
-        document.getElementById(feedId).style.fontWeight = 'normal';
-      }
+      updateCounter(feedId, -1);
     }
   });
   document.getElementById(storyId).getElementsByClassName("accordion-toggle")[0].style.fontWeight = 'normal';
@@ -381,22 +412,11 @@ function unreadStory(storyId) {
       // Avoid next click on story title
       document.getElementById(storyId).getElementsByClassName("accordion-toggle")[0].setAttribute('onclick', 'readStory("' + storyId + '", true)');
 
-     story.getElementsByClassName("story-read-toggle")[0].setAttribute('onclick', 'readStory("' + storyId + '")');
-     story.getElementsByClassName("story-read-toggle")[0].innerHTML = 'Mark as read';
+      story.getElementsByClassName("story-read-toggle")[0].setAttribute('onclick', 'readStory("' + storyId + '")');
+      story.getElementsByClassName("story-read-toggle")[0].innerHTML = 'Mark as read';
 
-      var counter = cleanCounter(document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML);
-      counter = counter + 1;
+      updateCounter(feedId, 1)
 
-      if (counter > 0) {
-        document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML = '(' + counter + ')';
-        document.getElementById(feedId).getElementsByClassName('unread-counter')[0].style.display = "";
-        if (!document.getElementById(feedId).classList.contains('unread')) {
-          document.getElementById(feedId).classList.add('unread');
-        }
-      } else {
-        document.getElementById(feedId).classList.remove('unread');
-        document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML = '(' + counter + ')';
-      }
       document.getElementById(storyId).getElementsByClassName("accordion-toggle")[0].style.fontWeight = 'bold';
     } else {
       if (data.callback == "/api/login")
@@ -548,19 +568,34 @@ function collapseIn (accordionGroupRoot) {
 
 function markAllAsRead(feedId){
   api.markAllAsRead(feedId, function(req, data) {
-    viewFeed(feedId, refreshCounters);
+    viewHome(function() {
+      if (feedId == "combined-feed")
+        viewCombinedFeed();
+      else if (feedId == "stared-feed")
+        viewStaredFeed();
+      else
+        viewFeed(feedId);
+    });
   });
 }
 
 function markAllAsUnread(feedId){
   api.markAllAsUnread(feedId, function(req, data) {
-    viewFeed(feedId, refreshCounters);
+    viewHome(function() {
+      if (feedId == "combined-feed")
+        viewCombinedFeed();
+      else if (feedId == "stared-feed")
+        viewStaredFeed();
+      else
+        viewFeed(feedId);
+    });
   });
 }
 
 function enableRibbon(feedId, ordering) {
   var ribbon = document.getElementById('ribbon');
   ribbon.style.display = "";
+
   if (ordering == "unreaded") {
     ribbon.getElementsByClassName('order-unreaded')[0].classList.add('active');
     ribbon.getElementsByClassName('order-published')[0].classList.remove('active');
@@ -570,6 +605,18 @@ function enableRibbon(feedId, ordering) {
   }
   ribbon.getElementsByClassName('order-unreaded')[0].getElementsByTagName('a')[0].onclick = function () {setFeedSetting(feedId, 'ordering', 'unreaded')};
   ribbon.getElementsByClassName('order-published')[0].getElementsByTagName('a')[0].onclick = function () {setFeedSetting(feedId, 'ordering', 'published')};
+
+  if (feedId == "combined-feed") {
+    ribbon.getElementsByClassName('mark-all-as-unread')[0].style.display = "none";
+    ribbon.style.width = "110px";
+  } else if (feedId == "stared-feed") {
+    ribbon.style.display = "none";
+    return
+  } else {
+    ribbon.getElementsByClassName('mark-all-as-unread')[0].style.display = "";
+    ribbon.style.width = "135px";
+  }
+
   ribbon.getElementsByClassName('mark-all-as-read')[0].getElementsByTagName('a')[0].onclick = function () {
     var onclick = "markAllAsRead(\"" + feedId + "\");TINY.box.hide();";
     var box = getMarkAllConfirmationTemplate('Mark all as read ?', feedId, onclick);
@@ -608,7 +655,6 @@ function getPreviousStory() {
 }
 
 function toggleReadState(storyId) {
-  console.log(storyId);
   var story = document.getElementById(storyId);
   if (story.classList.contains('unread-story')) {
     readStory(storyId);

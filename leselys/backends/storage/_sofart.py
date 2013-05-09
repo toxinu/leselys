@@ -69,6 +69,18 @@ class Sofart(Storage):
             res.append(feed)
         return res
 
+    def all_stories(self):
+        res = []
+        feeds = {}
+        for feed in self.db.feeds.find():
+            feeds[feed['_id']] = feed['title']
+
+        for story in self.db.stories.find():
+            story['_id'] = story['_id']
+            story['feed_title'] = feeds[story['feed_id']]
+            res.append(story)
+        return res
+
     def add_story(self, content):
         return self.db.stories.save(content)
 

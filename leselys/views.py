@@ -23,7 +23,9 @@ signer = leselys.core.signer
 
 @app.context_processor
 def get_feeds():
-    return dict(feeds=reader.get_feeds(), combined_feed=reader.get_combined_feed())
+    # Stared not implemented
+    stared_feed = {'counter': 14}
+    return dict(feeds=reader.get_feeds(), combined_feed=reader.get_combined_feed(), stared_feed=stared_feed)
 
 
 @app.context_processor
