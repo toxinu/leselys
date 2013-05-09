@@ -63,6 +63,17 @@ Don't forget to create a Leselys account with ``heroku run "bash heroku.sh && le
 
 Import your Google Reader OPML file right now!
 
+Update
+------
+
+This is how to update your Leselys (on Heroku): ::
+
+  git pull
+  git push heroku master
+  heroku restart
+
+If you use personnal VPS, just ``git pull`` and restart your Leselys process.
+
 Misc
 ----
 
