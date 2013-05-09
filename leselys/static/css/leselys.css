@@ -2,7 +2,7 @@
   position: fixed;
   top: 0;
   bottom: 0;
-  width: 14%;
+  width: 14.5%;
 }
 #content {
   padding-left: 10px;
@@ -282,4 +282,14 @@ li a [class^="icon-"] {
   display: none;
   margin-left: 10px;
   margin-bottom: -17px;
+}
+
+ul#menu {
+  margin-bottom: 10px;
+  overflow: hidden;
+  height: 100%;
+}
+
+ul#menu:hover {
+  overflow: auto;
 }
