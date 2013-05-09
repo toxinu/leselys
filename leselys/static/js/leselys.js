@@ -154,7 +154,7 @@ function viewSettings(callback) {
 
 function viewHome(callback) {
   api.getHome(function(req, data) {
-    if (data.sucess) {
+    if (data.success) {
       var parser = new DOMParser();
       var div = parser.parseFromString(data.content, "text/html");
       var content = div.getElementById('content');
@@ -233,6 +233,7 @@ function viewFeed(feedId, callback) {
         storyAccordion.id = storyId;
         storyAccordion.getElementsByClassName("accordion-toggle")[0].setAttribute('onclick', 'readStory("' + storyId + '")');
         storyAccordion.getElementsByClassName("accordion-toggle")[0].innerHTML = storyTitle;
+        storyAccordion.getElementsByClassName("accordion-toggle")[0].setAttribute('name', storyId);
 
         if (storyRead == false) {
           storyAccordion.getElementsByClassName('accordion-toggle')[0].style.fontWeight = "bold";
@@ -286,6 +287,7 @@ function readStory(storyId, ignore) {
     document.getElementById(storyId).getElementsByClassName('accordion-inner')[0].innerHTML = '<center><i class="icon-spinner icon-spin icon-3x"></i></center>';
   }
 
+  window.location.hash = storyId;
   api.readStory(storyId, function(req, data) {
     if (!data.success) {
       if (data.callback == "/api/login")
@@ -339,7 +341,6 @@ function readStory(storyId, ignore) {
       }
     }
   });
-
   document.getElementById(storyId).getElementsByClassName("accordion-toggle")[0].style.fontWeight = 'normal';
 }
 
