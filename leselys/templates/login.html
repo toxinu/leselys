@@ -5,18 +5,67 @@
 {% endif %}
 
 {% block body %}
-<form class="form-signin" method="POST" action="/api/login?jsonify=false" >
-  <h2 class="form-signin-heading">Please sign in</h2>
-  <input id="password-input" name="password" type="password" class="input-block-level" placeholder="Password">
-  <label class="checkbox">
-    <input name="remember" type="checkbox" value="false"> Remember me
-  </label>
-  <button class="btn btn-large btn-primary" type="submit">Sign in</button>
-</form>
 
-<script type="text/javascript">
-  window.onload = function () {
-    document.getElementById('password-input').focus();
+<style type="text/css">
+  body {
+    padding-top: 20px;
+    padding-bottom: 40px;
   }
-</script>
+
+  /* Custom container */
+  .container-narrow {
+    margin: 0 auto;
+    max-width: 700px;
+  }
+  .container-narrow > hr {
+    margin: 30px 0;
+  }
+
+  /* Main marketing message and sign up button */
+  .jumbotron {
+    margin: 60px 0;
+    text-align: center;
+  }
+  .jumbotron h1 {
+    font-size: 72px;
+    line-height: 1;
+  }
+  .jumbotron .btn {
+    font-size: 21px;
+    padding: 14px 24px;
+  }
+</style>
+
+<div class="container-narrow">
+
+  <div class="masthead">
+    <ul class="nav nav-pills pull-right">
+      <li><a href="https://github.com/socketubs/leselys">Github</a></li>
+      <li><a href="http://socketubs.net">Socketubs</a></li>
+    </ul>
+    <h3 class="muted">Leselys</h3>
+  </div>
+
+  <hr>
+
+  <div class="jumbotron">
+    <h1>Welcome back.</h1>
+    <div class="setup">
+      <form id="welcome-form" method="POST" action="/api/login?jsonify=false">
+        <div class="control-group">
+          <input style="width: 210px" name="password" id="password" type="password" autofocus="autofocus"/ >
+          <i class="icon-lock field-icon"></i>
+          <label id="password-label" class="field-label" for="password">Password</label>
+        </div>
+        <label class="checkbox" style="text-align: left">
+          <input name="remember" type="checkbox" value="false"> Remember me
+        </label>
+        <br />
+        <button class="btn btn-large btn-primary" type="submit">Login</button>
+      </form>
+    </div>
+  </div>
+
+</div>
+
 {% endblock %}

@@ -3,6 +3,16 @@ requests = new Array();
 importer = false;
 setKeyboard();
 
+function changePassword() {
+  var password1 = document.getElementById('password1').value;
+  var password2 = document.getElementById('password2').value;
+  console.log(password1 + ' and ' + password2);
+  if (password1 != password2) {
+    document.getElementById('password-status').innerHTML = "Not same password";
+    document.getElementById('password-status').style.display = "";
+  }
+}
+
 function addFeed() {
   var url = document.getElementById('urlFeed').value;
   if (url == '') { return false }
@@ -413,10 +423,18 @@ function initAddFeed() {
 }
 
 function initSettingsView() {
- document.getElementById('OPMLSubmit').addEventListener('click', handleOPMLImport, false);
- document.getElementById('OPMLFile').addEventListener('change', function() {
-   document.getElementById('upload-file-info').innerHTML = document.getElementById('OPMLFile').value.replace("C:\\fakepath\\", "");
- });
+  document.getElementById('OPMLSubmit').addEventListener('click', handleOPMLImport, false);
+  document.getElementById('OPMLFile').addEventListener('change', function() {
+    document.getElementById('upload-file-info').innerHTML = document.getElementById('OPMLFile').value.replace("C:\\fakepath\\", "");
+  });
+  // Set enter key on password2 input
+  document.getElementById('password2').onkeypress = function(e){
+    if (!e) e = window.event;
+    if (e.keyCode == '13'){
+      changePassword();
+      return false;
+    }
+  }
 }
 
 function initPage() {

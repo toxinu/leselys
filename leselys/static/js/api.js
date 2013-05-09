@@ -1,5 +1,16 @@
 api = {};
 
+api.changePassword = function(password) {
+    return ajaxRequest({
+        url: '/api/set_password',
+        method: 'POST',
+        params: {
+            password: password
+        },
+        callback: callback
+    });
+}
+
 api.addFeed = function(feedUrl, callback) {
     return ajaxRequest({
         url: '/api/add',

@@ -203,4 +203,77 @@ li a [class^="icon-"] {
   z-index:800
 }
 .tbox {position:absolute; display:none; z-index:900}
-.tinner {padding:15px; -moz-border-radius:5px; border-radius:5px; background:#fff url(images/preload.gif) no-repeat 50% 5
+.tinner {padding:15px; -moz-border-radius:5px; border-radius:5px; background:#fff url(images/preload.gif) no-repeat 50% 5}
+
+
+/* Login Page */
+/* Inspired by Stringer (https://github.com/swanson/stringer) */
+.setup {
+  width: 350px;
+  margin: 0 auto;
+  padding-top: 100px;
+}
+
+.setup h1 {
+  text-align: center;
+}
+
+.setup h2 {
+  text-align: center;
+  font-size: 18px;
+  line-height: 22px;
+}
+
+.setup p {
+  text-align: center;
+}
+
+.setup .control-group input {
+  width: 210px;
+}
+
+.setup .field-icon {
+  display: block;
+  color: #BFC9CA;
+  font-size: 24px;
+  position: absolute;
+  right: 13px;
+  top: 8px;
+  -webkit-transition: 0.25s;
+  -moz-transition: 0.25s;
+  -o-transition: 0.25s;
+  transition: 0.25s;
+}
+
+.setup .control-group input:focus + .field-icon {
+  color: #484948;
+}
+
+.setup .control-group input:focus ~ .field-label {
+  color: #484948;
+}
+
+.setup .field-label {
+  display: block;
+  color: #BFC9CA;
+  position: absolute;
+  left: 13px;
+  top: 10px;
+  -webkit-transition: 0.25s;
+  -moz-transition: 0.25s;
+  -o-transition: 0.25s;
+  transition: 0.25s;
+}
+
+.setup #password, .setup #password-confirmation, .setup #feed-url {
+  padding-left: 100px;
+  padding-right: 36px;
+}
+
+.setup .control-group {
+  position: relative;
+}
+
+#welcome-form {
+  margin-top: -60px;
+}
