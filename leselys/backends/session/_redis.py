@@ -24,7 +24,7 @@ class Session(SessionInterface):
 
     def __init__(
             self,
-            address="localhost",
+            host="localhost",
             port=6379,
             db=0,
             uri=None,
@@ -34,7 +34,7 @@ class Session(SessionInterface):
         else:
             port = int(port)
             db = int(db)
-            self.redis = Redis(address, port, db)
+            self.redis = Redis(host, port, db)
         self.prefix = prefix
 
     def generate_sid(self):
