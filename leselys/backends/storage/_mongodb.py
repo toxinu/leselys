@@ -1,11 +1,8 @@
 # -*- coding: utf-8 -*-
-import sys
-import pymongo
 
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from _storage import Storage
-from leselys.helpers import get_datetime
 
 
 class Mongodb(Storage):
@@ -96,16 +93,30 @@ class Mongodb(Storage):
             res.append(feed)
         return res
 
-    def all_stories(self):
+    def all_stories(self, ordering, start, stop):
         res = []
         feeds = {}
         for feed in self.db.feeds.find():
             feeds[str(feed['_id'])] = feed['title']
 
-        for story in self.db.stories.find():
-            story['_id'] = str(story['_id'])
-            story['feed_title'] = feeds[story['feed_id']]
-            res.append(story)
+        if ordering == "unreaded":
+            for story in self.db.stories.find({"read": False}).sort('last_update', -1).skip(start).limit(stop - start):
+                story['_id'] = str(story['_id'])
+                story['feed_title'] = feeds[story['feed_id']]
+                res.append(story)
+            nb_read = len(res)
+            if (stop - start) - nb_read <= 0:
+                return res
+            for story in self.db.stories.find({"read": True}).sort('last_update', -1).limit((stop - start) - nb_read):
+                story['_id'] = str(story['_id'])
+                story['feed_title'] = feeds[story['feed_id']]
+                res.append(story)
+        elif ordering == "published":
+            for story in self.db.stories.find().sort('last_update', -1).skip(start).limit(stop - start):
+                story['_id'] = str(story['_id'])
+                story['feed_title'] = feeds[story['feed_id']]
+                res.append(story)
+
         return res
 
     def add_story(self, content):
@@ -138,14 +149,31 @@ class Mongodb(Storage):
 
     def get_feed_unread(self, feed_id):
         res = []
-        for feed in self.db.stories.find({'feed_id': feed_id, 'read': False}):
+        for feed in self.db.stories.find({'feed_id': feed_id, 'read': False}).sort('last_update', -1):
             feed['_id'] = str(feed['_id'])
             res.append(feed)
         return res
 
-    def get_stories(self, feed_id):
+    def get_feed_unread_count(self, feed_id=False):
+        if not feed_id:
+            return self.db.stories.find({'read': False}).count()
+        return self.db.stories.find({'feed_id': feed_id, 'read': False}).count()
+
+    def get_stories(self, feed_id, ordering, start, stop):
         res = []
-        for story in self.db.stories.find({'feed_id': feed_id}):
-            story['_id'] = str(story['_id'])
-            res.append(story)
+        if ordering == "unreaded":
+            for story in self.db.stories.find({"feed_id": feed_id, "read": False}).sort('last_update', -1).skip(start).limit(stop - start):
+                story['_id'] = str(story['_id'])
+                res.append(story)
+            nb_read = len(res)
+            if (stop - start) - nb_read <= 0:
+                return res
+            for story in self.db.stories.find({"feed_id": feed_id, "read": True}).sort('last_update', -1).limit((stop-start)-nb_read):
+                story['_id'] = str(story['_id'])
+                res.append(story)
+        elif ordering == "published":
+            for story in self.db.stories.find({"feed_id": feed_id}).sort('last_update', -1).skip(start).limit(stop - start):
+                story['_id'] = str(story['_id'])
+                res.append(story)
+
         return res

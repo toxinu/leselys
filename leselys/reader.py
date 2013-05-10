@@ -66,19 +66,17 @@ class Retriever(threading.Thread):
             except KeyError:
                 description = entry['summary']
 
-            if entry.get('updated_parsed'):
-                last_update = get_dicttime(entry.updated_parsed)
+            if get_datetime(entry.get('updated_parsed')):
+                last_update = get_datetime(entry.updated_parsed)
             else:
-                last_update = get_dicttime(datetime.datetime.now().timetuple())
+                last_update = datetime.datetime.now()
             if entry.get('published_parsed', False):
-                published = get_dicttime(entry.published_parsed)
-                published_datetime = get_datetime(entry.published_parsed)
+                published = get_datetime(entry.published_parsed)
             else:
-                published = get_dicttime(datetime.datetime.now().timetuple())
-                published_datetime = datetime.datetime.now()
+                published = datetime.datetime.now()
 
             if self.do_retention:
-                delta = datetime.datetime.now() - published_datetime
+                delta = datetime.datetime.now() - published
                 if delta.days > int(config.get('worker', 'retention')):
                     continue
 
@@ -109,30 +107,25 @@ class Refresher(threading.Thread):
             self.feed['title'] = self.data.feed['title']
             storage.update_feed(self.feed['_id'], copy.copy(self.feed))
 
-        local_update = get_datetime(self.feed['last_update'])
+        local_update = self.feed['last_update']
         remote_update = False
         if self.data.feed.get('updated_parsed'):
             remote_update = get_datetime(self.data.feed.updated_parsed)
-            remote_update_raw = get_dicttime(self.data.feed.updated_parsed)
         if self.data.get('updated_parsed'):
             if remote_update:
                 if get_datetime(self.data.updated_parsed) > remote_update:
                     remote_update = get_datetime(self.data.updated_parsed)
-                    remote_update_raw = get_dicttime(self.data.updated_parsed)
         if self.data.feed.get('published_parsed'):
             if remote_update:
                 if get_datetime(self.data.feed.published_parsed) > remote_update:
                     remote_update = get_datetime(self.data.feed.published_parsed)
-                    remote_update_raw = get_dicttime(self.data.feed.published_parsed)
         if self.data.get('published_parsed'):
             if remote_update:
-                if get_datetime(self.data.published_parsed > remote_update):
+                if get_datetime(self.data.published_parsed) > remote_update:
                     remote_update = get_datetime(self.data.published_parsed)
-                    remote_update_raw = get_dicttime(self.data.published_parsed)
 
         if not remote_update:
             remote_update = datetime.datetime.now()
-            remote_update_raw = get_dicttime(remote_update.timetuple())
 
         if remote_update > local_update:
             print('!! %s is outdated.' % self.feed['title'].encode('utf-8'))
@@ -156,7 +149,7 @@ class Refresher(threading.Thread):
                     entry['read'] = True
                     storage.update_story(entry['_id'], copy.copy(entry))
 
-            self.feed['last_update'] = remote_update_raw
+            self.feed['last_update'] = remote_update
             storage.update_feed(self.feed_id, self.feed)
 
         else:
@@ -214,15 +207,15 @@ class Reader(object):
         feed_id = storage.get_feed_by_title(title)
         if not feed_id:
             if feed.feed.get('updated_parsed'):
-                feed_update = get_dicttime(feed.feed.updated_parsed)
+                feed_update = get_datetime(feed.feed.updated_parsed)
             elif feed.get('updated_parsed'):
-                feed_update = get_dicttime(feed.updated_parsed)
+                feed_update = get_datetime(feed.updated_parsed)
             elif feed.feed.get('published_parsed'):
-                feed_update = get_dicttime(feed.feed.published_parsed)
+                feed_update = get_datetime(feed.feed.published_parsed)
             elif feed.get('published_parsed'):
-                feed_update = get_dicttime(feed.published_parsed)
+                feed_update = get_datetime(feed.published_parsed)
             else:
-                feed_update = get_dicttime(datetime.datetime.now().timetuple())
+                feed_update = datetime.datetime.now()
 
             feed_id = storage.add_feed({'url': url,
                                         'title': title,
@@ -281,65 +274,22 @@ class Reader(object):
         # Get stories
         if not feed_id:
             if feed_type == "combined-feed":
-                stories = storage.all_stories()
+                stories = storage.all_stories(order_type, start, stop)
             elif feed_type == "stared-feed":
-                stories = storage.all_stared()
+                stories = storage.all_stared(order_type, start, stop)
             else:
                 raise Exception('Unknown feed type (%s)' % feed_type)
         else:
-            stories = storage.get_stories(feed_id)
+            stories = storage.get_stories(feed_id, order_type, start, stop)
 
+        length = storage.get_feed_unread_count(feed_id)
         res = []
-        entries = []
-        if order_type == 'unreaded':
-            for entry in stories:
-                story = {
-                    "title": entry['title'],
-                    "_id": entry['_id'],
-                    "read": entry['read'],
-                    'last_update': entry['last_update']}
-                if not feed_id:
-                    story['feed_id'] = entry['feed_id']
-                    story['feed_title'] = entry['feed_title']
+        for story in stories:
+            story['last_update'] = get_dicttime(story['last_update'])
+            story['published'] = get_dicttime(story['published'])
+            res.append(story)
 
-                res.append(story)
-
-            # Readed
-            readed = []
-            for entry in res:
-                if entry['read']:
-                    readed.append(entry)
-            readed.sort(key=lambda r: get_datetime(r['last_update']), reverse=True)
-            # Unread
-            unreaded = []
-            for entry in res:
-                if not entry['read']:
-                    unreaded.append(entry)
-            unreaded.sort(key=lambda r: get_datetime(r['last_update']),
-                          reverse=True)
-
-            entries = unreaded + readed
-
-        elif order_type == 'published':
-            for entry in stories:
-                story = {
-                    "title": entry['title'],
-                    "_id": entry['_id'],
-                    "read": entry['read'],
-                    'last_update': entry['published']}
-                if not feed_id:
-                    story['feed_id'] = entry['feed_id']
-                    story['feed_title'] = entry['feed_title']
-
-                res.append(story)
-
-            res.sort(key=lambda r: get_datetime(r['last_update']), reverse=True)
-            entries = res
-
-        length = len(entries)
-        entries = entries[start:stop]
-
-        return {'entries': entries, 'ordering': order_type, 'detail': {'start': start, 'stop': stop, 'length': length}}
+        return {'entries': res, 'ordering': order_type, 'detail': {'start': start, 'stop': stop, 'length': length}}
 
     def get_combined_feed(self):
         order_type = storage.get_feed_setting('combined-feed', 'ordering')
@@ -379,12 +329,8 @@ class Reader(object):
 
     def get_unread(self, feed_id=False):
         if not feed_id:
-            stories = 0
-            for story in storage.all_stories():
-                if not story['read']:
-                    stories += 1
-            return stories
-        return len(storage.get_feed_unread(feed_id))
+            return storage.get_feed_unread_count()
+        return storage.get_feed_unread_count(feed_id)
 
     def mark_all_read(self, feed_id):
         if feed_id == "combined-feed":
@@ -413,6 +359,8 @@ class Reader(object):
         """
         story = storage.get_story_by_id(story_id)
         if story['read']:
+            story['published'] = get_dicttime(story['published'])
+            story['last_update'] = get_dicttime(story['last_update'])
             return {'success': False,
                     'output': 'Story already readed',
                     'content': story}
@@ -420,12 +368,22 @@ class Reader(object):
         # Save read state before update it for javascript counter in UI
         story['read'] = True
         storage.update_story(story['_id'], copy.copy(story))
+        
+        story['published'] = get_dicttime(story['published'])
+        story['last_update'] = get_dicttime(story['last_update'])
+        
         return {'success': True, 'content': story}
 
     def unread(self, story_id):
         story = storage.get_story_by_id(story_id)
         if not story['read']:
+            story['published'] = get_dicttime(story['published'])
+            story['last_update'] = get_dicttime(story['last_update'])
             return {'success': False, 'output': 'Story already unreaded'}
         story['read'] = False
         storage.update_story(story['_id'], copy.copy(story))
+
+        story['published'] = get_dicttime(story['published'])
+        story['last_update'] = get_dicttime(story['last_update'])
+
         return {'success': True, 'content': story}

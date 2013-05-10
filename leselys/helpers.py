@@ -46,11 +46,11 @@ def get_datetime(unparsed_date):
 
 
 def get_dicttime(parsed_date):
-    return {'year': parsed_date[0],
-            'month': parsed_date[1],
-            'day': parsed_date[2],
-            'hour': parsed_date[3],
-            'min': parsed_date[4]}
+    return {'year': parsed_date.year,
+            'month': parsed_date.month,
+            'day': parsed_date.day,
+            'hour': parsed_date.hour,
+            'min': parsed_date.minute}
 
 
 # Decorator for webapp
