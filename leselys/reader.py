@@ -334,9 +334,9 @@ class Reader(object):
 
     def mark_all_read(self, feed_id):
         if feed_id == "combined-feed":
-            stories = storage.all_stories()
+            stories = storage.all_stories('unreaded', 0, 0)
         else:
-            stories = storage.get_stories(feed_id)
+            stories = storage.get_stories(feed_id, 'unreaded', 0, 0)
 
         for story in stories:
             story['read'] = True
@@ -344,10 +344,7 @@ class Reader(object):
         return {'success': True, "content": "All feed stories updated"}
 
     def mark_all_unread(self, feed_id):
-        stories = storage.get_stories(feed_id)
-        if not stories:
-            return {'success': False, "content": "Feed not found"}
-        for story in storage.get_stories(feed_id):
+        for story in storage.get_stories(feed_id, 'unreaded', 0, 0):
             story['read'] = False
             storage.update_story(story['_id'], copy.copy(story))
         return {'success': True, "content": "All feed stories updated"}

@@ -105,7 +105,7 @@ class Mongodb(Storage):
                 story['feed_title'] = feeds[story['feed_id']]
                 res.append(story)
             nb_read = len(res)
-            if (stop - start) - nb_read <= 0:
+            if (stop - start) - nb_read <= 0 and stop - start != 0:
                 return res
             for story in self.db.stories.find({"read": True}).sort('last_update', -1).limit((stop - start) - nb_read):
                 story['_id'] = str(story['_id'])
@@ -166,7 +166,7 @@ class Mongodb(Storage):
                 story['_id'] = str(story['_id'])
                 res.append(story)
             nb_read = len(res)
-            if (stop - start) - nb_read <= 0:
+            if (stop - start) - nb_read <= 0 and stop - start != 0:
                 return res
             for story in self.db.stories.find({"feed_id": feed_id, "read": True}).sort('last_update', -1).limit((stop-start)-nb_read):
                 story['_id'] = str(story['_id'])
