@@ -3,7 +3,6 @@ requests = new Array();
 importer = false;
 setKeyboard();
 global = {};
-
 global.feedStatus = {};
 
 function changePassword() {
@@ -230,52 +229,6 @@ function deleteFeed(feedId) {
       window.location = "/";
     }
   });
-}
-
-function viewCombinedFeed(callback) {
-  for (var i=0;i < requests.length;i++) {
-    requests[i].abort();
-    requests.shift();
-  }
-
-  // Add selected feed class
-  var feedTitle = document.getElementById(feedId);
-  feedTitle.classList.add('selected-feed');
-  for (var i=0;i < document.getElementsByClassName('feed').length;i++) {
-    var feed = document.getElementsByClassName('feed')[i];
-    if (feed.getAttribute('id') != feedId) {
-      feed.classList.remove('selected-feed');
-    }
-  }
-
-  // Already scrolled
-  if (!global.feedStatus || global.feedStatus.id != feedId) {
-    global.feedStatus.start = 0;
-    global.feedStatus.stop = 50;
-    global.feedStatus.id = feedId;
-    var append = false;
-  } else {
-    if (global.feedStatus.stop >= global.feedStatus.length)
-      return
-    global.feedStatus.start = global.feedStatus.start + 50;
-    global.feedStatus.stop = global.feedStatus.stop + 50;
-    var append = true;
-  }
-
-  var start = global.feedStatus.start;
-  var stop = global.feedStatus.stop;
-
-  var xhr = api.getCombinedFeed(function(req, data) {
-    if (data.success) {
-      listStories("combined-feed", data, false, callback);
-    } else {
-      if (data.callback == "/api/login")
-        window.location = "/login"
-      window.location = "/";
-    }
-  });
-
-  requests.push(xhr);
 }
 
 function listStories(feedId, data, append, callback) {
