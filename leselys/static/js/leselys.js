@@ -501,8 +501,12 @@ function initPage() {
   var feeds = document.getElementById('menu').getElementsByClassName('feed');
   addEventListenerList(feeds, 'click', function(e) {e.preventDefault()});
 
-  document.getElementById('combined-feed').addEventListener('click', function(e) {e.preventDefault()});
-  //document.getElementById('stared-feed').addEventListener('click', function(e) {e.preventDefault()});
+  var combinedFeed = document.getElementById('combined-feed');
+  if (combinedFeed)
+    combinedFeed.addEventListener('click', function(e) {e.preventDefault()});
+  var staredFeed = document.getElementById('stared-feed');
+  if (staredFeed)
+    staredFeed.addEventListener('click', function(e) {e.preventDefault()});
 
   initAddFeed()
   setInterval(refreshCounters, 120000);
