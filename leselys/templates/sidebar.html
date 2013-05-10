@@ -27,12 +27,12 @@
       <li class="nav-header feeds-list-title">Feeds</li>
 
       {% if combined_feed.counter > 0 %}
-        <li class="combined-feed unread" id="combined-feed"><a onclick="viewCombinedFeed()" href="#combined-feed"><span class="feed-title"><i class="icon-inbox"></i>All stories</span> <span class="unread-counter muted">({{ combined_feed.counter }})</span></a></li>
+        <li class="combined-feed unread" id="combined-feed"><a onclick="viewFeed(&quot;combined-feed&quot;)" href="#combined-feed"><span class="feed-title"><i class="icon-inbox"></i>All stories</span> <span class="unread-counter muted">({{ combined_feed.counter }})</span></a></li>
       {% else %}
-        <li class="combined-feed" id="combined-feed"><a onclick="viewCombinedFeed()" href="#combined-feed"><span class="feed-title"><i class="icon-inbox"></i>All stories</span> <span style="display: none" class="unread-counter muted">({{ combined_feed.counter }})</span></a></li>
+        <li class="combined-feed" id="combined-feed"><a onclick="viewFeed(&quot;combined-feed&quot;)" href="#combined-feed"><span class="feed-title"><i class="icon-inbox"></i>All stories</span> <span style="display: none" class="unread-counter muted">({{ combined_feed.counter }})</span></a></li>
       {% endif %}
 
-      <!--<li class="stared-feed" id="stared-feed"><a onclick="viewStaredFeed()" href="#stared-feed"><span class="feed-title"><i class="icon-star"></i>Stared stories</span></a></li>-->
+      <!--<li class="stared-feed" id="stared-feed"><a onclick="viewFeed(&quot;stared-feed&quot;)" href="#stared-feed"><span class="feed-title"><i class="icon-star"></i>Stared stories</span></a></li>-->
       <li class="divider"></li>
 
       {% for feed in feeds %}

@@ -247,7 +247,7 @@ class Reader(object):
         storage.remove_feed(feed_id)
         return {"success": True, "output": "Feed removed"}
 
-    def get(self, feed_id=False, feed_type="combined-ffed", order_type="user"):
+    def get(self, feed_id=False, feed_type="combined-ffed", order_type="user", start=0, stop=50):
         # Special feeds
         if not feed_id:
             if feed_type == "combined-feed":
@@ -336,7 +336,10 @@ class Reader(object):
             res.sort(key=lambda r: get_datetime(r['last_update']), reverse=True)
             entries = res
 
-        return {'entries': entries, 'ordering': order_type}
+        length = len(entries)
+        entries = entries[start:stop]
+
+        return {'entries': entries, 'ordering': order_type, 'detail': {'start': start, 'stop': stop, 'length': length}}
 
     def get_combined_feed(self):
         order_type = storage.get_feed_setting('combined-feed', 'ordering')

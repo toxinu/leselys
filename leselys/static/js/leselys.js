@@ -2,6 +2,9 @@
 requests = new Array();
 importer = false;
 setKeyboard();
+global = {};
+
+global.feedStatus = {};
 
 function changePassword() {
   var password1 = document.getElementById('password1');
@@ -97,14 +100,11 @@ function addFeed() {
 
 function setFeedSetting(feedId, settingKey, settingValue) {
   api.setFeedSetting(feedId, settingKey, settingValue, function(req, data) {
-    if (data.success)
-      if (feedId == "combined-feed")
-        viewCombinedFeed();
-      else if (feedId == "stared-feed")
-        viewStaredFeed();
-      else 
-        viewFeed(feedId);
-  })
+    if (data.success) {
+      global.feedStatus.id = false;
+      viewFeed(feedId);
+    }
+  });
 }
 
 function handleOPMLImport(evt) {
@@ -185,10 +185,10 @@ function viewHome(callback) {
       document.getElementById("content").innerHTML = content.innerHTML;
       document.getElementById("menu").innerHTML = sidebar.innerHTML;
       initPage();
+      disableRibbon();
       if (typeof callback != "undefined" ) {
           callback();
       }
-      disableRibbon();
     } else {
       if (data.callback == "/api/login")
         window.location = "/login"
@@ -237,9 +237,37 @@ function viewCombinedFeed(callback) {
     requests[i].abort();
     requests.shift();
   }
+
+  // Add selected feed class
+  var feedTitle = document.getElementById(feedId);
+  feedTitle.classList.add('selected-feed');
+  for (var i=0;i < document.getElementsByClassName('feed').length;i++) {
+    var feed = document.getElementsByClassName('feed')[i];
+    if (feed.getAttribute('id') != feedId) {
+      feed.classList.remove('selected-feed');
+    }
+  }
+
+  // Already scrolled
+  if (!global.feedStatus || global.feedStatus.id != feedId) {
+    global.feedStatus.start = 0;
+    global.feedStatus.stop = 50;
+    global.feedStatus.id = feedId;
+    var append = false;
+  } else {
+    if (global.feedStatus.stop >= global.feedStatus.length)
+      return
+    global.feedStatus.start = global.feedStatus.start + 50;
+    global.feedStatus.stop = global.feedStatus.stop + 50;
+    var append = true;
+  }
+
+  var start = global.feedStatus.start;
+  var stop = global.feedStatus.stop;
+
   var xhr = api.getCombinedFeed(function(req, data) {
     if (data.success) {
-      listStories("combined-feed", data, callback);
+      listStories("combined-feed", data, false, callback);
     } else {
       if (data.callback == "/api/login")
         window.location = "/login"
@@ -250,12 +278,18 @@ function viewCombinedFeed(callback) {
   requests.push(xhr);
 }
 
-function listStories(feedId, data, callback) {
+function listStories(feedId, data, append, callback) {
+  var append = append || false;
   var storyListAccordion = crel('div', {'class': 'accordion', 'id': 'story-list-accordion'});
-  var content = '';
 
-  if (data.content.length == 0) {
-    content = '<p style="text-align:center; margin-top: 50px"><em>Oups, there is no story here...</em></p>';
+  if (!append) {
+    var content = '';
+
+    if (data.content.length == 0) {
+      content = '<p style="text-align:center; margin-top: 50px"><em>Oups, there is no story here...</em></p>';
+    }
+  } else {
+    var content = document.getElementById('story-list-accordion').innerHTML;
   }
 
   for (var i=0;i < data.content.entries.length;i++) {
@@ -301,9 +335,42 @@ function viewFeed(feedId, callback) {
     requests[i].abort();
     requests.shift();
   }
-  var xhr = api.getFeed(feedId, function(req, data) {
+
+  // Add selected feed class
+  var feedTitle = document.getElementById(feedId);
+  feedTitle.classList.add('selected-feed');
+  for (var i=0;i < document.getElementsByClassName('feed').length;i++) {
+    var feed = document.getElementsByClassName('feed')[i];
+    if (feed.getAttribute('id') != feedId) {
+      feed.classList.remove('selected-feed');
+    }
+  }
+
+  // Already scrolled
+  if (!global.feedStatus || global.feedStatus.id != feedId) {
+    global.feedStatus.start = 0;
+    global.feedStatus.stop = 50;
+    global.feedStatus.id = feedId;
+    var append = false;
+  } else {
+    if (global.feedStatus.stop >= global.feedStatus.length) {
+      return
+    }
+    global.feedStatus.start = global.feedStatus.start + 50;
+    global.feedStatus.stop = global.feedStatus.stop + 50;
+    var append = true;
+  }
+
+  var start = global.feedStatus.start;
+  var stop = global.feedStatus.stop;
+
+  var xhr = api.getFeed(feedId, start, stop, function(req, data) {
     if (data.success) {
-      listStories(feedId, data, callback);
+      listStories(feedId, data, append, function() {
+        global.feedStatus.length = data.content.detail.length;
+        if (typeof callback != "undefined" )
+          callback();
+      });
     } else {
       if (data.callback == "/api/login")
         window.location = "/login"
@@ -481,6 +548,28 @@ function initPage() {
 
   initAddFeed()
   setInterval(refreshCounters, 120000);
+
+  if(window.addEventListener) {
+      document.addEventListener('scroll', function() {
+        getScroll(function(height) {
+          if (!global.loading) {
+            if (height >= 80) {
+              global.loading = true;
+              viewFeed(document.getElementsByClassName('selected-feed')[0].id, function() {
+                global.loading = false;
+              });
+            }
+          }
+        })
+      }, false);
+  }
+}
+
+function getScroll(callback) {
+  var percent = (document.documentElement.scrollTop + document.body.scrollTop) / (document.documentElement.scrollHeight - document.documentElement.clientHeight) * 100;
+
+  if (typeof callback != "undefined" )
+    callback(percent);
 }
 
 // Tabs for settings
@@ -568,27 +657,17 @@ function collapseIn (accordionGroupRoot) {
 
 function markAllAsRead(feedId){
   api.markAllAsRead(feedId, function(req, data) {
-    viewHome(function() {
-      if (feedId == "combined-feed")
-        viewCombinedFeed();
-      else if (feedId == "stared-feed")
-        viewStaredFeed();
-      else
-        viewFeed(feedId);
-    });
+      global.feedStatus.id = false;
+      viewFeed(feedId);
+      refreshCounters();
   });
 }
 
 function markAllAsUnread(feedId){
   api.markAllAsUnread(feedId, function(req, data) {
-    viewHome(function() {
-      if (feedId == "combined-feed")
-        viewCombinedFeed();
-      else if (feedId == "stared-feed")
-        viewStaredFeed();
-      else
-        viewFeed(feedId);
-    });
+      global.feedStatus.id = false;
+      viewFeed(feedId);
+      refreshCounters();
   });
 }
 
@@ -704,7 +783,6 @@ function setKeyboard(){
      if (previousStory == false) { return }
      previousStory.getElementsByTagName('a')[0].click();
    });
-
 }
 
 // Utils

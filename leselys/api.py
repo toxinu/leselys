@@ -33,7 +33,9 @@ def set_password():
     # For demo
     heroku_urls = [
             "http://leselys.herokuapp.com/api/set_password", 
-            "https://leselys.herokuapp.com/api/set_password"]
+            "https://leselys.herokuapp.com/api/set_password",
+            "http://leselys.herokuapp.com:80/api/set_password",
+            "https://leselys.herokuapp.com:443/api/set_password"]
     if request.url in heroku_urls:
         return jsonify(success=False, content="Funny little boy. Ip stored.")
 
@@ -83,18 +85,20 @@ def remove(feed_id):
 
 
 # Return list of entries for given feed_id
-# Or all if feed_id not specified
-@app.route('/api/get', defaults={'feed_id': False})
 @app.route('/api/get/<feed_id>')
 @login_required
 def get(feed_id):
-    if not feed_id:
-        feed_type = request.args.get('feed_type', 'combined-feed')
+    start = int(request.args.get('start', 0))
+    stop = int(request.args.get('stop', 50))
+
+    if feed_id in ['combined-feed', 'stared-feed']:
+        feed_type = feed_id
+        feed_id = False
     else:
         feed_type = None
 
     order_type = request.args.get('order_type', 'user')
-    return jsonify(success=True, content=reader.get(feed_id, feed_type, order_type))
+    return jsonify(success=True, content=reader.get(feed_id, feed_type, order_type, start, stop))
 
 
 # Set story as readed

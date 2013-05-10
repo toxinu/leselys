@@ -19,6 +19,14 @@
   </div>
 </div>
 <script type="text/javascript">
+    // Feed status
+    var getFeedStatusTemplate = function () {
+      return crel('div', {'id': 'feed-status'},
+          crel('span', {'id': 'feed-start'}, 0),
+          crel('span', {'id': 'feed-stop'}, 50),
+          crel('span', {'id': 'feed-total'})
+        )
+    }
     // Template add feed
     var getAddFeedTemplate = function () {
         return crel('li', {'id':'add', 'class': 'popover'},crel('form',

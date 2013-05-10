@@ -76,32 +76,16 @@ api.getHome = function(callback) {
     });
 }
 
-api.getFeed = function(feedId, callback) {
+api.getFeed = function(feedId, start, stop, callback) {
+    var start = start || 0;
+    var stop = stop || 50;
     return ajaxRequest({
         url: '/api/get/' + feedId,
-        method: 'GET',
-        callback: callback
-    });
-}
-
-api.getCombinedFeed = function(callback) {
-    return ajaxRequest({
-        url: '/api/get',
-        method: 'GET',
         params: {
-            feed_type: 'combined-feed'
+            start: start,
+            stop: stop
         },
-        callback: callback
-    });
-}
-
-api.getStaredFeed = function(callback) {
-    return ajaxRequest({
-        url: '/api/get_stared',
         method: 'GET',
-        params: {
-            feed_type: 'stared-ffed'
-        },
         callback: callback
     });
 }
