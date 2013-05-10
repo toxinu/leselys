@@ -511,7 +511,7 @@ function initPage() {
       document.addEventListener('scroll', function() {
         getScroll(function(height) {
           if (!global.loading) {
-            if (height >= 80) {
+            if (height >= 70) {
               global.loading = true;
               viewFeed(document.getElementsByClassName('selected-feed')[0].id, function() {
                 global.loading = false;
