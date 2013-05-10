@@ -30,6 +30,11 @@ signer = leselys.core.signer
 # Set password
 @app.route('/api/set_password', methods=['POST'])
 def set_password():
+    # For demo
+    print(request.url)
+    if request.url == "https://leselys.herokuapp.com/api/set_password":
+        return jsonify(success=False, content="Funny little boy. Ip stored.")
+
     if storage.get_password():
         if not session.get('logged_in'):
             if request.args.get('jsonify', "true") == "false":
@@ -44,7 +49,7 @@ def set_password():
     if request.args.get('jsonify', "true") == "false":
         rsp = redirect(url_for('home'))
     else:
-        rsp = make_response(jsonify(success=True, output="Password setted."))
+        rsp = make_response(jsonify(success=True, content="Password setted."))
     return rsp
 
 
