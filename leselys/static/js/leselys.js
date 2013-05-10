@@ -501,6 +501,9 @@ function initPage() {
   var feeds = document.getElementById('menu').getElementsByClassName('feed');
   addEventListenerList(feeds, 'click', function(e) {e.preventDefault()});
 
+  document.getElementById('combined-feed').addEventListener('click', function(e) {e.preventDefault()});
+  //document.getElementById('stared-feed').addEventListener('click', function(e) {e.preventDefault()});
+
   initAddFeed()
   setInterval(refreshCounters, 120000);
 
