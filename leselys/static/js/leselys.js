@@ -144,6 +144,7 @@ function handleOPMLImport(evt) {
 }
 
 function viewSettings(callback) {
+  global.feedStatus.id = false;
   api.getSettings(function(req, data) {
     if (data.success) {
       var parser = new DOMParser();
@@ -175,6 +176,7 @@ function viewSettings(callback) {
 }
 
 function viewHome(callback) {
+  global.feedStatus.id = false;
   api.getHome(function(req, data) {
     if (data.success) {
       var parser = new DOMParser();
@@ -242,7 +244,7 @@ function listStories(feedId, data, append, callback) {
       content = '<p style="text-align:center; margin-top: 50px"><em>Oups, there is no story here...</em></p>';
     }
   } else {
-    var content = document.getElementById('story-list-accordion').innerHTML;
+      var content = document.getElementById('story-list-accordion').innerHTML;
   }
 
   for (var i=0;i < data.content.entries.length;i++) {
