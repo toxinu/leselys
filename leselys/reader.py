@@ -66,7 +66,7 @@ class Retriever(threading.Thread):
             except KeyError:
                 description = entry['summary']
 
-            if get_datetime(entry.get('updated_parsed')):
+            if entry.get('updated_parsed'):
                 last_update = get_datetime(entry.updated_parsed)
             else:
                 last_update = datetime.datetime.now()
@@ -130,7 +130,7 @@ class Refresher(threading.Thread):
         if remote_update > local_update:
             print('!! %s is outdated.' % self.feed['title'].encode('utf-8'))
             readed = []
-            for entry in storage.get_stories(self.feed['_id']):
+            for entry in storage.get_stories(self.feed['_id'], "unreaded", 0, 0):
                 if entry['read']:
                     readed.append(entry['title'])
 

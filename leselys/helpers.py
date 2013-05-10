@@ -167,13 +167,13 @@ def run_retention(delta_day, story_before_retention):
     for feed in storage.get_feeds():
         print("=> %s" % feed['title'].encode('utf-8'))
 
-        stories = storage.get_stories(feed['_id'])
+        stories = storage.get_stories(feed['_id'], 'unreaded', 0, 0)
         nb_stories = len(stories)
         for story in stories:
             if nb_stories <= story_before_retention:
                 print('   | No many stories, so I keept it.')
                 break
-            delta = datetime.datetime.now() - get_datetime(story['last_update'])
+            delta = datetime.datetime.now() - story['last_update']
             print('  | %s (%s days)' % (story['_id'], delta.days))
             if delta.days > delta_day:
                 print('    | deleted.')
