@@ -81,6 +81,21 @@ Storage and session backends are Python modules, you can easily write your own. 
 
 Leselys automagically fetch new stories with it's refresher worker, and automagically (again), purge our stories database with it's retention task.
 
+Python 3 support:
+
+- docopt: True
+- feedparser: True
+- lxml: True
+- pymongo: True
+- celery: True
+- celery-with-mongodb: True
+- requests: True
+
+- py-bcrypt: False (look at `bcrypt`_)
+- itsdangerous: False
+- flask: False
+- leselys: False
+
 License
 -------
 
@@ -92,5 +107,6 @@ License is `AGPL3`_. See `LICENSE`_.
 .. _MongoDB storage backend: https://github.com/socketubs/leselys/blob/master/leselys/backends/_mongodb.py
 .. _Ubuntu: https://github.com/socketubs/leselys/wiki/Ubuntu
 .. _Heroku: https://github.com/socketubs/leselys/wiki/Heroku
+.. _bcrypt: https://github.com/dstufft/bcrypt
 .. _AGPL3: http://www.gnu.org/licenses/agpl.html
 .. _LICENSE: https://raw.github.com/socketubs/leselys/master/LICENSE
