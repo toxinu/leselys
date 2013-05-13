@@ -45,21 +45,24 @@ class Retriever(threading.Thread):
         # self.feed is raw parsed feed
         self.data = feed['entries']
         self.do_retention = do_retention
+
         if feed_from_db:
-            self.title = feed_from_db['title']
+            self.title = feed_from_db.get('title')
         else:
             self.title = feed['feed']['title']
 
     def run(self):
         # This feed comes from database
         feed = storage.get_feed_by_title(self.title)
+        feed_id = feed.get('_id')
 
         for entry in self.data:
-            title = entry['title']
-            link = entry['link']
+            title = entry.get('title')
+            link = entry.get('link')
+            guid = entry.get('guid') or entry.get('id') or title
 
-            if storage.get_story_by_title(feed['_id'], title):
-                storage.remove_story(storage.get_story_by_title(feed['_id'], title)['_id'])
+            if storage.get_story_by_guid(feed_id, guid):
+                storage.remove_story(storage.get_story_by_guid(feed_id, guid).get('_id'))
 
             try:
                 description = entry['content'][0]['value']
@@ -82,11 +85,12 @@ class Retriever(threading.Thread):
 
             storage.add_story({
                 'title': title,
+                'guid': guid,
                 'link': link,
                 'description': description,
                 'published': published,
                 'last_update': last_update,
-                'feed_id': feed['_id'],
+                'feed_id': feed_id,
                 'read': False})
 
 
@@ -97,17 +101,19 @@ class Refresher(threading.Thread):
     def __init__(self, feed):
         threading.Thread.__init__(self)
         self.feed = feed
-        self.feed_id = u(feed['_id'])
+        self.feed_id = u(feed.get('_id'))
+        self.feed_title = feed.get('title')
 
     def run(self):
-        self.data = feedparser.parse(self.feed['url'])
+        self.data = feedparser.parse(self.feed.get('url'))
 
-        # Update title if it change (yes some guys change it...)
-        if self.data.feed['title'] != self.feed['title']:
-            self.feed['title'] = self.data.feed['title']
-            storage.update_feed(self.feed['_id'], copy.copy(self.feed))
+        # Update title if it change
+        if self.data.feed.get('title') != self.feed_title:
+            self.feed['title'] = self.data.feed.get('title')
+            self.feed_title = self.feed['title']
+            storage.update_feed(self.feed_id, copy.copy(self.feed))
 
-        local_update = self.feed['last_update']
+        local_update = self.feed.get('last_update')
         remote_update = False
         if self.data.feed.get('updated_parsed'):
             remote_update = get_datetime(self.data.feed.updated_parsed)
@@ -128,11 +134,11 @@ class Refresher(threading.Thread):
             remote_update = datetime.datetime.now()
 
         if remote_update > local_update:
-            print('!! %s is outdated.' % self.feed['title'].encode('utf-8'))
+            print('!! %s is outdated.' % self.feed_title.encode('utf-8'))
             readed = []
-            for entry in storage.get_stories(self.feed['_id'], "unreaded", 0, 0):
-                if entry['read']:
-                    readed.append(entry['title'])
+            for entry in storage.get_stories(self.feed_id, "unreaded", 0, 0):
+                if entry.get('read'):
+                    readed.append(entry.get('guid'))
 
             if len(self.data.entries) <= int(config.get('worker', 'story_before_retention')):
                 do_retention = False
@@ -143,9 +149,9 @@ class Refresher(threading.Thread):
             retriever.start()
             retriever.join()
 
-            for entry in readed:
-                if storage.get_story_by_title(self.feed['_id'], entry):
-                    entry = storage.get_story_by_title(self.feed['_id'], entry)
+            for entry_guid in readed:
+                if storage.get_story_by_guid(self.feed_id, entry_guid):
+                    entry = storage.get_story_by_guid(self.feed_id, entry_guid)
                     entry['read'] = True
                     storage.update_story(entry['_id'], copy.copy(entry))
 
@@ -153,7 +159,7 @@ class Refresher(threading.Thread):
             storage.update_feed(self.feed_id, self.feed)
 
         else:
-            print('=> %s is up-to-date.' % self.feed['title'].encode('utf-8'))
+            print('=> %s is up-to-date.' % self.feed_title.encode('utf-8'))
 
 #########################################################################
 # Reader object
@@ -304,16 +310,17 @@ class Reader(object):
     def get_feeds(self):
         feeds = []
         for feed in storage.get_feeds():
-            ordering = storage.get_feed_setting(feed['_id'], 'ordering')
+            feed_id = feed.get('_id')
+            ordering = storage.get_feed_setting(feed_id, 'ordering')
             if not ordering:
-                storage.set_feed_setting(feed['_id'], 'ordering', 'unreaded')
-                ordering = storage.get_feed_setting(feed['_id'], 'ordering')
+                storage.set_feed_setting(feed_id, 'ordering', 'unreaded')
+                ordering = storage.get_feed_setting(feed_id, 'ordering')
 
             ordering = ordering['value']
 
-            feeds.append({'title': feed['title'],
-                          'id': feed['_id'],
-                          'url': feed['url'],
+            feeds.append({'title': feed.get('title'),
+                          'id': feed_id,
+                          'url': feed.get('url'),
                           'counter': self.get_unread(feed['_id']),
                           'ordering': ordering
                           })

@@ -135,6 +135,12 @@ class Mongodb(Storage):
                     raise Exception('Update story failed, cant find _id')
         return str(self.db.stories.save(content))
 
+    def get_story_by_guid(self, feed_id, guid):
+        story = self.db.stories.find_one({'guid': guid, 'feed_id': feed_id})
+        if story:
+            story['_id'] = str(story['_id'])
+        return story
+
     def get_story_by_id(self, _id):
         story = self.db.stories.find_one({'_id': ObjectId(_id)})
         if story:
