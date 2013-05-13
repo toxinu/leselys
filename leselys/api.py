@@ -143,7 +143,11 @@ def all_unread(feed_id):
 @cached(10)
 def import_opml():
     opml_file = request.form['file']
-    for feed in retrieve_feeds_from_opml(opml_file):
+    try:
+        feeds = retrieve_feeds_from_opml(opml_file)
+    except Exception as err:
+        return jsonify(success=False, output="Bad OPML file (%s)" % err)
+    for feed in feeds:
         t = Thread(target=reader.add, args=(feed['url'],))
         t.start()
     return jsonify(success=True, output='Imported file is processing...')

@@ -13,6 +13,7 @@ from flask import url_for
 from flask import jsonify
 
 from leselys.externals import opml
+from xml.sax.saxutils import escape as escape_xml
 
 # Unicode python 2-3
 if sys.version < '3':
@@ -120,10 +121,10 @@ def retrieve_feeds_from_opml(opml_raw):
         if len(outline) > 0:
             for feed in outline:
                 if feed.type == 'rss':
-                    result.append({'title': feed.text, 'url': feed.xmlUrl})
+                    result.append({'title': escape_xml(feed.text), 'url': escape_xml(feed.xmlUrl)})
         else:
             if outline.type == 'rss':
-                result.append({'title': outline.text, 'url': outline.xmlUrl})
+                result.append({'title': escape_xml(outline.text), 'url': escape_xml(outline.xmlUrl)})
     return result
 
 
