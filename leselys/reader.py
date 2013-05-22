@@ -101,7 +101,7 @@ class Refresher(threading.Thread):
     def __init__(self, feed):
         threading.Thread.__init__(self)
         self.feed = feed
-        self.feed_id = u(feed.get('_id'))
+        self.feed_id = feed.get('_id')
         self.feed_title = feed.get('title')
 
     def run(self):
