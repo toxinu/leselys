@@ -17,6 +17,9 @@ function changePassword() {
   if (password1.value != password2.value) {
     document.getElementById('password-status').innerHTML = "Not same password";
     document.getElementById('password-form').classList.add('warning');
+  } else if (!password1.value) {
+    document.getElementById('password-status').innerHTML = "Password can't be empty";
+    document.getElementById('password-form').classList.add('warning');
   } else {
     api.changePassword(password1.value);
     document.getElementById('password-status').innerHTML = "Password changed!";
@@ -126,7 +129,9 @@ function handleOPMLImport(evt) {
 
   reader.onload = (function(OPMLFile) {
     return function(e) {
-      api.importOPML(e.target.result, function(req, data) {
+      //api.importOPML(e.target.result, function(req, data) {
+      api.importOPML(file, function(req, data) {
+
         if (data.success) {
           importer = false;
           document.getElementById("OPMLSubmit").innerHTML = "Importing, reload page later...";
@@ -307,6 +312,7 @@ function viewFeed(feedId, callback) {
     global.feedStatus.stop = 50;
     global.feedStatus.id = feedId;
     var append = false;
+    window.scrollTo(0, 0);
   } else {
     if (global.feedStatus.stop >= global.feedStatus.length) {
       return
@@ -318,6 +324,8 @@ function viewFeed(feedId, callback) {
 
   var start = global.feedStatus.start;
   var stop = global.feedStatus.stop;
+
+  console.log('Loading ' + feedId);
 
   var xhr = api.getFeed(feedId, start, stop, function(req, data) {
     if (data.success) {
@@ -508,23 +516,28 @@ function initPage() {
   if (staredFeed)
     staredFeed.addEventListener('click', function(e) {e.preventDefault()});
 
-  initAddFeed()
+  bindInfinityScroll();
+  initAddFeed();
   setInterval(refreshCounters, 120000);
+}
 
-  if(window.addEventListener) {
+
+
+function bindInfinityScroll(){
+    if(window.addEventListener) {
       document.addEventListener('scroll', function() {
         getScroll(function(height) {
           if (!global.loading) {
             if (height >= 70) {
               global.loading = true;
-              viewFeed(document.getElementsByClassName('selected-feed')[0].id, function() {
+              viewFeed(getCurrentFeedId(), function() {
                 global.loading = false;
               });
             }
           }
         })
       }, false);
-  }
+    }
 }
 
 function getScroll(callback) {
@@ -673,6 +686,11 @@ function enableRibbon(feedId, ordering) {
 function disableRibbon() {
   var ribbon = document.getElementById('ribbon');
   ribbon.style.display = "none";
+}
+
+function getCurrentFeedId() {
+  if (document.getElementsByClassName('selected-feed').length > 0)
+    return document.getElementsByClassName('selected-feed')[0].id;
 }
 
 function getCurrentStory() {

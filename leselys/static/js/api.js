@@ -44,11 +44,10 @@ api.setFeedSetting = function(feedId, settingKey, settingValue, callback) {
 }
 
 api.importOPML = function(file, callback) {
-    return ajaxRequest({
+    return sendFile({
         url: '/api/import/opml',
-        method: 'POST',
         params: {
-            file: file
+            fileInput: file
         },
         callback: callback
     });

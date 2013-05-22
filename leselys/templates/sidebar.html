@@ -27,7 +27,7 @@
       <li class="nav-header feeds-list-title">Feeds</li>
 
       {% if combined_feed.counter > 0 %}
-        <li class="combined-feed unread" id="combined-feed"><a onclick="viewFeed(&quot;combined-feed&quot;)" href="#combined-feed"><span class="feed-title"><i class="icon-inbox"></i>All stories</span> <span class="unread-counter muted">({{ combined_feed.counter }})</span></a></li>
+        <li class="combined-feed feed unread" id="combined-feed"><a onclick="viewFeed(&quot;combined-feed&quot;)" href="#combined-feed"><span class="feed-title"><i class="icon-inbox"></i>All stories</span> <span class="unread-counter muted">({{ combined_feed.counter }})</span></a></li>
       {% else %}
         <li class="combined-feed" id="combined-feed"><a onclick="viewFeed(&quot;combined-feed&quot;)" href="#combined-feed"><span class="feed-title"><i class="icon-inbox"></i>All stories</span> <span style="display: none" class="unread-counter muted">({{ combined_feed.counter }})</span></a></li>
       {% endif %}

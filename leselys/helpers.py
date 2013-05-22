@@ -116,21 +116,21 @@ def cached(timeout=5 * 60, key='view/%s'):
 
 def retrieve_feeds_from_opml(opml_raw):
     result = []
-    feeds = opml.from_string(opml_raw.encode("ascii", "ignore"))
+    feeds = opml.from_string(opml_raw)
     for outline in feeds:
         if len(outline) > 0:
             for feed in outline:
                 if feed.type == 'rss':
-                    result.append({'title': escape_xml(feed.text), 'url': escape_xml(feed.xmlUrl)})
+                    result.append({'title': feed.text, 'url': feed.xmlUrl})
         else:
             if outline.type == 'rss':
-                result.append({'title': escape_xml(outline.text), 'url': escape_xml(outline.xmlUrl)})
+                result.append({'title': outline.text, 'url': outline.xmlUrl})
     return result
 
 
 def export_to_opml():
     storage = leselys.core.storage
-    header = """<?xml version="1.0" encoding="UTF-8"?>
+    header = """<?xml version="1.0"?>
 <opml version="1.0">
   <head>
     <title>Leselys feeds export</title>
@@ -145,10 +145,10 @@ def export_to_opml():
     <outline text="%s"
         title="%s" type="rss"
         xmlUrl="%s" htmlUrl="%s"/>""" % (
-            feed['title'],
-            feed['title'],
-            feed['url'],
-            feed['url'])
+            escape_xml(feed['title']),
+            escape_xml(feed['title']),
+            escape_xml(feed['url']),
+            escape_xml(feed['url']))
 
     return header + body + footer
 

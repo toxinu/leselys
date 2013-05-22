@@ -47,6 +47,9 @@ def set_password():
                 return jsonify(success=False, content="Not allowed")
 
     password = request.form.get('password')
+    if not password:
+        return jsonify(success=False, content="Can't be empty")
+
     storage.set_password(password)
 
     session['logged_in'] = True
@@ -142,9 +145,9 @@ def all_unread(feed_id):
 @login_required
 @cached(10)
 def import_opml():
-    opml_file = request.form['file']
+    opml_file = request.files['file']
     try:
-        feeds = retrieve_feeds_from_opml(opml_file)
+        feeds = retrieve_feeds_from_opml(opml_file.read())
     except Exception as err:
         return jsonify(success=False, output="Bad OPML file (%s)" % err)
     for feed in feeds:

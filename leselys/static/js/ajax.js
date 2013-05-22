@@ -18,6 +18,38 @@ function getXMLHttpRequest() {
     return xhr;
 }
 
+function sendFile(options){
+  var form = new FormData();
+  form.append('file', options['params']['fileInput']);
+
+  var xhr = getXMLHttpRequest();
+  xhr.open("POST", options['url']);
+
+  // Bind 'readystatechange'
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState == 4) {
+      if (xhr.status == 200 || xhr.status == 0) {
+        var data = xhr.responseText;
+
+        // Try parsing to JSON
+        try { data = JSON.parse(data); } catch(e) {
+          window.location = "/";
+        };
+
+        if (options['callback'])
+          options['callback'](xhr, data);
+
+      } else {
+        var data = {success: false, content: {}}
+        if (options['callback'])
+          options['callback'](xhr, data);
+      }
+    }
+  }
+  xhr.send(form);
+  return xhr;
+}
+
 function ajaxRequest(options){
 
   if (options == undefined)
