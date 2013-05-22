@@ -30,7 +30,6 @@ And install your `MongoDB`_.
 
   pip install leselys
   leselys init leselys.ini
-  leselys adduser leselys.ini
   leselys serve leselys.ini
   # In another terminal
   leselys worker leselys.ini
@@ -58,8 +57,6 @@ All Heroku dependencies like ``Pymongo``, ``gunicorn`` and ``redis`` are in ``re
   # Add "sh heroku.sh && leselys refresh heroku.ini" job every 10 minutes
   # And "sh heroku.sh && leselys retention heroku.ini" job every day
   git push heroku master
-
-Don't forget to create a Leselys account with ``heroku run "bash heroku.sh && leselys adduser heroku.ini"``.
 
 Import your Google Reader OPML file right now!
 

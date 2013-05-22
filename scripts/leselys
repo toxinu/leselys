@@ -7,13 +7,11 @@ import leselys
 from docopt import docopt
 from leselys import core
 from leselys import worker
-from leselys import accounts
 
 doc = """Leselys is a Web Interface for Leselys.
 
 Usage:
   leselys serve <path> [--host=<address>] [--port=<port>] [--debug]
-  leselys (adduser|deluser|passwd) <path>
   leselys init <path>
   leselys worker <path>
   leselys (refresh|retention) <path>
@@ -77,12 +75,6 @@ story_before_retention = 100"""
     core.load_session()
     if args.get('serve'):
         core.run()
-    if args.get('adduser'):
-        accounts.add_user(core.storage)
-    if args.get('deluser'):
-        accounts.del_user(core.storage)
-    if args.get('passwd'):
-        accounts.update_password(core.storage)
 
     if args.get('worker'):
       from leselys import worker
