@@ -20,15 +20,16 @@ Two requirements: **Mongodb** and **Python**.
 
 In order to install leselys you'll need some dependencies: ::
 
-  apt-get install build-essential python-dev python-pip
-  apt-get install libxslt1-dev libxml2-dev python-libxml2 python-libxslt1
+  sudo apt-get install build-essential python-dev python-setuptools
+  sudo apt-get install libxslt1-dev libxml2-dev
+  sudo easy_install pip
 
 And install your `MongoDB`_.
 
 
 ::
 
-  pip install leselys
+  sudo pip install leselys
   leselys init leselys.ini
   leselys serve leselys.ini
   # In another terminal
