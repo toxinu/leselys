@@ -23,16 +23,22 @@ In order to install leselys you'll need some dependencies: ::
   sudo apt-get install build-essential python-dev python-setuptools
   sudo apt-get install libxslt1-dev libxml2-dev
   sudo easy_install pip
+  sudo easy_install virtualenv
 
 And install your `MongoDB`_.
 
+This is the right way, with ``virtualenv``: ::
 
 ::
 
-  sudo pip install leselys
+  mkdir leselys && cd leselys
+  virtualenv .
+  source bin/activate
+  pip install leselys
   leselys init leselys.ini
   leselys serve leselys.ini
-  # In another terminal
+  # In another terminal (in leselys directory)
+  source bin/activate
   leselys worker leselys.ini
 
 Open your browser at ``http://localhost:5000``.
@@ -70,7 +76,7 @@ This is how to update your Leselys (on Heroku): ::
   git push heroku master
   heroku restart
 
-If you use personnal VPS, just ``git pull`` and restart your Leselys process.
+And for the ``pip`` way, you just have to go to your ``virtualenv`` and run ``pip install leselys -U`` and restart Leselys processes.
 
 Misc
 ----
@@ -81,18 +87,18 @@ Leselys automagically fetch new stories with it's refresher worker, and automagi
 
 Python 3 support:
 
-- docopt: True
-- feedparser: True
-- lxml: True
-- pymongo: True
-- celery: True
-- celery-with-mongodb: True
-- requests: True
+- docopt: ``True``
+- feedparser: True``
+- lxml: ``True``
+- pymongo: ``True``
+- celery: ``True``
+- celery-with-mongodb: ``True``
+- requests: ``True``
 
-- py-bcrypt: False (look at `bcrypt`_)
-- itsdangerous: False
-- flask: False
-- leselys: False
+- py-bcrypt: ``False`` (look at `bcrypt`_)
+- itsdangerous: ``False``
+- flask: ``False``
+- leselys: ``False``
 
 License
 -------
