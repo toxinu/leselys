@@ -27,7 +27,7 @@ In order to install leselys you'll need some dependencies: ::
 
 And install your `MongoDB`_.
 
-This is the right way, with ``virtualenv``: ::
+This is the right way, with ``virtualenv``:
 
 ::
 
