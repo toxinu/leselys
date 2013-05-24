@@ -66,6 +66,7 @@ ul#menu {
 }
 li#icons a {
   text-decoration: none;
+  margin-right: 5px;
 }
 li a [class^="icon-"] {
   color: #222222 ;
@@ -147,6 +148,7 @@ li a [class^="icon-"] {
   }
 }
 .checkbox input {
+  display: inline;
   opacity: 1;
 }
 #add {
@@ -156,6 +158,7 @@ li a [class^="icon-"] {
   background-color: #eaeaea;
   top: 45px;
   padding: 10px 10px;
+  margin-left: 14px;
 }
 
 #add button {
