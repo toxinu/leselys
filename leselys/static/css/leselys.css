@@ -305,3 +305,6 @@ ul#menu {
 ul#menu:hover {
   overflow: auto;
 }
+input#password {
+  height: 30px;
+}
