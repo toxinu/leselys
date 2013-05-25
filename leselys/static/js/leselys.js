@@ -325,8 +325,6 @@ function viewFeed(feedId, callback) {
   var start = global.feedStatus.start;
   var stop = global.feedStatus.stop;
 
-  console.log('Loading ' + feedId);
-
   var xhr = api.getFeed(feedId, start, stop, function(req, data) {
     if (data.success) {
       listStories(feedId, data, append, function() {
