@@ -648,7 +648,8 @@ function markAllAsUnread(feedId){
 
 function enableRibbon(feedId, ordering) {
   var ribbon = document.getElementById('ribbon');
-  ribbon.style.display = "";
+  ribbon.classList.remove('hidden');
+  ribbon.classList.remove('ribbon-three');
 
   if (ordering == "unreaded") {
     ribbon.getElementsByClassName('order-unreaded')[0].classList.add('active');
@@ -661,14 +662,13 @@ function enableRibbon(feedId, ordering) {
   ribbon.getElementsByClassName('order-published')[0].getElementsByTagName('a')[0].onclick = function () {setFeedSetting(feedId, 'ordering', 'published')};
 
   if (feedId == "combined-feed") {
-    ribbon.getElementsByClassName('mark-all-as-unread')[0].style.display = "none";
-    ribbon.style.width = "110px";
+    ribbon.getElementsByClassName('mark-all-as-unread')[0].classList.add('hidden');
+    ribbon.classList.add('ribbon-three');
   } else if (feedId == "stared-feed") {
-    ribbon.style.display = "none";
+    ribbon.classList.add('hidden');
     return
   } else {
-    ribbon.getElementsByClassName('mark-all-as-unread')[0].style.display = "";
-    ribbon.style.width = "135px";
+    ribbon.getElementsByClassName('mark-all-as-unread')[0].classList.remove('hidden');
   }
 
   ribbon.getElementsByClassName('mark-all-as-read')[0].getElementsByTagName('a')[0].onclick = function () {

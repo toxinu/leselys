@@ -45,7 +45,7 @@
 #ribbon ul {
   margin-left: 2px;
   margin-right: 2px;
-  margin-top: 1px;
+  margin-top: 3px;
   text-align:center;
 }
 #ribbon i {
@@ -111,7 +111,11 @@ li a [class^="icon-"] {
   }
   #ribbon {
     height: 185px;
-    width: 45px;
+    width: 50px;
+  }
+  #ribbon.ribbon-three {
+    height: 150px;
+    width: 50px !important;
   }
   #ribbon li {
     display: block;
@@ -145,6 +149,12 @@ li a [class^="icon-"] {
   }
   #content .welcome {
     display: none;
+  }
+  .feed {
+    margin-bottom: 5px;
+  }
+  #content {
+    margin-top: 20px;
   }
 }
 .checkbox input {
@@ -307,4 +317,13 @@ ul#menu:hover {
 }
 input#password {
   height: 30px;
+}
+#ribbon a {
+  text-decoration: none;
+}
+#ribbon.ribbon-three {
+  width: 110px;
+}
+.hidden {
+  display: none !important;
 }
