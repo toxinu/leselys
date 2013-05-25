@@ -322,6 +322,6 @@ input#password {
 .hidden {
   display: none !important;
 }
-a i {
+a > i {
   text-decoration: none;
 }
