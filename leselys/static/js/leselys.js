@@ -335,7 +335,6 @@ function viewFeed(feedId, callback) {
     } else {
       if (data.callback == "/api/login")
         window.location = "/login"
-      window.location = "/";
     }
   });
 
