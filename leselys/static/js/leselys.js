@@ -233,7 +233,6 @@ function deleteFeed(feedId) {
     } else {
       if (data.callback == "/api/login")
         window.location = "/login"
-      window.location = "/";
     }
   });
 }
