@@ -6210,3 +6210,17 @@ div.subnav-fixed {
 .affix {
   position: fixed;
 }
+
+/* Socketubs FIX */
+#ribbon {
+  height: 35px !important;
+}
+
+@media handheld, only screen and (max-width: 768px) {
+  #ribbon {
+    height: 185px !important;
+  }
+  #ribbon.ribbon-three {
+    height: 150px !important;
+  }
+}
