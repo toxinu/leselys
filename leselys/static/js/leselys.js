@@ -1,5 +1,4 @@
 // Globals
-requests = new Array();
 importer = false;
 setKeyboard();
 global = {};
@@ -290,12 +289,7 @@ function listStories(feedId, data, append, callback) {
 }
 
 function viewFeed(feedId, callback) {
-  for (var i=0;i < requests.length;i++) {
-    requests[i].abort();
-    requests.shift();
-  }
-
-  // Add selected feed class
+    // Add selected feed class
   var feedTitle = document.getElementById(feedId);
   feedTitle.classList.add('selected-feed');
   for (var i=0;i < document.getElementsByClassName('feed').length;i++) {
@@ -336,8 +330,6 @@ function viewFeed(feedId, callback) {
         window.location = "/login"
     }
   });
-
-  requests.push(xhr);
 }
 
 function updateCounter(feedId, number) {
