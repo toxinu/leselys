@@ -142,7 +142,7 @@ class Refresher(threading.Thread):
         if remote_update > local_update:
             print('!! %s is outdated.' % self.feed_title.encode('utf-8'))
             readed = []
-            for entry in storage.get_stories(self.feed_id, "unreaded", 0, 0):
+            for entry in storage.get_stories(self.feed_id, "published", 0, 0):
                 if entry.get('read'):
                     readed.append(entry.get('guid'))
 
