@@ -160,6 +160,7 @@ def refresh_all():
     for feed in feeds:
         refresher = Refresher(feed)
         refresher.start()
+        #refresher.join()
 
 
 def run_retention(delta_day, story_before_retention):
