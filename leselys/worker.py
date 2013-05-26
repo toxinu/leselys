@@ -2,6 +2,7 @@
 from __future__ import absolute_import
 
 import sys
+
 from celery import Celery
 from leselys import core
 from leselys import helpers

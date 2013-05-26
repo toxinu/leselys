@@ -4,8 +4,8 @@ import feedparser
 import threading
 import leselys
 import copy
-
 import requests
+
 from urlparse import urlparse
 from urlparse import urljoin
 
@@ -156,8 +156,9 @@ class Refresher(threading.Thread):
             retriever.join()
 
             for entry_guid in readed:
-                if storage.get_story_by_guid(self.feed_id, entry_guid):
-                    entry = storage.get_story_by_guid(self.feed_id, entry_guid)
+                entry = get_story_by_guid(self.feed_id, entry_guid)
+                if entry:
+                    print('Updated it')
                     entry['read'] = True
                     storage.update_story(entry['_id'], copy.copy(entry))
 
@@ -378,10 +379,10 @@ class Reader(object):
         # Save read state before update it for javascript counter in UI
         story['read'] = True
         storage.update_story(story['_id'], copy.copy(story))
-        
+
         story['published'] = get_dicttime(story['published'])
         story['last_update'] = get_dicttime(story['last_update'])
-        
+
         return {'success': True, 'content': story}
 
     def unread(self, story_id):
