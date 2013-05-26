@@ -158,7 +158,6 @@ class Refresher(threading.Thread):
             for entry_guid in readed:
                 entry = storage.get_story_by_guid(self.feed_id, entry_guid)
                 if entry:
-                    print('Updated it')
                     entry['read'] = True
                     storage.update_story(entry['_id'], copy.copy(entry))
 
