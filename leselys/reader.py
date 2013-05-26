@@ -156,7 +156,7 @@ class Refresher(threading.Thread):
             retriever.join()
 
             for entry_guid in readed:
-                entry = get_story_by_guid(self.feed_id, entry_guid)
+                entry = storage.get_story_by_guid(self.feed_id, entry_guid)
                 if entry:
                     print('Updated it')
                     entry['read'] = True
