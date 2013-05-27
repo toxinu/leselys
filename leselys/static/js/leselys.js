@@ -359,8 +359,9 @@ function readStory(storyId, ignore) {
 
   var storyHeading = document.getElementById(storyId);
   storyHeading.classList.add('selected-story');
-  for (var i=0;i < document.getElementsByClassName('accordion-group').length;i++) {
-    var story = document.getElementsByClassName('accordion-group')[i];
+  var storyList = document.getElementsByClassName('accordion-group');
+  for (var i=0;i < storyList.length;i++) {
+    var story = storyList[i];
     if (story.getAttribute('id') != storyId) {
       story.classList.remove('selected-story');
     }
@@ -398,7 +399,13 @@ function readStory(storyId, ignore) {
     var feedId = data.content.feed_id;
     var story = getStoryTemplate();
 
-    story.getElementsByClassName("story-link")[0].href = data.content.link;
+    // TODO unbind v when the user is no longer looking at stories?
+    var storyLink = story.getElementsByClassName("story-link")[0];
+    storyLink.href = data.content.link;
+    Mousetrap.unbind('v');
+    Mousetrap.bind('v',
+                   function() { window.open(storyLink.href, '_blank'); });
+
     story.getElementsByClassName("story-read-toggle")[0].setAttribute('onclick', 'unreadStory("' + storyId + '")');
     story.getElementsByClassName("story-read-toggle")[0].innerHTML = 'Mark as unread';
     story.getElementsByClassName("story-read-toggle")[0].href = "#" + storyId;
@@ -688,8 +695,13 @@ function getCurrentStory() {
 
 function getNextStory() {
   var story = document.getElementsByClassName('selected-story')[0];
-  if (typeof story === "undefined") { return false }
-  if (story.nextSibling == null) { return false }
+  // If there is no selected story, try for the first story.
+  if (typeof story === "undefined") {
+    story = document.getElementsByClassName('accordion-group')[0];
+    if (typeof story === "undefined") { return false; }
+    return story;
+  }
+  if (story.nextSibling == null) { return false; }
   return story.nextSibling;
 }
 
@@ -712,6 +724,7 @@ function toggleReadState(storyId) {
 // Keyboard
 function setKeyboard(){
    Mousetrap.bind('g h', function() { viewHome(); });
+   Mousetrap.bind('g a', function() { viewFeed('combined-feed'); });
    Mousetrap.bind('r', function() { refreshCounters(); });
    Mousetrap.bind('a', function() { addToggle(); });
    Mousetrap.bind('?', function() {
