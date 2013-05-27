@@ -4,7 +4,7 @@ import bcrypt
 
 class Storage(object):
     def _hash_string(self, string):
-        return bcrypt.hashpw(string, bcrypt.gensalt())
+        return bcrypt.hashpw(string.encode('utf-8'), bcrypt.gensalt())
 
     def is_valid_password(self, password):
         """
@@ -12,6 +12,7 @@ class Storage(object):
 
         password : plaintext password
         """
+        password = password.encode('utf-8')
         stored = self.get_password()
         if not stored:
             return False
