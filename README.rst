@@ -88,7 +88,7 @@ Leselys automagically fetch new stories with it's refresher worker, and automagi
 Python 3 support:
 
 - docopt: ``True``
-- feedparser: True``
+- feedparser: ``True``
 - lxml: ``True``
 - pymongo: ``True``
 - celery: ``True``
