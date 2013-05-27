@@ -172,7 +172,7 @@ li a [class^="icon-"] {
 }
 
 #add button {
-  display: block;
+  margin: 0.125em;
 }
 
 #add form {

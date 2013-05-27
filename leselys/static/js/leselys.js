@@ -39,8 +39,7 @@ function addFeed() {
   if (url == '') { return false }
 
   // Undisplay add popup
-  document.getElementById('add').style.display = "none";
-  document.getElementById('urlFeed').value = "";
+  addToggle();
 
   // Clear help message if no subscriptions
   if (document.getElementById('menu').getElementsByClassName('empty-feed-list')) {
@@ -762,12 +761,19 @@ function addEventListenerList(list, event, fn) {
 
 function addToggle() {
   var add = document.getElementById('add');
+  Mousetrap.reset();
+
   if (add.style.display == "block" ) {
+    // hide the popover and reset state
     add.style.display = "none";
-  } else {
-    add.style.display = "block";
+    setKeyboard();
+    return;
   }
+
+  // show the popover and set state
+  add.style.display = "block";
   document.getElementById('urlFeed').focus();
+  Mousetrap.bind('esc', function(e, combo) { addToggle(); });
 }
 
 function cleanCounter(counter) {
