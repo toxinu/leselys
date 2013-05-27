@@ -11,10 +11,10 @@
   </div>
   <div id="content" class="span10">
     <div class="hero-unit welcome">
-    	<h1>Hi,</h1>
-	      <p>I'm Leselys, your very elegant RSS reader.</p>
-      	<p><a href="https://github.com/socketubs/leselys" target="_blank" class="btn btn-primary btn-large">
-			Learn more</a></p>
+      <h1>Hi,</h1>
+        <p>I'm Leselys, your very elegant RSS reader.</p>
+        <p><a href="https://github.com/socketubs/leselys" target="_blank" class="btn btn-primary btn-large">
+      Learn more</a></p>
     </div>
   </div>
 </div>
@@ -34,11 +34,17 @@
                 crel('center',
                     crel('input', {'id': 'urlFeed',
                                    'type': 'text',
-                                   'class': 'input-large',
+                                   'class': 'input-large mousetrap',
                                    'placeholder': 'Url...'}),
-                    crel('button', {'type': 'submit',
-                                    'class': 'btn',
-                                    'onclick': 'addFeed()'}, 'Submit')
+                    crel('div',
+                        crel('button', {'type': 'reset',
+                                        'class': 'btn',
+                                        'onclick': 'addToggle()'},
+                             'Cancel'),
+                        crel('button', {'type': 'submit',
+                                        'class': 'btn',
+                                        'onclick': 'addFeed()'},
+                             'Submit'))
                 )
             )
         ))
