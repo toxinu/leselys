@@ -33,7 +33,7 @@ function sendFile(options){
 
         // Try parsing to JSON
         try { data = JSON.parse(data); } catch(e) {
-          window.location = "/";
+          window.location = "";
         };
 
         if (options['callback'])
@@ -82,7 +82,7 @@ function ajaxRequest(options){
 
         // Try parsing to JSON
         try { data = JSON.parse(data); } catch(e) {
-          window.location = "/";
+          window.location = "";
         };
 
         if (options['callback'])
