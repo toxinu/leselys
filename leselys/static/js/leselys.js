@@ -444,7 +444,7 @@ function unreadStory(storyId) {
 
 function loadTheme(themeName, callback) {
   api.setTheme(themeName, function(req, data) {
-    window.location = "/";
+    window.location = "";
   });
 }
 
