@@ -2,7 +2,7 @@ api = {};
 
 api.changePassword = function(password, callback) {
     return ajaxRequest({
-        url: '/api/set_password',
+        url: 'api/set_password',
         method: 'POST',
         params: {
             password: password
@@ -13,7 +13,7 @@ api.changePassword = function(password, callback) {
 
 api.addFeed = function(feedUrl, callback) {
     return ajaxRequest({
-        url: '/api/add',
+        url: 'api/add',
         method: 'POST',
         params: {
             url: feedUrl
@@ -24,7 +24,7 @@ api.addFeed = function(feedUrl, callback) {
 
 api.deleteFeed = function(feedId, callback) {
     return ajaxRequest({
-        url: '/api/remove/' + feedId,
+        url: 'api/remove/' + feedId,
         method: 'DELETE',
         callback : callback
     });
@@ -32,7 +32,7 @@ api.deleteFeed = function(feedId, callback) {
 
 api.setFeedSetting = function(feedId, settingKey, settingValue, callback) {
     return ajaxRequest({
-        url: '/api/feedsettings',
+        url: 'api/feedsettings',
         method: 'POST',
         params: {
             feed_id: feedId,
@@ -45,7 +45,7 @@ api.setFeedSetting = function(feedId, settingKey, settingValue, callback) {
 
 api.importOPML = function(file, callback) {
     return sendFile({
-        url: '/api/import/opml',
+        url: 'api/import/opml',
         params: {
             fileInput: file
         },
@@ -55,7 +55,7 @@ api.importOPML = function(file, callback) {
 
 api.getSettings = function(callback) {
     return ajaxRequest({
-        url: '/settings',
+        url: 'settings',
         method: 'GET',
         params: {
             jsonify: true
@@ -66,7 +66,7 @@ api.getSettings = function(callback) {
 
 api.getHome = function(callback) {
     return ajaxRequest({
-        url: '/',
+        url: '',
         method: 'GET',
         params: {
             jsonify: true
@@ -79,7 +79,7 @@ api.getFeed = function(feedId, start, stop, callback) {
     var start = start || 0;
     var stop = stop || 50;
     return ajaxRequest({
-        url: '/api/get/' + feedId,
+        url: 'api/get/' + feedId,
         params: {
             start: start,
             stop: stop
@@ -91,7 +91,7 @@ api.getFeed = function(feedId, start, stop, callback) {
 
 api.readStory = function(storyId, callback) {
     return ajaxRequest({
-        url: '/api/read/' + storyId,
+        url: 'api/read/' + storyId,
         method: 'GET',
         callback: callback
     });
@@ -99,7 +99,7 @@ api.readStory = function(storyId, callback) {
 
 api.unreadStory = function(storyId, callback) {
     return ajaxRequest({
-        url: '/api/unread/' + storyId,
+        url: 'api/unread/' + storyId,
         method: 'GET',
         callback: callback
     });
@@ -118,7 +118,7 @@ api.setTheme = function(themeName, callback) {
 
 api.getCounters = function(callback) {
     return ajaxRequest({
-        url: '/api/counters',
+        url: 'api/counters',
         method: 'GET',
         callback: callback
     });
@@ -126,7 +126,7 @@ api.getCounters = function(callback) {
 
 api.markAllAsRead = function(feedId, callback) {
     return ajaxRequest({
-        url: '/api/all_read/' + feedId,
+        url: 'api/all_read/' + feedId,
         method: 'GET',
         callback: callback
     });
@@ -134,7 +134,7 @@ api.markAllAsRead = function(feedId, callback) {
 
 api.markAllAsUnread = function(feedId, callback) {
     return ajaxRequest({
-        url: '/api/all_unread/' + feedId,
+        url: 'api/all_unread/' + feedId,
         method: 'GET',
         callback: callback
     });
