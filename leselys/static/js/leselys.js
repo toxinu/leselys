@@ -88,7 +88,7 @@ function addFeed() {
         newFeedSetting.style.display = "";
       }
     } else {
-      if (data.callback == "/api/login") { window.location = "/login" }
+      if (data.callback == "/api/login") { window.location = "login" }
       loader.innerHTML = '<li><i class="icon-exclamation-sign"></i> Error: ' + data.output +'</li>';
       var clearLoader = function() {
         loader.style.display = "none";
@@ -136,7 +136,7 @@ function handleOPMLImport(evt) {
           document.getElementById("OPMLSubmit").className += " disabled";
         } else {
           if (data.callback == "/api/login")
-            window.location = "/login"
+            window.location = "login"
           document.getElementById("OPMLSubmit").innerHTML = "Error: " + data.output;
           document.getElementById("OPMLSubmit").className += " disabled";
         }
@@ -173,7 +173,7 @@ function viewSettings(callback) {
       disableRibbon();
     } else {
       if (data.callback == "/api/login")
-        window.location = "/login"
+        window.location = "login"
     }
   });
 }
@@ -195,7 +195,7 @@ function viewHome(callback) {
       }
     } else {
       if (data.callback == "/api/login")
-        window.location = "/login"
+        window.location = "login"
     }
   });
 }
@@ -230,7 +230,7 @@ function deleteFeed(feedId) {
       }
     } else {
       if (data.callback == "/api/login")
-        window.location = "/login"
+        window.location = "login"
     }
   });
 }
@@ -326,7 +326,7 @@ function viewFeed(feedId, callback) {
       });
     } else {
       if (data.callback == "/api/login")
-        window.location = "/login"
+        window.location = "login"
     }
   });
 }
@@ -375,7 +375,7 @@ function readStory(storyId, ignore) {
   api.readStory(storyId, function(req, data) {
     if (!data.success) {
       if (data.callback == "/api/login")
-        window.location = "/login"
+        window.location = "login"
     }
     if (data.content.last_update == false) {
       var published = "No date";
@@ -444,14 +444,14 @@ function unreadStory(storyId) {
       document.getElementById(storyId).getElementsByClassName("accordion-toggle")[0].style.fontWeight = 'bold';
     } else {
       if (data.callback == "/api/login")
-        window.location = "/login"
+        window.location = "login"
     }
   });
 }
 
 function loadTheme(themeName, callback) {
   api.setTheme(themeName, function(req, data) {
-    window.location = "/";
+    window.location = "";
   });
 }
 
@@ -473,7 +473,7 @@ function refreshCounters() {
       }
     } else {
       if (data.callback == "/api/login")
-        window.location = "/login"
+        window.location = "login"
     }
   });
 }
