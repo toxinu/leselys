@@ -755,13 +755,15 @@ function setKeyboard(){
    });
    Mousetrap.bind('j', function() {
      var nextStory = getNextStory();
-     if (nextStory == false) { return }
+     if (nextStory == false) { return; }
      nextStory.getElementsByTagName('a')[0].click();
+     nextStory.scrollIntoView();
    });
    Mousetrap.bind('k', function() {
      var previousStory = getPreviousStory();
-     if (previousStory == false) { return }
+     if (previousStory == false) { return; }
      previousStory.getElementsByTagName('a')[0].click();
+     previousStory.scrollIntoView();
    });
 }
 
