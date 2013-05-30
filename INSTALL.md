@@ -1,10 +1,10 @@
 # Installation
 
-- [Debian](#Ubuntu/Debian)
-- [Ubuntu](#Ubuntu/Debian)
-- [Archlinux](#Archlinux)
-- [Heroku](#Heroku)
-- [Others](#Others)
+- [Debian](#ubuntudebian)
+- [Ubuntu](#ubuntudebian)
+- [Archlinux](#archlinux)
+- [Heroku](#heroku)
+- [Others](#others)
 
 Leselys use [Supervisor](http://supervisord.org/) in order to manage these processes.
 Step will be explain for your system.
