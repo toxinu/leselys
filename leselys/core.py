@@ -1,7 +1,11 @@
 # coding: utf-8
 import os
 import sys
-import ConfigParser
+
+try:
+    import configparser
+except ImportError:
+    import ConfigParser as configparser
 
 import leselys
 import werkzeug
@@ -83,7 +87,7 @@ class Core(object):
             sys.exit(1)
         self.args = args
         self.config_path = config_path
-        self.config = ConfigParser.ConfigParser()
+        self.config = configparser.ConfigParser()
         self.config.read(self.config_path)
 
         if self.config.has_section('webserver') and self.config.get('webserver', 'host'):

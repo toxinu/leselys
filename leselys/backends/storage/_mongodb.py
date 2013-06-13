@@ -2,7 +2,7 @@
 
 from pymongo import MongoClient
 from bson.objectid import ObjectId
-from _storage import Storage
+from leselys.backends.storage._storage import Storage
 
 
 class Mongodb(Storage):

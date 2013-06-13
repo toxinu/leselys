@@ -6,8 +6,12 @@ import leselys
 import copy
 import requests
 
-from urlparse import urlparse
-from urlparse import urljoin
+try:
+    from urlparse import urlparse
+    from urlparse import urljoin
+except ImportError:
+    from urllib.parse import urlparse
+    from urllib.parse import urljoin
 
 from leselys.helpers import u
 from leselys.helpers import get_datetime

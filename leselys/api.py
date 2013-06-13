@@ -32,7 +32,7 @@ signer = leselys.core.signer
 def set_password():
     # For demo
     heroku_urls = [
-            "http://leselys.herokuapp.com/api/set_password", 
+            "http://leselys.herokuapp.com/api/set_password",
             "https://leselys.herokuapp.com/api/set_password",
             "http://leselys.herokuapp.com:80/api/set_password",
             "https://leselys.herokuapp.com:443/api/set_password"]
@@ -210,7 +210,7 @@ def logout():
 @login_required
 def set_theme():
     theme_name = request.form['theme'].lower()
-    _themes = dict((k.lower(), v) for k, v in themes.iteritems())
+    _themes = dict((k.lower(), v) for k, v in themes.items())
     if not theme_name in _themes.keys():
         return jsonify(success=False, output='Theme not exists')
 

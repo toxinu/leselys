@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 from sofart import Database
-from _storage import Storage
+from leselys.backends.storage._storage import Storage
 
 import sys
 
 print("Don't use sofart backend, totaly not usable.")
 sys.exit(1)
+
 
 class Sofart(Storage):
     def __init__(self, **kwargs):

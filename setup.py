@@ -43,7 +43,7 @@ setup(
         'feedparser',
         'lxml',
         'itsdangerous',
-        'py-bcrypt',
+        'bcrypt',
         'requests',
         'celery',
         'celery-with-mongodb',
