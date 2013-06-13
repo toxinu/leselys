@@ -94,10 +94,10 @@ Python 3 support:
 - celery: ``True``
 - celery-with-mongodb: ``True``
 - requests: ``True``
+- bcrypt: ``True``
+- itsdangerous: ``True``
+- flask: ``True``
 
-- py-bcrypt: ``False`` (look at `bcrypt`_)
-- itsdangerous: ``False``
-- flask: ``False``
 - leselys: ``False``
 
 License
@@ -111,6 +111,5 @@ License is `AGPL3`_. See `LICENSE`_.
 .. _MongoDB storage backend: https://github.com/socketubs/leselys/blob/master/leselys/backends/_mongodb.py
 .. _Ubuntu: https://github.com/socketubs/leselys/wiki/Ubuntu
 .. _Heroku: https://github.com/socketubs/leselys/wiki/Heroku
-.. _bcrypt: https://github.com/dstufft/bcrypt
 .. _AGPL3: http://www.gnu.org/licenses/agpl.html
 .. _LICENSE: https://raw.github.com/socketubs/leselys/master/LICENSE
