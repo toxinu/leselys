@@ -257,7 +257,7 @@ class Reader(object):
         storage.remove_feed(feed_id)
         return {"success": True, "output": "Feed removed"}
 
-    def get(self, feed_id=False, feed_type="combined-ffed", order_type="user", start=0, stop=50):
+    def get(self, feed_id=False, feed_type="combined-feed", order_type="user", start=0, stop=50):
         # Special feeds
         if not feed_id:
             if feed_type == "combined-feed":
@@ -335,7 +335,8 @@ class Reader(object):
                           'counter': self.get_unread(feed['_id']),
                           'ordering': ordering
                           })
-        return feeds
+        return sorted(feeds, key=lambda k: k['title'].lower())
+        #return feeds
 
     def refresh(self, feed_id):
         feed = storage.get_feed_by_id(feed_id)
