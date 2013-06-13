@@ -41,6 +41,10 @@ function addFeed() {
   // Undisplay add popup
   addToggle();
 
+  // Clean add input content
+  var add = document.getElementById('urlFeed');
+  add.value = '';
+
   // Clear help message if no subscriptions
   if (document.getElementById('menu').getElementsByClassName('empty-feed-list')) {
     document.getElementById('menu').getElementsByClassName('empty-feed-list')[0].style.display = "none";
