@@ -24,9 +24,10 @@ requires = [
 ]
 
 if sys.version_info[0] == 3:
-    requires.append('bcrypt')
+    requires.append('py3k-bcrypt')
 else:
     requires.append('py-bcrypt')
+
 
 def get_version():
     VERSIONFILE = 'leselys/__init__.py'
