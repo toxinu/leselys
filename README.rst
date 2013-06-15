@@ -85,19 +85,8 @@ Storage and session backends are Python modules, you can easily write your own. 
 
 Leselys automagically fetch new stories with it's refresher worker, and automagically (again), purge our stories database with it's retention task.
 
-Python 3 support:
-
-- docopt: ``True``
-- feedparser: ``True``
-- lxml: ``True``
-- pymongo: ``True``
-- celery: ``False``
-- celery-with-mongodb: ``True``
-- requests: ``True``
-- bcrypt: ``True``
-- itsdangerous: ``True``
-- flask: ``True``
-- leselys: ``True``
+Python 3 support is available, there is just ``worker`` with celery which doesn't work correctly. You can schedule the task with ``refresh`` and ``retention`` commands.
+Python 3 is automatically used on Heroku.
 
 License
 -------
