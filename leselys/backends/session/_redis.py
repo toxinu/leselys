@@ -52,8 +52,11 @@ class Session(SessionInterface):
             return self.session_class(sid=sid)
         val = self.redis.get(self.prefix + sid)
         if val is not None:
-            data = self.serializer.loads(val)
-            return self.session_class(data, sid=sid)
+            try:
+                data = self.serializer.loads(val)
+                return self.session_class(data, sid=sid)
+            except:
+                pass
         return self.session_class(sid=sid, new=True)
 
     def save_session(self, app, session, response):
