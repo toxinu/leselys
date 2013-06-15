@@ -97,8 +97,7 @@ Python 3 support:
 - bcrypt: ``True``
 - itsdangerous: ``True``
 - flask: ``True``
-
-- leselys: ``False``
+- leselys: ``True``
 
 License
 -------

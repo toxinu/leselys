@@ -35,6 +35,7 @@ setup(
     author_email='geoffrey@lehee.name',
     url='https://github.com/socketubs/leselys',
     keywords='rss reader greader',
+    zip_safe=False,
     packages=['leselys'],
     scripts=['scripts/leselys'],
     install_requires=[
@@ -47,7 +48,8 @@ setup(
         'requests',
         'celery',
         'celery-with-mongodb',
-        'pymongo'
+        'pymongo',
+        'anyjson'
     ],
     include_package_data=True,
     classifiers=(
