@@ -91,7 +91,7 @@ Python 3 support:
 - feedparser: ``True``
 - lxml: ``True``
 - pymongo: ``True``
-- celery: ``True``
+- celery: ``False``
 - celery-with-mongodb: ``True``
 - requests: ``True``
 - bcrypt: ``True``
