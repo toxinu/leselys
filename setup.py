@@ -10,6 +10,23 @@ try:
 except ImportError:
     from distutils.core import setup
 
+requires = [
+    'docopt',
+    'flask',
+    'feedparser',
+    'lxml',
+    'itsdangerous',
+    'requests',
+    'celery',
+    'celery-with-mongodb',
+    'pymongo',
+    'anyjson'
+]
+
+if sys.version_info[0] == 3:
+    requires.append('bcrypt')
+else:
+    requires.append('py-bcrypt')
 
 def get_version():
     VERSIONFILE = 'leselys/__init__.py'
@@ -38,19 +55,7 @@ setup(
     zip_safe=False,
     packages=['leselys'],
     scripts=['scripts/leselys'],
-    install_requires=[
-        'docopt',
-        'flask',
-        'feedparser',
-        'lxml',
-        'itsdangerous',
-        'bcrypt',
-        'requests',
-        'celery',
-        'celery-with-mongodb',
-        'pymongo',
-        'anyjson'
-    ],
+    install_requires=requires,
     include_package_data=True,
     classifiers=(
         'Intended Audience :: Developers',
