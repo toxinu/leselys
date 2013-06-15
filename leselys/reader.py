@@ -110,6 +110,9 @@ class Refresher(threading.Thread):
 
     def run(self):
         self.data = feedparser.parse(self.feed.get('url'))
+        if self.data.get('bozo_exception', False):
+            print("!! Can't retrieve %s feed (%s)" % (self.feed_title.encode('utf-8'), self.data['bozo_exception']))
+            return
 
         # Update title if it change
         if self.data.feed.get('title') != self.feed_title:
