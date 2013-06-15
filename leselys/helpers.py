@@ -71,7 +71,7 @@ def login_required(f):
         # Not in cache
         if not session.get('logged_in'):
             # No cookie
-            if not request.cookies.get('remember'):
+            if request.cookies.get('remember') == "false":
                 if request.args.get('jsonify', "false") == "false":
                     return redirect(url_for('login_view'))
                 else:

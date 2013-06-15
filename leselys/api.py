@@ -181,7 +181,7 @@ def login():
                 rsp = make_response(jsonify(success=True, output="Successfully logged in."))
             if remember:
                 session.permanent = True
-                rsp.set_cookie('remember', True)
+                rsp.set_cookie('remember', "true")
                 rsp.set_cookie('token', signer.sign(password))
             return rsp
     else:
@@ -200,8 +200,8 @@ def logout():
         rsp = make_response(redirect(url_for('login_view')))
     else:
         rsp = make_response(jsonify(success=True, output="Successfully logged out."))
-    rsp.set_cookie('token', None)
-    rsp.set_cookie('remember', False)
+    rsp.set_cookie('token', "true")
+    rsp.set_cookie('remember', "false")
     return rsp
 
 
