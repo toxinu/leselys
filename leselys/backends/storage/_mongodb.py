@@ -26,9 +26,15 @@ class Mongodb(Storage):
 
     def set_feed_setting(self, feed_id, setting_type, value):
         setting = self.db.feedsettings.find_one({'feed_id': feed_id, 'setting_type': setting_type})
-        if setting:
-            self.db.feedsettings.remove(setting['_id'])
+        if setting.get('_id'):
+            self.db.feedsettings.save({
+                '_id': settings['_id'],
+                'feed_id': feed_id,
+                'setting_type': setting_type,
+                'value': value
+            })
         self.db.feedsettings.save({'feed_id': feed_id, 'setting_type': setting_type, 'value': value})
+
 
     def get_feed_setting(self, feed_id, setting_type):
         setting = self.db.feedsettings.find_one({'feed_id': feed_id, 'setting_type': setting_type})
@@ -77,7 +83,6 @@ class Mongodb(Storage):
         return feed
 
     def update_feed(self, _id, content):
-        self.db.feeds.remove(ObjectId(_id))
         if content['_id']:
             if not isinstance(content['_id'], ObjectId):
                 try:
@@ -126,7 +131,6 @@ class Mongodb(Storage):
         self.db.stories.remove(ObjectId(_id))
 
     def update_story(self, _id, content):
-        self.db.stories.remove(ObjectId(_id))
         if content['_id']:
             if not isinstance(content['_id'], ObjectId):
                 try:

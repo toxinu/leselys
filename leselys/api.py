@@ -90,6 +90,7 @@ def remove(feed_id):
 # Return list of entries for given feed_id
 @app.route('/api/get/<feed_id>')
 @login_required
+@cached(30)
 def get(feed_id):
     start = int(request.args.get('start', 0))
     stop = int(request.args.get('stop', 50))
