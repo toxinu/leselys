@@ -27,6 +27,12 @@ signer = leselys.core.signer
 # API
 #######################################################################
 
+# Get feeds info
+@app.route('/api/get_feeds')
+def get_feeds():
+    return jsonify(success=True, content=reader.get_feeds())
+
+
 # Set password
 @app.route('/api/set_password', methods=['POST'])
 def set_password():
