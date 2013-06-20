@@ -26,7 +26,7 @@ class Mongodb(Storage):
 
     def set_feed_setting(self, feed_id, setting_type, value):
         setting = self.db.feedsettings.find_one({'feed_id': feed_id, 'setting_type': setting_type})
-        if setting.get('_id'):
+        if setting and setting.get('_id'):
             self.db.feedsettings.save({
                 '_id': settings['_id'],
                 'feed_id': feed_id,
