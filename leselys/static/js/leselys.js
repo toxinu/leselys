@@ -69,6 +69,7 @@ function addFeed() {
       loader.style.display = "none";
       loader.innerHTML = newFeed.outerHTML;
       loader.id = feedId;
+      loader.setAttribute('data-url', feedURL);
       loader.classList.add('feed');
       loader.style.display = "";
 
