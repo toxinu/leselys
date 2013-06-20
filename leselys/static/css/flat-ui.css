@@ -3740,7 +3740,7 @@ body.vjs-full-window {
 }
 
 /* Socketubs FIX */
-input#urlFeed {
+input#urlFeed, input[type=password] {
   height: 20px !important;
   width: 206px !important;
 }
