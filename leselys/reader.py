@@ -40,7 +40,8 @@ for element in acceptable_elements:
 
 
 class Retriever(threading.Thread):
-    """The Retriever object has to retrieve all feeds asynchronously and
+    """
+    The Retriever object has to retrieve all feeds asynchronously and
     return it to the Reader when a new subscription arrives
     """
 
@@ -99,7 +100,8 @@ class Retriever(threading.Thread):
 
 
 class Refresher(threading.Thread):
-    """The Refresher object have to retrieve all new entries asynchronously
+    """
+    The Refresher object have to retrieve all new entries asynchronously
     """
 
     def __init__(self, feed):
@@ -114,10 +116,19 @@ class Refresher(threading.Thread):
             print("!! Can't retrieve %s feed (%s)" % (self.feed_title.encode('utf-8'), self.data['bozo_exception']))
             return
 
+        need_update = False
         # Update title if it change
         if self.data.feed.get('title') != self.feed_title:
             self.feed['title'] = self.data.feed.get('title')
             self.feed_title = self.feed['title']
+            need_update = True
+        # Add website url if not setted
+        if self.data.feed.get('link') != self.feed.get('link'):
+            self.feed['link'] = self.data.feed.get('link')
+            self.feed_link = self.feed['link']
+            need_update = True
+
+        if need_update:
             storage.update_feed(self.feed_id, copy.copy(self.feed))
 
         local_update = self.feed.get('last_update')
@@ -224,6 +235,7 @@ class Reader(object):
             return {'success': False, 'output': 'Bad feed'}
 
         title = feed.feed['title']
+        link = feed.feed['link']
         feed_id = storage.get_feed_by_title(title)
         if not feed_id:
             if feed.feed.get('updated_parsed'):
@@ -239,6 +251,7 @@ class Reader(object):
 
             feed_id = storage.add_feed({'url': url,
                                         'title': title,
+                                        'link': link,
                                         'last_update': feed_update})
         else:
             return {'success': False, 'output': 'Feed already exists'}
@@ -250,6 +263,7 @@ class Reader(object):
             'success': True,
             'title': title,
             'url': url,
+            'link': link,
             'feed_id': feed_id,
             'output': 'Feed added',
             'counter': len(feed['entries'])}
@@ -335,6 +349,7 @@ class Reader(object):
             feeds.append({'title': feed.get('title'),
                           'id': feed_id,
                           'url': feed.get('url'),
+                          'link': feed.get('link', feed.get('url')),
                           'counter': self.get_unread(feed['_id']),
                           'ordering': ordering
                           })

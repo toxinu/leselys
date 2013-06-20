@@ -61,15 +61,16 @@ function addFeed() {
       var feedId = data.feed_id;
       var feedTitle = data.title;
       var feedURL = data.url;
+      var feedLink = data.link;
       var feedCounter = data.counter;
 
-      var newFeed = crel('a', {'onClick': 'viewFeed("' + feedId + '")', 'href': '/#' + feedId}, feedTitle + " ",
+      var newFeed = crel('a', {'onClick': 'viewFeed("' + feedId + '")', 'href': '#' + feedId}, feedTitle + " ",
             crel('span', {'class': 'unread-counter muted'}, '(' + feedCounter + ')'));
 
       loader.style.display = "none";
       loader.innerHTML = newFeed.outerHTML;
       loader.id = feedId;
-      loader.setAttribute('data-url', feedURL);
+      loader.setAttribute('data-link', feedLink);
       loader.classList.add('feed');
       loader.style.display = "";
 
@@ -687,6 +688,11 @@ function disableRibbon() {
   ribbon.classList.remove('hidden');
 }
 
+function getCurrentFeedLink() {
+  if (document.getElementsByClassName('selected-feed').length > 0)
+    return document.getElementsByClassName('selected-feed')[0].getAttribute('data-link');
+}
+
 function getCurrentFeedId() {
   if (document.getElementsByClassName('selected-feed').length > 0)
     return document.getElementsByClassName('selected-feed')[0].id;
@@ -728,48 +734,51 @@ function toggleReadState(storyId) {
 
 // Keyboard
 function setKeyboard(){
-   Mousetrap.bind('g h', function() { viewHome(); });
-   Mousetrap.bind('g a', function() { viewFeed('combined-feed'); });
-   Mousetrap.bind('r', function() { refreshCounters(); });
-   Mousetrap.bind('a', function() { addToggle(); });
-   Mousetrap.bind('?', function() {
-     viewSettings(function () {
-       var navList = document.getElementById('content').getElementsByClassName('nav-tabs')[0].getElementsByTagName('li');
-       var contentList = document.getElementById('content').getElementsByClassName('tab-content')[0].getElementsByClassName('tab-pane');
-       for (i=0;i<navList.length;i++) {
-         navList[i].classList.remove('active');
-         contentList[i].classList.remove('active');
-
-         if (navList[i].getElementsByTagName('a')[0].getAttribute('href') == '#help') {
-           navList[i].classList.add('active');
-           contentList[i].classList.add('active');
-           contentList[i].style.display = "block";
-         }
-       }
-     });
-   });
-   Mousetrap.bind('m', function() {
-     var story = getCurrentStory();
-     if (story == false) { return }
-     toggleReadState(story.getAttribute('id'));
-   });
-   Mousetrap.bind('o', function() {
-     var story = getCurrentStory();
-     if (story == false) { return }
-     story.getElementsByTagName('a')[0].click()
-   });
-   Mousetrap.bind('j', function() {
-     var nextStory = getNextStory();
-     if (nextStory == false) { return; }
-     nextStory.getElementsByTagName('a')[0].click();
-     nextStory.scrollIntoView();
-   });
-   Mousetrap.bind('k', function() {
-     var previousStory = getPreviousStory();
-     if (previousStory == false) { return; }
-     previousStory.getElementsByTagName('a')[0].click();
-     previousStory.scrollIntoView();
-   });
+  Mousetrap.bind('g h', function() { viewHome(); });
+  Mousetrap.bind('g a', function() { viewFeed('combined-feed'); });
+  Mousetrap.bind('r', function() { refreshCounters(); });
+  Mousetrap.bind('a', function() { addToggle(); });
+  Mousetrap.bind('?', function() {
+    viewSettings(function () {
+      var navList = document.getElementById('content').getElementsByClassName('nav-tabs')[0].getElementsByTagName('li');
+      var contentList = document.getElementById('content').getElementsByClassName('tab-content')[0].getElementsByClassName('tab-pane');
+      for (i=0;i<navList.length;i++) {
+        navList[i].classList.remove('active');
+        contentList[i].classList.remove('active');
+        if (navList[i].getElementsByTagName('a')[0].getAttribute('href') == '#help') {
+          navList[i].classList.add('active');
+          contentList[i].classList.add('active');
+          contentList[i].style.display = "block";
+        }
+      }
+    });
+  });
+  Mousetrap.bind('m', function() {
+    var story = getCurrentStory();
+    if (story == false) { return }
+    toggleReadState(story.getAttribute('id'));
+  });
+  Mousetrap.bind('o', function() {
+    var story = getCurrentStory();
+    if (story == false) { return }
+    story.getElementsByTagName('a')[0].click()
+  });
+  Mousetrap.bind('j', function() {
+    var nextStory = getNextStory();
+    if (nextStory == false) { return; }
+    nextStory.getElementsByTagName('a')[0].click();
+    nextStory.scrollIntoView();
+  });
+  Mousetrap.bind('k', function() {
+    var previousStory = getPreviousStory();
+    if (previousStory == false) { return; }
+    previousStory.getElementsByTagName('a')[0].click();
+    previousStory.scrollIntoView();
+  });
+  Mousetrap.bind('b', function() {
+    var link = getCurrentFeedLink();
+    if (link) {window.open(link, '_blank')}
+  });
 }
 
 // Utils
