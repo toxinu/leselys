@@ -306,9 +306,8 @@ li a [class^="icon-"] {
   margin-bottom: -17px;
 }
 ul#menu {
-  margin-bottom: 10px;
   overflow: hidden;
-  height: 100%;
+  height: 97%;
 }
 ul#menu:hover {
   overflow: auto;
