@@ -77,7 +77,7 @@ def login_required(f):
                 else:
                     return jsonify(success=False, output="Failed to log in.")
             else:
-                password_md5 = request.cookies.get('password')
+                password_md5 = "%s.%s" % (storage.get_password(), request.cookies.get('token'))
                 try:
                     password_unsigned = signer.unsign(
                         password_md5, max_age=15 * 24 * 60 * 60)
