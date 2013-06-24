@@ -685,7 +685,7 @@ function enableRibbon(feedId, ordering) {
 
 function disableRibbon() {
   var ribbon = document.getElementById('ribbon');
-  ribbon.classList.remove('hidden');
+  ribbon.classList.add('hidden');
 }
 
 function getCurrentFeedLink() {
