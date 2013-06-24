@@ -96,7 +96,7 @@ License is `AGPL3`_. See `LICENSE`_.
 .. _MongoDB: http://docs.mongodb.org/manual/installation/
 .. _bullshit apps: http://tommorris.org/posts/8070
 .. _right now: https://leselys.herokuapp.com
-.. _MongoDB storage backend: https://github.com/socketubs/leselys/blob/master/leselys/backends/_mongodb.py
+.. _MongoDB storage backend: https://github.com/socketubs/leselys/blob/master/leselys/backends/storage/_mongodb.py
 .. _Ubuntu: https://github.com/socketubs/leselys/wiki/Ubuntu
 .. _Heroku: https://github.com/socketubs/leselys/wiki/Heroku
 .. _AGPL3: http://www.gnu.org/licenses/agpl.html
