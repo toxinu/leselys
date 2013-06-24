@@ -189,7 +189,7 @@ def login():
             if remember:
                 session.permanent = True
                 rsp.set_cookie('remember', "true")
-                rsp.set_cookie('token', ''.join(signer.sign(storage.get_password()).split('.')[1:]))
+                rsp.set_cookie('token', ''.join(str(signer.sign(storage.get_password())).split('.')[1:]))
             return rsp
     else:
         if request.args.get('jsonify', "true") == "false":
