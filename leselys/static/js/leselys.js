@@ -312,7 +312,7 @@ function viewFeed(feedId, callback) {
     var append = false;
     window.scrollTo(0, 0);
   } else {
-    if (global.feedStatus.stop >= global.feedStatus.length) {
+    if (global.feedStatus.stop >= global.feedStatus.count) {
       return
     }
     global.feedStatus.start = global.feedStatus.start + 50;
@@ -326,7 +326,7 @@ function viewFeed(feedId, callback) {
   var xhr = api.getFeed(feedId, start, stop, function(req, data) {
     if (data.success) {
       listStories(feedId, data, append, function() {
-        global.feedStatus.length = data.content.detail.length;
+        global.feedStatus.count = data.content.detail.count;
         if (typeof callback != "undefined" )
           callback();
       });

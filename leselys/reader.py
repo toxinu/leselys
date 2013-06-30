@@ -317,13 +317,14 @@ class Reader(object):
             stories = storage.get_stories(feed_id, order_type, start, stop)
 
         length = storage.get_feed_unread_count(feed_id)
+        count = storage.get_feed_count(feed_id)
         res = []
         for story in stories:
             story['last_update'] = get_dicttime(story['last_update'])
             story['published'] = get_dicttime(story['published'])
             res.append(story)
 
-        return {'entries': res, 'ordering': order_type, 'detail': {'start': start, 'stop': stop, 'length': length}}
+        return {'entries': res, 'ordering': order_type, 'detail': {'start': start, 'stop': stop, 'length': length, 'count':count}}
 
     def get_combined_feed(self):
         order_type = storage.get_feed_setting('combined-feed', 'ordering')

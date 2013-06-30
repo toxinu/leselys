@@ -169,6 +169,11 @@ class Mongodb(Storage):
             return self.db.stories.find({'read': False}).count()
         return self.db.stories.find({'feed_id': feed_id, 'read': False}).count()
 
+    def get_feed_count(self, feed_id=False):
+        if not feed_id:
+            return self.db.stories.find().count()
+        return self.db.stories.find({'feed_id': feed_id}).count()
+
     def get_stories(self, feed_id, ordering, start, stop):
         res = []
         if ordering == "unreaded":
