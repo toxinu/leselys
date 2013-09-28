@@ -152,6 +152,22 @@ function handleOPMLImport(evt) {
   reader.readAsText(file);
 }
 
+function renameFeed(feedId) {
+  var customTitle = document.getElementById('rename-feed-' + feedId).value;
+  api.renameFeed(feedId, customTitle, function(req, data) {
+    if (data.success) {
+      refreshSideBar();
+    } else {
+      console.log(data);
+    }
+  })
+}
+
+function renameFeedForm(feedId, feedTitle) {
+  var box = getRenameBoxTemplate(feedId, feedTitle, "renameFeed('" + feedId + "');TINY.box.hide();");
+  TINY.box.show({'html': box.outerHTML,maskopacity:40,maskid:'rename-box-mask'});
+}
+
 function viewSettings(callback) {
   global.feedStatus.id = false;
   api.getSettings(function(req, data) {
@@ -177,6 +193,25 @@ function viewSettings(callback) {
         callback();
       }
       disableRibbon();
+    } else {
+      if (data.callback == "/api/login")
+        window.location = "login"
+    }
+  });
+}
+
+function refreshSideBar(callback) {
+  global.feedStatus.id = false;
+  api.getHome(function(req, data) {
+    if (data.success) {
+      var parser = new DOMParser();
+      var div = parser.parseFromString(data.content, "text/html");
+      var sidebar = div.getElementById('menu');
+      document.getElementById("menu").innerHTML = sidebar.innerHTML;
+      initPage();
+      if (typeof callback != "undefined" ) {
+          callback();
+      }
     } else {
       if (data.callback == "/api/login")
         window.location = "login"
@@ -519,8 +554,6 @@ function initPage() {
   initAddFeed();
   setInterval(refreshCounters, 120000);
 }
-
-
 
 function bindInfinityScroll(){
     if(window.addEventListener) {

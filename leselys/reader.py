@@ -13,7 +13,6 @@ except ImportError:
     from urllib.parse import urlparse
     from urllib.parse import urljoin
 
-from leselys.helpers import u
 from leselys.helpers import get_datetime
 from leselys.helpers import get_dicttime
 from leselys.feed_finder import FeedFinder
@@ -90,6 +89,7 @@ class Retriever(threading.Thread):
 
             storage.add_story({
                 'title': title,
+                'custom_title': '',
                 'guid': guid,
                 'link': link,
                 'description': description,
@@ -117,11 +117,6 @@ class Refresher(threading.Thread):
             return
 
         need_update = False
-        # Update title if it change
-        if self.data.feed.get('title') != self.feed_title:
-            self.feed['title'] = self.data.feed.get('title')
-            self.feed_title = self.feed['title']
-            need_update = True
         # Add website url if not setted
         if self.data.feed.get('link') != self.feed.get('link'):
             self.feed['link'] = self.data.feed.get('link')
@@ -279,7 +274,7 @@ class Reader(object):
         if not feed_id:
             if feed_type == "combined-feed":
                 if order_type == "user" or order_type not in ['unreaded', 'published']:
-                    order_type = storage.get_feed_setting('combined-feed' , 'ordering')
+                    order_type = storage.get_feed_setting('combined-feed', 'ordering')
                     if not order_type:
                         storage.set_feed_setting('combined-feed', 'ordering', 'unreaded')
                         order_type = 'unreaded'
@@ -324,7 +319,10 @@ class Reader(object):
             story['published'] = get_dicttime(story['published'])
             res.append(story)
 
-        return {'entries': res, 'ordering': order_type, 'detail': {'start': start, 'stop': stop, 'length': length, 'count':count}}
+        return {
+            'entries': res,
+            'ordering': order_type,
+            'detail': {'start': start, 'stop': stop, 'length': length, 'count': count}}
 
     def get_combined_feed(self):
         order_type = storage.get_feed_setting('combined-feed', 'ordering')
@@ -347,15 +345,22 @@ class Reader(object):
 
             ordering = ordering['value']
 
-            feeds.append({'title': feed.get('title'),
-                          'id': feed_id,
-                          'url': feed.get('url'),
-                          'link': feed.get('link', feed.get('url')),
-                          'counter': self.get_unread(feed['_id']),
-                          'ordering': ordering
-                          })
+            feeds.append({
+                'title': feed.get('title'),
+                'custom_title': feed.get('custom_title'),
+                'id': feed_id,
+                'url': feed.get('url'),
+                'link': feed.get('link', feed.get('url')),
+                'counter': self.get_unread(feed['_id']),
+                'ordering': ordering})
         return sorted(feeds, key=lambda k: k['title'].lower())
         #return feeds
+
+    def rename_feed(self, feed_id, custom_title):
+        feed = storage.get_feed_by_id(feed_id)
+        feed['title'] = custom_title
+        storage.update_feed(feed['_id'], feed)
+        return {'success': True, 'content': "New title setted"}
 
     def refresh(self, feed_id):
         feed = storage.get_feed_by_id(feed_id)

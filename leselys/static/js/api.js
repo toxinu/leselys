@@ -11,6 +11,18 @@ api.changePassword = function(password, callback) {
     });
 }
 
+api.renameFeed = function(feedId, customTitle, callback) {
+    return ajaxRequest({
+        url: 'api/rename_feed',
+        method: 'POST',
+        params: {
+            feed_id: feedId,
+            custom_title: customTitle
+        },
+        callback: callback
+    });
+}
+
 api.addFeed = function(feedUrl, callback) {
     return ajaxRequest({
         url: 'api/add',

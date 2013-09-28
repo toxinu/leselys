@@ -86,6 +86,34 @@
           )
        )
     }
+
+
+    // Confirmation delete feed
+    var getConfirmationDeleteFeedTemplate = function(sentence, onclick) {
+      return crel('div', {'class': 'confirmation-box well'},
+          crel('div', {'class': 'confirmation-body'}, sentence),
+          crel('div', {'class': 'confirmation-actions'},
+            crel('button', {'type': 'submit',
+                            'class': 'btn',
+                            'onclick': 'TINY.box.hide()'}, 'No'),
+            crel('button', {'type': 'submit',
+                            'class': 'btn btn-warning',
+                            'onclick': onclick}, 'Yes')
+          )
+       )
+    }
+
+    // Rename box
+    var getRenameBoxTemplate = function(feedId, feedTitle, onclick) {
+      return crel('div', {'class': 'confirmation-box-large well'},
+          crel('input', {'id': 'rename-feed-' + feedId,'type':'text','value':feedTitle, 'class': 'rename-feed', 'autofocus': 'autofocus'}),
+          crel('div', {'class': 'confirmation-actions'},
+            crel('button', {'type': 'submit',
+                            'class': 'btn btn-warning',
+                            'onclick': onclick}, 'Change')
+          )
+       )
+    }
     window.onload = function() {
       initPage();
     }

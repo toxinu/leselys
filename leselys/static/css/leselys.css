@@ -201,6 +201,9 @@ li a [class^="icon-"] {
   border-radius: 10px;
   width: 150px;
 }
+.confirmation-box-large {
+  width: 300px;
+}
 .confirmation-body {
   margin-bottom: 5px;
   text-align: center;
@@ -210,6 +213,9 @@ li a [class^="icon-"] {
 }
 .confirmation-actions .btn {
   margin-right: 5px;
+}
+input.rename-feed {
+  width: 290px;
 }
 .tab-pane {
   margin-left: 20px;

@@ -33,6 +33,19 @@ def get_feeds():
     return jsonify(success=True, content=reader.get_feeds())
 
 
+# Set feed custom title
+@app.route('/api/rename_feed', methods=['POST'])
+def rename_feed():
+    custom_title = request.form.get('custom_title')
+    if not custom_title:
+        return jsonify(success=False, content="I need a custom_title field.")
+    feed_id = request.form.get('feed_id')
+    if not feed_id:
+        return jsonify(success=False, content="I need a feed_id field.")
+    res = reader.rename_feed(feed_id, custom_title)
+    return jsonify(res)
+
+
 # Set password
 @app.route('/api/set_password', methods=['POST'])
 def set_password():
