@@ -20,6 +20,29 @@ from werkzeug.contrib.cache import SimpleCache
 from leselys.backends.storage import _load_storage
 from leselys.backends.session import _load_session
 
+
+class open_filename(object):
+    """Context manager that opens a filename and closes it on exit, but does
+    nothing for file-like objects.
+    """
+    def __init__(self, filename, *args, **kwargs):
+        self.closing = kwargs.pop('closing', False)
+        if isinstance(filename, basestring):
+            self.fh = open(filename, *args, **kwargs)
+            self.closing = True
+        else:
+            self.fh = filename
+
+    def __enter__(self):
+        return self.fh
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if self.closing:
+            self.fh.close()
+
+        return False
+
+
 # from http://flask.pocoo.org/snippets/35/
 class ReverseProxied(object):
     '''Wrap the application in this middleware and configure the
@@ -82,13 +105,15 @@ class Core(object):
         self.cache = SimpleCache()
 
     def load_config(self, config_path, args={}):
-        if not os.path.exists(config_path):
-            print('Error: "%s" file not exists.' % config_path)
-            sys.exit(1)
         self.args = args
-        self.config_path = config_path
         self.config = configparser.ConfigParser()
-        self.config.read(self.config_path)
+
+        try:
+            with open_filename(config_path) as fh:
+                self.config.readfp(fh)
+        except IOError:
+            print('Error: cannot read config from %r' % config_path)
+            sys.exit(1)
 
         if self.config.has_section('webserver') and self.config.get('webserver', 'host'):
             self.host = self.config.get('webserver', 'host')
