@@ -62,7 +62,7 @@ class Retriever(threading.Thread):
         feed_id = feed.get('_id')
 
         for entry in self.data:
-            title = entry.get('title')
+            title = entry.get('title') or "No title"
             link = entry.get('link')
             guid = entry.get('guid') or entry.get('id') or title
 
