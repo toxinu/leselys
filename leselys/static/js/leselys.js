@@ -344,11 +344,10 @@ function updateCounter(feedId, number) {
   if (counter == 0) {
     document.getElementById(feedId).getElementsByClassName('unread-counter')[0].style.display = "none";
     document.getElementById(feedId).classList.remove('unread');
-    document.getElementById(feedId).style.fontWeight = 'normal';
   } else {
     document.getElementById(feedId).getElementsByClassName('unread-counter')[0].innerHTML = '(' + counter + ')';
     document.getElementById(feedId).getElementsByClassName('unread-counter')[0].style.display = "";
-      document.getElementById(feedId).classList.add('unread');
+    document.getElementById(feedId).classList.add('unread');
   }
   if (feedId != "combined-feed" && feedId != "stared-feed") {
     updateCounter("combined-feed", number);
