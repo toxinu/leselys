@@ -6,7 +6,6 @@ from flask import request
 from flask import make_response
 from flask import session
 from flask import redirect
-from flask import render_template
 from flask import url_for
 
 from threading import Thread
@@ -27,6 +26,7 @@ signer = leselys.core.signer
 # API
 #######################################################################
 
+
 # Get feeds info
 @app.route('/api/get_feeds')
 def get_feeds():
@@ -38,10 +38,10 @@ def get_feeds():
 def set_password():
     # For demo
     heroku_urls = [
-            "http://leselys.herokuapp.com/api/set_password",
-            "https://leselys.herokuapp.com/api/set_password",
-            "http://leselys.herokuapp.com:80/api/set_password",
-            "https://leselys.herokuapp.com:443/api/set_password"]
+        "http://leselys.herokuapp.com/api/set_password",
+        "https://leselys.herokuapp.com/api/set_password",
+        "http://leselys.herokuapp.com:80/api/set_password",
+        "https://leselys.herokuapp.com:443/api/set_password"]
     if request.url in heroku_urls:
         return jsonify(success=False, content="Funny little boy. Ip stored.")
 
@@ -96,7 +96,6 @@ def remove(feed_id):
 # Return list of entries for given feed_id
 @app.route('/api/get/<feed_id>')
 @login_required
-@cached(30)
 def get(feed_id):
     start = int(request.args.get('start', 0))
     stop = int(request.args.get('stop', 50))
@@ -232,8 +231,8 @@ def set_theme():
 def change_setting():
     key = request.form['key']
     value = request.form['value']
-    storage.set_setting(setting, value)
-    return jsonify(success=True, output="%s setting have been set at %s" % (setting, value))
+    storage.set_setting(key, value)
+    return jsonify(success=True, output="%s setting have been set at %s" % (key, value))
 
 
 # Set feedsettings
