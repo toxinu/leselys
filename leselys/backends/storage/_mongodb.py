@@ -28,13 +28,13 @@ class Mongodb(Storage):
         setting = self.db.feedsettings.find_one({'feed_id': feed_id, 'setting_type': setting_type})
         if setting and setting.get('_id'):
             self.db.feedsettings.save({
-                '_id': settings['_id'],
+                '_id': setting['_id'],
                 'feed_id': feed_id,
                 'setting_type': setting_type,
                 'value': value
             })
-        self.db.feedsettings.save({'feed_id': feed_id, 'setting_type': setting_type, 'value': value})
-
+        self.db.feedsettings.save(
+            {'feed_id': feed_id, 'setting_type': setting_type, 'value': value})
 
     def get_feed_setting(self, feed_id, setting_type):
         setting = self.db.feedsettings.find_one({'feed_id': feed_id, 'setting_type': setting_type})
@@ -105,19 +105,22 @@ class Mongodb(Storage):
             feeds[str(feed['_id'])] = feed['title']
 
         if ordering == "unreaded":
-            for story in self.db.stories.find({"read": False}).sort('last_update', -1).skip(start).limit(stop - start):
+            for story in self.db.stories.find(
+                    {"read": False}).sort('last_update', -1).skip(start).limit(stop - start):
                 story['_id'] = str(story['_id'])
                 story['feed_title'] = feeds[story['feed_id']]
                 res.append(story)
             nb_read = len(res)
             if (stop - start) - nb_read <= 0 and stop - start != 0:
                 return res
-            for story in self.db.stories.find({"read": True}).sort('last_update', -1).limit((stop - start) - nb_read):
+            for story in self.db.stories.find(
+                    {"read": True}).sort('last_update', -1).limit((stop - start) - nb_read):
                 story['_id'] = str(story['_id'])
                 story['feed_title'] = feeds[story['feed_id']]
                 res.append(story)
         elif ordering == "published":
-            for story in self.db.stories.find().sort('last_update', -1).skip(start).limit(stop - start):
+            for story in self.db.stories.find().sort(
+                    'last_update', -1).skip(start).limit(stop - start):
                 story['_id'] = str(story['_id'])
                 story['feed_title'] = feeds[story['feed_id']]
                 res.append(story)
@@ -159,7 +162,8 @@ class Mongodb(Storage):
 
     def get_feed_unread(self, feed_id):
         res = []
-        for feed in self.db.stories.find({'feed_id': feed_id, 'read': False}).sort('last_update', -1):
+        for feed in self.db.stories.find(
+                {'feed_id': feed_id, 'read': False}).sort('last_update', -1):
             feed['_id'] = str(feed['_id'])
             res.append(feed)
         return res
@@ -177,17 +181,22 @@ class Mongodb(Storage):
     def get_stories(self, feed_id, ordering, start, stop):
         res = []
         if ordering == "unreaded":
-            for story in self.db.stories.find({"feed_id": feed_id, "read": False}).sort('last_update', -1).skip(start).limit(stop - start):
+            for story in self.db.stories.find(
+                    {"feed_id": feed_id, "read": False}).sort('last_update', -1).skip(
+                    start).limit(stop - start):
                 story['_id'] = str(story['_id'])
                 res.append(story)
             nb_read = len(res)
             if (stop - start) - nb_read <= 0 and stop - start != 0:
                 return res
-            for story in self.db.stories.find({"feed_id": feed_id, "read": True}).sort('last_update', -1).limit((stop-start)-nb_read):
+            for story in self.db.stories.find(
+                    {"feed_id": feed_id, "read": True}).sort(
+                    'last_update', -1).limit((stop - start) - nb_read):
                 story['_id'] = str(story['_id'])
                 res.append(story)
         elif ordering == "published":
-            for story in self.db.stories.find({"feed_id": feed_id}).sort('last_update', -1).skip(start).limit(stop - start):
+            for story in self.db.stories.find(
+                    {"feed_id": feed_id}).sort('last_update', -1).skip(start).limit(stop - start):
                 story['_id'] = str(story['_id'])
                 res.append(story)
 
