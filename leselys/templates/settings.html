@@ -1,0 +1,110 @@
+{% extends "layout.html" %}
+{% block body %}
+<div class="row-fluid">
+  <div class="span2">
+    {% include 'sidebar.html' %}
+  </div>
+  <div id="content" class="span10">
+    <div class="tabbable">
+      <ul class="nav nav-tabs">
+        <li class="active"><a href="#feeds-settings">Feeds</a></li>
+        <li><a href="#settings">Settings</a></li>
+        <li><a href="#help">Help</a></li>
+        <li><a href="#about">About</a></li>
+      </ul>
+
+      <div class="tab-content">
+        <div class="tab-pane active" id="feeds-settings">
+          <h3>Feed settings</h3>
+          <ul>
+          {% if feeds %}
+            {% for feed in feeds %}
+            <li id="{{ feed.id }}-settings">{{ feed.title }} (<a class="muted" onClick="deleteFeed(&quot;{{ feed.id }}&quot;)" href="#">remove</a>) - <a href="{{ feed.url }}">{{ feed.url }}</a></li>
+            {% endfor %}
+            <span class="empty-feed-list" style="display: none"><em>No feeds...</em></span>
+          {% else %}
+            <span class="empty-feed-list"><em>No feeds...</em></span>
+          {% endif %}
+          </ul>
+        </div>
+        <div class="tab-pane" id="settings">
+          <h3>Themes</h3>
+          <ul>
+            {% for theme_name in themes.keys() %}
+                 {% if theme_name.lower() == current_theme_name.lower() %}
+                   <li style="font-weight: bold" >{{ theme_name }}</li>
+                 {% else %}
+                   <li><a href="#" onclick="loadTheme('{{ theme_name|lower }}')">{{ theme_name }}</a></li>
+                 {% endif %}
+            {% endfor %}
+          </ul>
+          <hr>
+          <div id="password-form" class="control-group">
+            <h3>Password</h3>
+
+            <input id="password1" type="password" placeholder="Type your new password…">
+            <input id="password2" type="password" placeholder="Type it again…">
+            <div id="password-status"></div><br /><br />
+            <button id="change-password-submit" type="submit" onclick="changePassword()" class="btn">Change password</button>
+          </div>
+          <hr>
+          <div class="form-inline">
+            <h3>Import</h3>
+              <div style="position:relative;">
+                <a id="OPMLButton" class='btn' href='javascript:;'>
+                  Choose OPML File here
+                  <input id="OPMLFile" type="file" style='position:absolute;z-index:2;top:0;left:0;filter: alpha(opacity=0);-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";opacity:0;background-color:transparent;color:transparent;' name="files[]" size="40" multiple />
+                </a>
+                <output id="list"></output>
+                &nbsp;
+                <span class='label label-info' id="upload-file-info"></span>
+                <br /><br />
+                <button id="OPMLSubmit" type="submit" class="btn btn-info">Upload</button>
+              </div>
+          </div>
+          <hr>
+          <form class="form-inline" method="GET" action="api/export/opml">
+            <h3>Export</h3>
+              <div style="position:relative;">
+                <button type="submit" class="btn btn-info">Download</button>
+              </div>
+          </form>
+        </div>
+        <div class="tab-pane" id="help">
+          <h3>Keyboard</h3>
+          <ul>
+            <li><code>g then h</code> Go to Home view</li>
+            <li><code>g then a</code> Go to all stories</li>
+            <li><code>r</code> Refresh feeds list</li>
+            <li><code>a</code> Add feed popup (ESC to cancel)</li>
+            <li><code>m</code> Toggle read/unread state of selected story</li>
+            <li><code>o</code> Toggle open/close selected story</li>
+            <li><code>j</code> Select and open next story</li>
+            <li><code>k</code> Select and open previous story</li>
+            <li><code>v</code> View full story, using new tab or window</li>
+            <li><code>b</code> View feed's website, using new tab or window</li>
+            <li><code>?</code> Show this help</li>
+          </ul>
+          <h3>More</h3>
+          <p>You can find more help on <a href="https://github.com/socketubs/leselys" target="_blank">Github</a>.</p>
+        </div>
+        <div class="tab-pane" id="about">
+          <h3>About</h3>
+          <h4>Dependencies</h4>
+          <ul>
+          {% for dep, version in app_config.versions.items() %}
+            <li>{{ dep }} ({{ version }})</li>
+          {% endfor %}
+          </ul>
+          <h4>Configuration</h4>
+          <ul>
+            <li>Storage: <em>{{ config.get('storage', 'type') }}</em></li>
+            <li>Session: <em>{{ config.get('session', 'type') }}</em></li>
+          </ul>
+          Please copy paste all this informations if you fill a bug on <a href="https://github.com/socketubs/leselys/issues?state=open" target="_blank">Github</a>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

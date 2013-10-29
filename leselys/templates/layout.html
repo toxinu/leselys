@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Leselys</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- For iPhone 4 with high-resolution Retina display: -->
+  <link rel="apple-touch-icon-precomposed" sizes="114x114" href="{{ url_for('static', filename='img/apple-touch-icon-114x114-precomposed.png') }}">
+  <!-- For first-generation iPad: -->
+  <link rel="apple-touch-icon-precomposed" sizes="72x72" href="{{ url_for('static', filename='img/apple-touch-icon-72x72-precomposed.png') }}">
+  <!-- For non-Retina iPhone, iPod Touch, and Android 2.1+ devices: -->
+  <link rel="apple-touch-icon-precomposed" href="{{ url_for('static', filename='img/apple-touch-icon-precomposed.png') }}">
+
+  <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}" type="image/x-icon"/>
+  <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}" type="image/x-icon"/>
+  <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+  {% if current_theme_url != "bootstrap.min.css" %}
+    <link href="{{ url_for('static', filename='css/' +  current_theme_url ) }}" rel="stylesheet">
+  {% endif %}
+  <link href="{{ url_for('static', filename='css/leselys.min.css') }}" rel="stylesheet">
+  <script src="{{ url_for('static', filename='js/leselys.min.js') }}"></script>
+</head>
+<body>
+  <div id="ribbon" class="navbar hidden">
+    <ul>
+      <li class="mark-all-as-read"><a title="Mark all as read" href="#"><i class="icon-eye-open"></i></a></li>
+      <li class="mark-all-as-unread"><a title="Mark all as unread" href="#"><i class="icon-eye-close"></i></a></li>
+      <li class="divider-vertical"></li>
+      <li class="order-unreaded"><a title="Ordered by unread" href="#"><i class="icon-magic"></i></a></li>
+      <li class="order-published"><a title="Ordered by publication" href="#"><i class="icon-time"></i></a></li>
+    </ul>
+  </div>
+  <div class="container-fluid">
+    {% block body %}{% endblock %}
+  </div>
+</body>
+</html>

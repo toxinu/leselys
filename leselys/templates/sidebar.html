@@ -1,0 +1,48 @@
+<div class="sidebar-nav">
+  <ul id="menu" class="nav nav-list sidenav-affix">
+    <li class="divider"></li>
+    <center>
+      <li id="icons">
+        <a title="Home" href="#" onclick="viewHome()"><i class="icon-home"></i></a>
+        <a title="Settings" href="#" onclick="viewSettings()"><i class="icon-wrench"></i></a>
+        <a title="Add subscription" href="#" onclick="addToggle()"><i class="icon-plus-sign"></i></a>
+        <a title="Logout" href="logout"><i class="icon-off"></i></a>
+      </li>
+    </center>
+    <li class="divider"></li>
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+              <a class="close" data-dismiss="alert" href="#">&times;</a>{{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+    {% if not feeds %}
+      <li style="display:none" class="nav-header feeds-list-title">Feeds</li>
+      <li class="empty-feed-list"><center><em>Add your first feed with the little cross icon.</em></center></li>
+    {% else %}
+      <li class="nav-header feeds-list-title">Feeds</li>
+
+      {% if combined_feed.counter > 0 %}
+        <li class="combined-feed feed unread" id="combined-feed"><a onclick="viewFeed(&quot;combined-feed&quot;)" href="#combined-feed"><span class="feed-title"><i class="icon-inbox"></i>All stories</span> <span class="unread-counter muted">({{ combined_feed.counter }})</span></a></li>
+      {% else %}
+        <li class="combined-feed" id="combined-feed"><a onclick="viewFeed(&quot;combined-feed&quot;)" href="#combined-feed"><span class="feed-title"><i class="icon-inbox"></i>All stories</span> <span style="display: none" class="unread-counter muted">({{ combined_feed.counter }})</span></a></li>
+      {% endif %}
+
+      <!--<li class="stared-feed" id="stared-feed"><a onclick="viewFeed(&quot;stared-feed&quot;)" href="#stared-feed"><span class="feed-title"><i class="icon-star"></i>Stared stories</span></a></li>-->
+      <li class="divider"></li>
+
+      {% for feed in feeds %}
+        {% if feed.counter > 0 %}
+        <li class="feed unread" id="{{ feed.id }}" data-link="{{ feed.link }}"><a onclick="viewFeed(&quot;{{ feed.id }}&quot;)" href="#{{ feed.id }}"><span class="feed-title">{{ feed.title }}</span> <span class="unread-counter muted">({{ feed.counter }})</span></a></li>
+        {% else %}
+        <li class="feed" id="{{ feed.id }}" data-link="{{ feed.link }}"><a onclick="viewFeed(&quot;{{ feed.id }}&quot;)" href="#{{ feed.id }}"><span class="feed-title">{{ feed.title }}</span> <span style="display: none" class="unread-counter muted">({{ feed.counter }})</span></a></li>
+        {% endif %}
+      {% endfor %}
+      <li class="empty-feed-list" style="display: none"><center><em>Add your first feed with the little cross icon.</em></center></li>
+    {% endif %}
+  </ul>
+</div>

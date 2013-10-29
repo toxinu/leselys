@@ -1,0 +1,93 @@
+{% if debug %}
+  {% extends "layout.debug.html" %}
+{% else %}
+  {% extends "layout.html" %}
+{% endif %}
+
+{% block body %}
+<div class="row-fluid">
+  <div class="span2">
+    {% include 'sidebar.html' %}
+  </div>
+  <div id="content" class="span10">
+    <div class="hero-unit welcome">
+      <h1>Hi,</h1>
+        <p>I'm Leselys, your very elegant RSS reader.</p>
+        <p><a href="https://github.com/socketubs/leselys" target="_blank" class="btn btn-primary btn-large">
+      Learn more</a></p>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+    // Feed status
+    var getFeedStatusTemplate = function () {
+      return crel('div', {'id': 'feed-status'},
+          crel('span', {'id': 'feed-start'}, 0),
+          crel('span', {'id': 'feed-stop'}, 50),
+          crel('span', {'id': 'feed-total'})
+        )
+    }
+    // Template add feed
+    var getAddFeedTemplate = function () {
+        return crel('li', {'id':'add', 'class': 'popover'},crel('form',
+            crel('fieldset',
+                crel('center',
+                    crel('input', {'id': 'urlFeed',
+                                   'type': 'text',
+                                   'class': 'input-large mousetrap',
+                                   'placeholder': 'Url...'}),
+                    crel('div',
+                        crel('button', {'type': 'reset',
+                                        'class': 'btn',
+                                        'onclick': 'addToggle()'},
+                             'Cancel'),
+                        crel('button', {'type': 'submit',
+                                        'class': 'btn',
+                                        'onclick': 'addFeed()'},
+                             'Submit'))
+                )
+            )
+        ))
+    }
+    // Template story accordion
+    var getStoryAccordionTemplate = function() {
+        return crel('div', {'class': 'accordion-group'},
+            crel('div', {'class': 'accordion-heading'},
+                crel('a', {'class': 'accordion-toggle story'})
+            ),
+            crel('div', {'class': 'accordion-inner'})
+        )
+    }
+    // Template story
+    var getStoryTemplate = function() {
+        return crel('div', {'class': 'accordion-inner'},
+            crel('p', {'style': 'font-size: 12px;'},
+                crel('span', {'class': 'label story-date'}),
+                ' | ',
+                crel('a', {'class': 'story-link', 'target': '_blank'}, 'External link'),
+                ' | ',
+                crel('a', {'class': 'story-read-toggle'}),
+                crel('br'), crel('br')
+            ),
+            crel('div', {'class': 'story-content'})
+        )
+    }
+    // Mark all confirmation
+    var getMarkAllConfirmationTemplate = function(sentence, feedId, onclick) {
+      return crel('div', {'class': 'confirmation-box well'},
+          crel('div', {'class': 'confirmation-body'}, sentence),
+          crel('div', {'class': 'confirmation-actions'},
+            crel('button', {'type': 'submit',
+                            'class': 'btn',
+                            'onclick': 'TINY.box.hide()'}, 'No'),
+            crel('button', {'type': 'submit',
+                            'class': 'btn btn-warning',
+                            'onclick': onclick}, 'Yes')
+          )
+       )
+    }
+    window.onload = function() {
+      initPage();
+    }
+</script>
+{% endblock %}

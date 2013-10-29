@@ -1,0 +1,67 @@
+{% if debug %}
+  {% extends "layout.debug.html" %}
+{% else %}
+  {% extends "layout.html" %}
+{% endif %}
+
+{% block body %}
+
+<style type="text/css">
+  body {
+    padding-top: 20px;
+    padding-bottom: 40px;
+  }
+
+  /* Custom container */
+  .container-narrow {
+    margin: 0 auto;
+    max-width: 700px;
+  }
+  .container-narrow > hr {
+    margin: 30px 0;
+  }
+
+  /* Main marketing message and sign up button */
+  .jumbotron {
+    margin: 60px 0;
+    text-align: center;
+  }
+  .jumbotron h1 {
+    font-size: 72px;
+    line-height: 1;
+  }
+  .jumbotron .btn {
+    font-size: 21px;
+    padding: 14px 24px;
+  }
+</style>
+
+<div class="container-narrow">
+
+  <div class="masthead">
+    <ul class="nav nav-pills pull-right">
+      <li><a href="https://github.com/socketubs/leselys">Github</a></li>
+      <li><a href="http://socketubs.net">Socketubs</a></li>
+    </ul>
+    <h3 class="muted">Leselys</h3>
+  </div>
+
+  <hr>
+
+  <div class="jumbotron">
+    <h1>Welcome on your Leselys!</h1>
+    <p class="lead">You just have to set a password to start using it. After that, you can import your Google Reader or any other OPML file.</p>
+    <div class="setup">
+      <form id="welcome-form" method="POST" action="api/set_password?jsonify=false" >
+        <div class="control-group">
+          <input style="width: 210px" name="password" id="password" type="password" autofocus="autofocus"/ >
+          <i class="icon-lock field-icon"></i>
+          <label id="password-label" class="field-label" for="password">Password</label>
+        </div>
+        <button class="btn btn-large btn-primary" type="submit">Set this password!</button>
+      </form>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
