@@ -1,0 +1,6 @@
+virtenv
+*.pyc
+*.db
+celerybeat-schedule
+venv
+*.sublime-*

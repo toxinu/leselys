@@ -1,0 +1,99 @@
+#!/usr/bin/env python
+# coding: utf-8
+import sys
+import os
+import leselys
+
+from docopt import docopt
+from leselys import core
+from leselys import worker
+
+doc = """Leselys is a Web Interface for Leselys.
+
+Usage:
+  leselys serve <path> [--host=<address>] [--port=<port>] [--debug]
+  leselys init <path>
+  leselys worker <path>
+  leselys (refresh|retention) <path>
+  leselys -h | --help
+  leselys -v | --version
+
+Options:
+  --host=<address>    Address to bind webserver on [default: 127.0.0.1]
+  --port=<port>       Port to listen for webserver [default: 5000]
+  --debug             Enable Debug mode for Flask [default: false]
+  -h --help           Show help
+  -v --version        Show version
+
+
+ - <path> is configuration file path.
+
+"""
+
+if __name__ == '__main__':
+    args = docopt(doc, version=leselys.__version__)
+
+    config_path = args.get('<path>')
+    if args.get('init'):
+        if not os.path.exists(config_path):
+            with open(args.get('<path>'), 'w') as config:
+                config_default = """[webserver]
+host = 0.0.0.0
+port = 5000
+debug = false
+
+[storage]
+type = mongodb
+host = mongodb://localhost:27017
+database = leselys
+
+[session]
+type = memory
+#type = redis
+#host = localhost
+#port = 6379
+#db = 0
+
+[worker]
+broker = mongodb://localhost:27017/leselys
+# Interval in minutes
+interval = 10
+# Retention in days
+retention = 30
+# No retention will be done before this number of story
+story_before_retention = 100"""
+                config.write(config_default)
+                print('Configuration file created.')
+                sys.exit(0)
+        else:
+            print('Error: "%s" file already exists.' % config_path)
+            sys.exit(1)
+
+
+    core.load_config(config_path, args)
+    core.load_storage()
+    core.load_session()
+    if args.get('serve'):
+        core.run()
+
+    if args.get('worker'):
+      from leselys import worker
+      try:
+        args = [arg for arg in sys.argv if arg != config_path]
+        worker.run(config_path, args)
+      except KeyboardInterrupt:
+        print('Stopping...')
+        sys.exit(1)
+      sys.exit(0)
+
+    if args.get('refresh'):
+      from leselys.helpers import refresh_all
+      refresh_all()
+      sys.exit(0)
+
+    if args.get('retention'):
+      from leselys.helpers import run_retention
+      run_retention(
+        int(core.config.get('worker', 'retention')),
+        int(core.config.get('worker', 'story_before_retention')))
+      sys.exit(0)
