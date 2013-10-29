@@ -1,0 +1,9 @@
+[
+  {
+    "model": "reader.folder",
+    "pk": 1,
+    "fields": {
+      "name": "No folder"
+    }
+  }
+]

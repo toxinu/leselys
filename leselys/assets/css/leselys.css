@@ -1,0 +1,56 @@
+form.add-feed {
+    width: 300px;
+}
+input.add-feed {
+    width: 96%;
+    margin: 2px 5px 10px 6px;
+}
+input.btn.add-feed {
+    margin: 0 0 10px 6px;
+    width: 96%;
+    height: 36px;
+    font-size: 13px;
+}
+
+ul.folders {
+    list-style: none;
+}
+
+.folder-collapsed {
+    display: none;
+}
+.folder-expanded {
+    display: block;
+}
+
+a i.glyphicon {
+    text-decoration: none;
+    color: black;
+}
+a i.glyphicon:active {
+    color: black;
+}
+ a
+    {
+        outline-style:none;
+    }
+a:focus, a:active {
+    outline: 0;
+}
+
+hr.small-line {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+ul.feed-list {
+    list-style: none;
+}
+
+ul.feed-list li {
+    margin-left: -22px;
+}
+
+.story-readed {
+    color: rgb(153, 153, 153) !important;
+}

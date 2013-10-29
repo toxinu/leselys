@@ -1,0 +1,59 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leselys</title>
+    <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet">
+    <link href="{% static "css/font-awesome.min.css" %}" rel="stylesheet">
+    <link href="{% static "css/leselys.css" %}" rel="stylesheet">
+</head>
+<body>
+    <div class="navbar navbar-default navbar-static-top">
+      <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" onclick="contentPane.renderWelcomePage()" href="#">Leselys</a>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li class="active"><a onclick="contentPane.renderWelcomePage()" href="/#">Home</a></li>
+                <li><a onclick="contentPane.renderSettingsPage()" href="#/settings">Settings</a></li>
+                <li><a href="#/about">About</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Add feed <strong class="caret"></strong></a>
+                    <ul class="dropdown-menu">
+                        <form class="form-inline add-feed" role="form">
+                            {% csrf_token %}
+                            <input id="add-feed-input" class="form-control add-feed" onclick="if(event.stopPropagation){event.stopPropagation();}event.cancelBubble=true;" type="url">
+                            <input class="btn btn-success add-feed" onclick="this.parentNode.parentNode.parentNode.className = 'dropdown'; sideBar.addFeed()" value="Add it!">
+                        </form>
+                    </ul>
+                </li>
+                <li class="divider-vertical"></li>
+                <li><a href="/#/logout">Logout</a></li>
+            </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div id="sidebar" class="col-md-4" style="display: none">Feed list</div>
+            <div id="contentpane" class="col-md-8" style="display: none">Story list</div>
+        </div>
+    </div>
+    <script src="{% static "js/angular.min.js" %}"></script>
+    <script src="{% static "js/angular-route.min.js" %}"></script>
+    <script src="{% static "js/angular-resource.min.js" %}"></script>
+    <script src="{% static "js/angular-cookies.min.js" %}"></script>
+    <script src="{% static "js/ui-bootstrap-tpls.min.js" %}"></script>
+</body>
+</html>
