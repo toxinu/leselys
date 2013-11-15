@@ -1,0 +1,23 @@
+<div class="row">
+    <div class="col-md-4">
+        <h2>Feeds</h2>
+        <ul>
+            <li ng-repeat="folder in folders">
+                {{ folder.name }}
+                <ul>
+                    <li ng-repeat="feed in feeds|filter: feed.folder = folder.id">
+                        <a href="#/read/{{ feed.id }}"/>{{ feed.title }}</a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <div class="col-md-8">
+        <h2>{{ selectedFeed.title }}</h2>
+        <ul>
+            <li ng-repeat="story in stories">
+                {{ story.title }}
+            </li>
+        </ul>
+    </div>
+</div>

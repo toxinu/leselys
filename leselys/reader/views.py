@@ -5,35 +5,53 @@ from rest_framework.generics import ListCreateAPIView
 from rest_framework.generics import RetrieveUpdateAPIView
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 
-from .mixins import ListCreateAPIViewMixin
-
 from .models import Story
 from .models import Feed
 from .models import Folder
 from .serializers import FeedSerializer
+from .serializers import StorySerializer
+from .serializers import StoryDetailSerializer
 
 
-class FeedListView(ListCreateAPIViewMixin, ListCreateAPIView):
+class FeedListAPIView(ListCreateAPIView):
     model = Feed
     serializer_class = FeedSerializer
 
 
-class FeedDetailView(CreateAPIView, RetrieveUpdateDestroyAPIView):
+class FeedDetailAPIView(CreateAPIView, RetrieveUpdateDestroyAPIView):
     model = Feed
+    serializer_class = FeedSerializer
 
 
-class StoryListView(ListAPIView):
+class StoryListAPIView(ListAPIView):
     model = Story
+    serializer_class = StorySerializer
+
+    def get_queryset(self):
+        qs = Story.objects.all().defer('description')
+
+        feed = self.request.QUERY_PARAMS.get('feed')
+        if feed:
+            qs = qs.filter(feed=feed)
+
+        readed = self.request.QUERY_PARAMS.get('readed')
+        if readed in ['', 'true', 'True', '1', 'yes']:
+            qs = qs.filter(readed=True)
+        elif readed in ['false', '0', 'no']:
+            qs = qs.filter(readed=False)
+
+        return qs
 
 
-class StoryDetailView(RetrieveUpdateAPIView):
+class StoryDetailAPIView(RetrieveUpdateAPIView):
     model = Story
+    serializer_class = StoryDetailSerializer
 
 
-class FolderListView(ListCreateAPIViewMixin, ListCreateAPIView):
+class FolderListAPIView(ListCreateAPIView):
     model = Folder
     paginate_by = None
 
 
-class FolderDetailView(RetrieveUpdateDestroyAPIView):
+class FolderDetailAPIView(RetrieveUpdateDestroyAPIView):
     model = Folder

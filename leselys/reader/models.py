@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
+
 from django.db import models
+
 from .helpers import get_feed_urls
 
 
@@ -15,9 +17,11 @@ class Story(models.Model):
     guid = models.CharField(max_length=300)
     title = models.CharField(max_length=300)
     description = models.TextField()
+
     published = models.DateTimeField(default=datetime.now, auto_now_add=True)
     updated = models.DateTimeField(default=datetime.now, auto_now_add=True)
     readed = models.BooleanField(default=False)
+
     feed = models.ForeignKey('Feed')
 
     class Meta:
@@ -41,15 +45,20 @@ class Feed(models.Model):
 
     title = models.CharField(max_length=300, blank=True)
     custom_title = models.CharField(max_length=300, blank=True)
+
     url = models.URLField(unique=True)
-    updated = models.DateTimeField(default=datetime.now, auto_now_add=True)
-    ordering = models.SmallIntegerField(
-        choices=ORDERING_CHOICES, default=DEFAULT_ORDERING, blank=True)
     website_url = models.URLField(blank=True)
     favicon_url = models.URLField(blank=True)
+
+    ordering = models.SmallIntegerField(
+        choices=ORDERING_CHOICES, default=DEFAULT_ORDERING, blank=True)
+    folder = models.ForeignKey('Folder', default=DEFAULT_FOLDER)
+
+    added = models.DateTimeField(default=datetime.now, auto_now_add=True)
+    updated = models.DateTimeField(null=True)
+
     in_error = models.BooleanField(default=True)
     error = models.CharField(blank=True, max_length=1000, default=DEFAULT_ERROR_MSG)
-    folder = models.ForeignKey('Folder', default=DEFAULT_FOLDER)
 
     def __unicode__(self):
         return self.title or self.url

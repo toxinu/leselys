@@ -34,13 +34,14 @@ class Migration(SchemaMigration):
             ('title', self.gf('django.db.models.fields.CharField')(max_length=300, blank=True)),
             ('custom_title', self.gf('django.db.models.fields.CharField')(max_length=300, blank=True)),
             ('url', self.gf('django.db.models.fields.URLField')(unique=True, max_length=200)),
-            ('updated', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, auto_now_add=True, blank=True)),
-            ('ordering', self.gf('django.db.models.fields.SmallIntegerField')(default=0)),
             ('website_url', self.gf('django.db.models.fields.URLField')(max_length=200, blank=True)),
             ('favicon_url', self.gf('django.db.models.fields.URLField')(max_length=200, blank=True)),
+            ('ordering', self.gf('django.db.models.fields.SmallIntegerField')(default=0, blank=True)),
+            ('folder', self.gf('django.db.models.fields.related.ForeignKey')(default=1, to=orm['reader.Folder'])),
+            ('added', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, auto_now_add=True, blank=True)),
+            ('updated', self.gf('django.db.models.fields.DateTimeField')(null=True)),
             ('in_error', self.gf('django.db.models.fields.BooleanField')(default=True)),
             ('error', self.gf('django.db.models.fields.CharField')(default=u'This feed has never been fetched', max_length=1000, blank=True)),
-            ('folder', self.gf('django.db.models.fields.related.ForeignKey')(default=1, to=orm['reader.Folder'])),
         ))
         db.send_create_signal(u'reader', ['Feed'])
 
@@ -59,15 +60,16 @@ class Migration(SchemaMigration):
     models = {
         u'reader.feed': {
             'Meta': {'object_name': 'Feed'},
+            'added': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'auto_now_add': 'True', 'blank': 'True'}),
             'custom_title': ('django.db.models.fields.CharField', [], {'max_length': '300', 'blank': 'True'}),
             'error': ('django.db.models.fields.CharField', [], {'default': "u'This feed has never been fetched'", 'max_length': '1000', 'blank': 'True'}),
             'favicon_url': ('django.db.models.fields.URLField', [], {'max_length': '200', 'blank': 'True'}),
             'folder': ('django.db.models.fields.related.ForeignKey', [], {'default': '1', 'to': u"orm['reader.Folder']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'in_error': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'ordering': ('django.db.models.fields.SmallIntegerField', [], {'default': '0'}),
+            'ordering': ('django.db.models.fields.SmallIntegerField', [], {'default': '0', 'blank': 'True'}),
             'title': ('django.db.models.fields.CharField', [], {'max_length': '300', 'blank': 'True'}),
-            'updated': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'auto_now_add': 'True', 'blank': 'True'}),
+            'updated': ('django.db.models.fields.DateTimeField', [], {'null': 'True'}),
             'url': ('django.db.models.fields.URLField', [], {'unique': 'True', 'max_length': '200'}),
             'website_url': ('django.db.models.fields.URLField', [], {'max_length': '200', 'blank': 'True'})
         },

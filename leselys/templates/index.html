@@ -1,6 +1,6 @@
 {% load staticfiles %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="leselysApp">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +8,9 @@
     <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet">
     <link href="{% static "css/font-awesome.min.css" %}" rel="stylesheet">
     <link href="{% static "css/leselys.css" %}" rel="stylesheet">
+    <script type="text/javascript">
+        var static_url = "{% static "." %}"
+    </script>
 </head>
 <body>
     <div class="navbar navbar-default navbar-static-top">
@@ -18,12 +21,12 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" onclick="contentPane.renderWelcomePage()" href="#">Leselys</a>
+            <a class="navbar-brand" href="#">Leselys</a>
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li class="active"><a onclick="contentPane.renderWelcomePage()" href="/#">Home</a></li>
-                <li><a onclick="contentPane.renderSettingsPage()" href="#/settings">Settings</a></li>
+                <li class="active"><a href="/#">Home</a></li>
+                <li><a href="#/settings">Settings</a></li>
                 <li><a href="#/about">About</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
@@ -45,15 +48,15 @@
     </div>
 
     <div class="container">
-        <div class="row">
-            <div id="sidebar" class="col-md-4" style="display: none">Feed list</div>
-            <div id="contentpane" class="col-md-8" style="display: none">Story list</div>
-        </div>
+        <div ng-view>
     </div>
-    <script src="{% static "js/angular.min.js" %}"></script>
-    <script src="{% static "js/angular-route.min.js" %}"></script>
-    <script src="{% static "js/angular-resource.min.js" %}"></script>
-    <script src="{% static "js/angular-cookies.min.js" %}"></script>
-    <script src="{% static "js/ui-bootstrap-tpls.min.js" %}"></script>
+
+    <script src="{% static "js/lib/angular.min.js" %}"></script>
+    <script src="{% static "js/lib/angular-route.min.js" %}"></script>
+    <script src="{% static "js/lib/angular-resource.min.js" %}"></script>
+    <script src="{% static "js/lib/angular-sanitize.min.js" %}"></script>
+    <script src="{% static "js/lib/ui-bootstrap-tpls-0.6.0.min.js" %}"></script>
+    <script src="{% static "js/app.js" %}"></script>
+    <script src="{% static "js/controllers.js" %}"></script>
 </body>
 </html>

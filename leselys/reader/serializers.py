@@ -2,14 +2,23 @@
 from rest_framework import serializers
 
 from .models import Feed
+from .models import Story
 
 
 class FeedSerializer(serializers.ModelSerializer):
-    folder = serializers.PrimaryKeyRelatedField(required=False)
-
     class Meta:
         model = Feed
-        fields = (
-            'title', 'custom_title', 'url', 'ordering',
-            'website_url', 'favicon_url', 'folder')
         read_only_fields = ('updated', 'in_error', 'error')
+
+
+class StorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Story
+        fields = ('id', 'title', 'published', 'updated', 'readed', 'feed')
+
+
+class StoryDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Story
+        read_only_fields = (
+            'title', 'guid', 'description', 'published', 'updated', 'feed')
