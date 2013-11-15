@@ -40,7 +40,7 @@ leselysServices.service('Reader', ['$http', function($http) {
 		});
     };
     Reader.getStory = function(storyId, callback) {
-      	$http.get('api/story/' + storyId).success(function(data) {
+      	$http.get('api/story/' + storyId, {cache:true}).success(function(data) {
 			callback(data);
 		});
     }
