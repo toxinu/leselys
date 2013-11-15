@@ -1,10 +1,10 @@
 <div class="row">
     <div class="col-md-4">
         <h2>Feeds</h2>
-        <ul>
+        <ul class="list-unstyled">
             <li ng-repeat="folder in folders">
                 {{ folder.name }}
-                <ul class="list-unstyled">
+                <ul>
                     <li ng-repeat="feed in feeds|filter: feed.folder = folder.id">
                         <a ng-class="{strong:selectedFeed.id == feed.id}" href="#/read/{{ feed.id }}"/>
                             {{ feed.title }} <span class="badge">{{ feed.unread_counter }}</span>

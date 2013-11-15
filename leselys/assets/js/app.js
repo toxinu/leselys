@@ -1,5 +1,5 @@
 'use strict';
-var leselysApp = angular.module('leselysApp', ['leselysControllers', 'ngRoute', 'ngSanitize', 'ui.bootstrap']);
+var leselysApp = angular.module('leselysApp', ['leselysControllers', 'leselysServices', 'ngRoute', 'ngSanitize', 'ui.bootstrap']);
 
 leselysApp.config(['$routeProvider',
 		function($routeProvider) {
