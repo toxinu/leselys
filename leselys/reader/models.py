@@ -55,7 +55,7 @@ class Feed(models.Model):
     folder = models.ForeignKey('Folder', default=DEFAULT_FOLDER)
 
     added = models.DateTimeField(default=datetime.now, auto_now_add=True)
-    updated = models.DateTimeField(null=True)
+    updated = models.DateTimeField(null=True, blank=True)
 
     in_error = models.BooleanField(default=True)
     error = models.CharField(blank=True, max_length=1000, default=DEFAULT_ERROR_MSG)
@@ -68,7 +68,7 @@ class Feed(models.Model):
         return self.error != Feed.DEFAULT_ERROR_MSG
 
     @property
-    def counter(self):
+    def unread_counter(self):
         return Story.objects.filter(feed=self.id, readed=False).count()
 
     def initialize(self):

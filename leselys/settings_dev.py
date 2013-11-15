@@ -11,11 +11,11 @@ DATABASES = {
     }
 }
 SECRET_KEY = "f_!db_*)(1usnm8u9)q3goiuwrngg*r^h1kqd3l)p)9lxhyy4s"
-INSTALLED_APPS += ('debug_toolbar',)
+# INSTALLED_APPS += ('debug_toolbar',)
 
-MIDDLEWARE_CLASSES += (
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
-)
+# MIDDLEWARE_CLASSES += (
+#     'debug_toolbar.middleware.DebugToolbarMiddleware',
+# )
 
 DEBUG_TOOLBAR_PANELS = (
     'debug_toolbar.panels.version.VersionDebugPanel',

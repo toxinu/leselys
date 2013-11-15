@@ -54,3 +54,7 @@ ul.feed-list li {
 .story-readed {
     color: rgb(153, 153, 153) !important;
 }
+
+.strong {
+    font-weight: bold;
+}

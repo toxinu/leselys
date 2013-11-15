@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+
 from rest_framework.generics import ListAPIView
 from rest_framework.generics import CreateAPIView
 from rest_framework.generics import ListCreateAPIView
@@ -13,19 +16,30 @@ from .serializers import StorySerializer
 from .serializers import StoryDetailSerializer
 
 
-class FeedListAPIView(ListCreateAPIView):
+class CacheMixin(object):
+    cache_timeout = None
+
+    @method_decorator(cache_page(cache_timeout))
+    def dispatch(self, *args, **kwargs):
+        return super(CacheMixin, self).dispatch(*args, **kwargs)
+
+
+class FeedListAPIView(ListCreateAPIView, CacheMixin):
     model = Feed
     serializer_class = FeedSerializer
+    cache_timeout = 60 * 60
 
 
-class FeedDetailAPIView(CreateAPIView, RetrieveUpdateDestroyAPIView):
+class FeedDetailAPIView(CreateAPIView, RetrieveUpdateDestroyAPIView, CacheMixin):
     model = Feed
     serializer_class = FeedSerializer
+    cache_timeout = 60 * 60
 
 
-class StoryListAPIView(ListAPIView):
+class StoryListAPIView(ListAPIView, CacheMixin):
     model = Story
     serializer_class = StorySerializer
+    cache_timeout = 60 * 60
 
     def get_queryset(self):
         qs = Story.objects.all().defer('description')
@@ -43,15 +57,18 @@ class StoryListAPIView(ListAPIView):
         return qs
 
 
-class StoryDetailAPIView(RetrieveUpdateAPIView):
+class StoryDetailAPIView(RetrieveUpdateAPIView, CacheMixin):
     model = Story
     serializer_class = StoryDetailSerializer
+    cache_timeout = 60 * 60
 
 
-class FolderListAPIView(ListCreateAPIView):
+class FolderListAPIView(ListCreateAPIView, CacheMixin):
     model = Folder
     paginate_by = None
+    cache_timeout = 60 * 60
 
 
-class FolderDetailAPIView(RetrieveUpdateDestroyAPIView):
+class FolderDetailAPIView(RetrieveUpdateDestroyAPIView, CacheMixin):
     model = Folder
+    cache_timeout = 60 * 60

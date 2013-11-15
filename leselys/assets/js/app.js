@@ -1,5 +1,5 @@
 'use strict';
-var leselysApp = angular.module('leselysApp', ['leselysControllers', 'ngRoute', 'ui.bootstrap']);
+var leselysApp = angular.module('leselysApp', ['leselysControllers', 'ngRoute', 'ngSanitize', 'ui.bootstrap']);
 
 leselysApp.config(['$routeProvider',
 		function($routeProvider) {
@@ -25,3 +25,9 @@ leselysApp.config(['$routeProvider',
 				});
 		}
 	]);
+
+leselysApp.config(['$httpProvider', function($httpProvider) {
+    	$httpProvider.defaults.xsrfCookieName = 'csrftoken';
+    	$httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
+	}
+]);
