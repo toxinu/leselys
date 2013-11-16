@@ -12,6 +12,9 @@
                             {{ feed.title }} <span ng-show="feed.unread_counter" class="badge pull-right">{{ feed.unread_counter }}</span>
                         </a>
                     </li>
+                    <span ng-show="(feeds|filter: feed.folder = folder.id).length == 0">
+                        <em>Empty folder...</em>
+                    </span>
                 </ul>
             </li>
         </ul>
