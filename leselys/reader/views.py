@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from django.http import HttpResponseBadRequest
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 
@@ -76,3 +77,12 @@ class FolderListAPIView(ListCreateAPIView, CacheMixin):
 class FolderDetailAPIView(RetrieveUpdateDestroyAPIView, CacheMixin):
     model = Folder
     cache_timeout = 60 * 60
+
+    def delete(self, request, *args, **kwargs):
+        folder = self.get_object()
+        if folder:
+            if folder.feed_set.count() > 0:
+                return HttpResponseBadRequest("Still feeds in this folder.")
+            if Folder.objects.all().count() <= 1:
+                return HttpResponseBadRequest("Can't remove last folder.")
+        return super(FolderDetailAPIView, self).delete(request, *args, **kwargs)
