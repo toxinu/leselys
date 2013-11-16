@@ -11,7 +11,7 @@ class Migration(SchemaMigration):
         # Adding model 'Folder'
         db.create_table(u'reader_folder', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=100)),
+            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=100)),
         ))
         db.send_create_signal(u'reader', ['Folder'])
 
@@ -39,7 +39,7 @@ class Migration(SchemaMigration):
             ('ordering', self.gf('django.db.models.fields.SmallIntegerField')(default=0, blank=True)),
             ('folder', self.gf('django.db.models.fields.related.ForeignKey')(default=1, to=orm['reader.Folder'])),
             ('added', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, auto_now_add=True, blank=True)),
-            ('updated', self.gf('django.db.models.fields.DateTimeField')(null=True)),
+            ('updated', self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True)),
             ('in_error', self.gf('django.db.models.fields.BooleanField')(default=True)),
             ('error', self.gf('django.db.models.fields.CharField')(default=u'This feed has never been fetched', max_length=1000, blank=True)),
         ))
@@ -69,14 +69,14 @@ class Migration(SchemaMigration):
             'in_error': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'ordering': ('django.db.models.fields.SmallIntegerField', [], {'default': '0', 'blank': 'True'}),
             'title': ('django.db.models.fields.CharField', [], {'max_length': '300', 'blank': 'True'}),
-            'updated': ('django.db.models.fields.DateTimeField', [], {'null': 'True'}),
+            'updated': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
             'url': ('django.db.models.fields.URLField', [], {'unique': 'True', 'max_length': '200'}),
             'website_url': ('django.db.models.fields.URLField', [], {'max_length': '200', 'blank': 'True'})
         },
         u'reader.folder': {
             'Meta': {'object_name': 'Folder'},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
+            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '100'})
         },
         u'reader.story': {
             'Meta': {'object_name': 'Story'},
