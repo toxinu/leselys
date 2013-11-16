@@ -49,8 +49,14 @@ leselysControllers.controller('readerCtrl', ['$scope', '$http', '$routeParams', 
 
 
 leselysControllers.controller('settingsCtrl', ['$scope', 'Reader', function($scope, Reader) {
+	$scope.addFolder = function(folderName) {
+		Reader.addFolder(folderName);
+	};
 	$scope.deleteFeed = function(feed) {
 		Reader.deleteFeed(feed.id);
+	};
+	$scope.deleteFolder = function(folder) {
+		Reader.deleteFolder(folder.id);
 	};
 
 	Reader.getFolders(function(folders) {
