@@ -4,12 +4,26 @@
     <tabset>
         <tab heading="Folders">
             <br />
+            <form class="form-inline pull-right" role="form">
+                <div class="form-group">
+                    <input type="text" class="form-control" ng-model="folder.name" placeholder="Folder name">
+                </div>
+                <button type="submit" class="btn btn-success" ng-click="addFolder(folder.name)">
+                    Add new folder
+                </button>
+            </form>
+            <div class="clearfix"></div>
+            <hr>
             <ul class="list-group">
                 <li class="list-group-item" ng-repeat="folder in folders">
                     {{ folder.name }}
-                    <span class="pull-right">Delete | Rename</span>
+                    <span class="pull-right">
+                        <button type="button" class="btn btn-xs btn-danger" ng-click="deleteFolder(folder)">Delete</button>
+                        <button type="button" class="btn btn-xs btn-warning">Rename</button>
+                    </span>
                 </li>
             </ul>
+            <div class="well well-lg" ng-show="folders.length == 0">No folders...</div>
         </tab>
         <tab heading="Feeds">
             <br />
@@ -19,6 +33,7 @@
                     <a ng-click="feed.settingsOpen = !feed.settingsOpen" href="">
                         <strong>{{ feed.title }}</strong>
                     </a>
+                    <button type="button" class="pull-right btn btn-xs btn-danger" ng-click="deleteFeed(feed)">Delete</button>
                     <div ng-show="feed.settingsOpen">
                         <hr>
                         <div class="alert alert-warning" ng-show="feed.in_error">
@@ -42,7 +57,6 @@
                             <dt>Updated</dt>
                             <dd>{{ feed.updated | date:'medium'}}</dd>
                         </dl>
-                        <button type="button" class="btn btn-danger" ng-click="deleteFeed(feed)">Delete</button>
                     </div>
                 </li>
             </ul>
