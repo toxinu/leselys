@@ -16,10 +16,7 @@
                 <li class="list-group-item" ng-repeat="folder in folders">
                     {{ folder.name }}
                     <span class="pull-right">
-                        <button type="button" class="btn btn-xs btn-danger" ng-click="deleteFolder(folder)">Delete</button>
-                        <button type="button" class="btn btn-xs btn-warning" ng-click="folder.settingsOpen = !folder.settingsOpen">
-                            Rename
-                        </button>
+                        <button type="button" class="btn btn-xs btn-success" ng-click="folder.settingsOpen = !folder.settingsOpen">Edit</button>
                     </span>
                     <div ng-show="folder.settingsOpen">
                         <hr>
@@ -31,6 +28,9 @@
                                 </button>
                             </span>
                         </div>
+                        <hr>
+                        <button type="button" class="btn btn-xs btn-danger pull-right" ng-click="deleteFolder(folder)">Delete</button>
+                        <div class="clearfix"></div>
                     </div>
                 </li>
             </ul>
@@ -68,7 +68,8 @@
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">Folder</label>
                                 <div class="col-sm-6">
-                                    <p class="form-control-static">{{ feed.folder_text }}</p>
+                                    <select class="form-control" ng-model="feed.folder" ng-options="folder.id as folder.name for folder in folders">
+                                    </select>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -92,7 +93,8 @@
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">Ordering</label>
                                 <div class="col-sm-6">
-                                    <p class="form-control-static">{{ feed.ordering_text }}</p>
+                                    <select class="form-control" ng-model="feed.ordering" ng-options="ordering.id as ordering.name for ordering in ordering">
+                                    </select>
                                 </div>
                             </div>
                             <div class="form-group">
