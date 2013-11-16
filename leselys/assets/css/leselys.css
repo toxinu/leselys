@@ -58,3 +58,7 @@ ul.feed-list li {
 .strong {
     font-weight: bold;
 }
+
+ul.nav.nav-tabs li a {
+    cursor: pointer;
+}
