@@ -2,6 +2,7 @@
 from django.conf.urls import patterns
 from django.views.generic import TemplateView
 
+from .views import OrderingAPIView
 from .views import FeedListAPIView
 from .views import FeedDetailAPIView
 from .views import StoryListAPIView
@@ -17,5 +18,6 @@ urlpatterns = patterns(
     (r'^api/story/(?P<pk>\d+)', StoryDetailAPIView.as_view()),
     (r'^api/story', StoryListAPIView.as_view()),
     (r'^api/folder/(?P<pk>\d+)', FolderDetailAPIView.as_view()),
-    (r'^api/folder', FolderListAPIView.as_view())
+    (r'^api/folder', FolderListAPIView.as_view()),
+    (r'^api/ordering', OrderingAPIView.as_view())
 )

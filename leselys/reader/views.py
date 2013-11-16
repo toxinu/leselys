@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+import json
+
+from django.views.generic import View
+from django.http import HttpResponse
 from django.http import HttpResponseBadRequest
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
@@ -9,8 +13,8 @@ from rest_framework.generics import ListCreateAPIView
 from rest_framework.generics import RetrieveUpdateAPIView
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 
-from .models import Story
 from .models import Feed
+from .models import Story
 from .models import Folder
 from .serializers import FeedSerializer
 from .serializers import StoryListSerializer
@@ -23,6 +27,14 @@ class CacheMixin(object):
     @method_decorator(cache_page(cache_timeout))
     def dispatch(self, *args, **kwargs):
         return super(CacheMixin, self).dispatch(*args, **kwargs)
+
+
+class OrderingAPIView(View):
+    def get(self, request, *args, **kwargs):
+        response_json = []
+        for ordering in Feed.ORDERING_CHOICES:
+            response_json.append({'id': ordering[0], 'name': ordering[1]})
+        return HttpResponse(json.dumps(response_json))
 
 
 class FeedListAPIView(ListCreateAPIView, CacheMixin):
