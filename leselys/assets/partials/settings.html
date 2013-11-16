@@ -4,14 +4,12 @@
     <tabset>
         <tab heading="Folders">
             <br />
-            <form class="form-inline pull-right" role="form">
-                <div class="form-group">
-                    <input type="text" class="form-control" ng-model="folder.name" placeholder="Folder name">
-                </div>
-                <button type="submit" class="btn btn-success" ng-click="addFolder(folder.name)">
-                    Add new folder
-                </button>
-            </form>
+            <div class="input-group pull-right">
+                <input type="text" class="form-control" placeholder="New folder name" ng-model="folder.name">
+                <span class="input-group-btn">
+                    <button class="btn btn-success" type="button" ng-click="addFolder(folder.name)">Add</button>
+                </span>
+            </div>
             <div class="clearfix"></div>
             <hr>
             <ul class="list-group">
@@ -19,8 +17,21 @@
                     {{ folder.name }}
                     <span class="pull-right">
                         <button type="button" class="btn btn-xs btn-danger" ng-click="deleteFolder(folder)">Delete</button>
-                        <button type="button" class="btn btn-xs btn-warning">Rename</button>
+                        <button type="button" class="btn btn-xs btn-warning" ng-click="folder.settingsOpen = !folder.settingsOpen">
+                            Rename
+                        </button>
                     </span>
+                    <div ng-show="folder.settingsOpen">
+                        <hr>
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="New folder name" ng-model="newName">
+                            <span class="input-group-btn">
+                                <button class="btn btn-success" type="button" ng-click="renameFolder(folder, newName)">
+                                    Save
+                                </button>
+                            </span>
+                        </div>
+                    </div>
                 </li>
             </ul>
             <div class="well well-lg" ng-show="folders.length == 0">No folders...</div>
@@ -29,39 +40,88 @@
             <br />
             <ul class="list-group">
                 <li class="list-group-item" ng-repeat="feed in feeds">
-                    <img ng-src="{{ feed.favicon_url }}">
-                    <a ng-click="feed.settingsOpen = !feed.settingsOpen" href="">
-                        <strong>{{ feed.title }}</strong>
-                    </a>
-                    <button type="button" class="pull-right btn btn-xs btn-danger" ng-click="deleteFeed(feed)">Delete</button>
+                    <img ng-src="{{ feed.favicon_url }}"> {{ feed.title }}
+                    <span class="pull-right">
+
+                        <button type="button" class="btn btn-xs btn-success" ng-click="feed.settingsOpen = !feed.settingsOpen">
+                            Edit
+                        </button>
+                    </span>
                     <div ng-show="feed.settingsOpen">
                         <hr>
                         <div class="alert alert-warning" ng-show="feed.in_error">
                             {{ feed.error }} at {{ feed.updated | date:'medium' }}
                         </div>
-                        <dl class="dl-horizontal">
-                            <dt>Title</dt>
-                            <dd>{{ feed.custom_title || feed.title }}</dd>
-                            <dt>Folder</dt>
-                            <dd>{{ feed.folder_text }}</dd>
-                            <dt>Feed URL</dt>
-                            <dd><a href="{{ feed.url }}" target="_blank">{{ feed.url }}</a></dd>
-                            <dt>Website URL</dt>
-                            <dd><a href="{{ feed.url }}" target="_blank">{{ feed.website_url }}</a></dd>
-                            <dt>Favicon URL</dt>
-                            <dd><img ng-src="{{ feed.favicon_url }}"> <a href="{{ feed.favicon_url }}" target="_blank">{{ feed.favicon_url }}</a></dd>
-                            <dt>Ordering</dt>
-                            <dd>{{ feed.ordering_text }}</dd>
-                            <dt>Added</dt>
-                            <dd>{{ feed.added | date:'medium' }}</dd>
-                            <dt>Updated</dt>
-                            <dd>{{ feed.updated | date:'medium'}}</dd>
-                        </dl>
+                        <form class="form-horizontal" role="form" ng-submit="updateFeed(feed)">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Title</label>
+                                <div class="col-sm-6">
+                                    <p class="form-control-static">{{ feed.title }}</p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Custom title</label>
+                                <div class="col-sm-6">
+                                    <input class="form-control" value="{{ feed.custom_title }}" ng-model="feed.custom_title">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Folder</label>
+                                <div class="col-sm-6">
+                                    <p class="form-control-static">{{ feed.folder_text }}</p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Feed URL</label>
+                                <div class="col-sm-6">
+                                    <input class="form-control" value="{{ feed.url }}" ng-model="feed.url">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Website URL</label>
+                                <div class="col-sm-6">
+                                    <input class="form-control" value="{{ feed.website_url }}" ng-model="feed.website_url">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Favicon URL</label>
+                                <div class="col-sm-6">
+                                    <input class="form-control" value="{{ feed.favicon_url }}" ng-model="feed.favicon_url">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Ordering</label>
+                                <div class="col-sm-6">
+                                    <p class="form-control-static">{{ feed.ordering_text }}</p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Added</label>
+                                <div class="col-sm-6">
+                                    <p class="form-control-static">{{ feed.added | date:'medium' }}</p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Updated</label>
+                                <div class="col-sm-6">
+                                    <p class="form-control-static">{{ feed.updated | date:'medium' }}</p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <button type="submit" class="btn btn-success">Save</button>
+                                </div>
+                            </div>
+                        </form>
+                        <hr>
+                        <button type="button" class="btn btn-xs btn-danger pull-right" ng-click="deleteFeed(feed)">
+                            Delete
+                        </button>
+                        <div class="clearfix"></div>
                     </div>
                 </li>
             </ul>
             <div class="well well-lg" ng-show="feeds.length == 0">No feeds...</div>
         </tab>
-        <tab heading="Options">Static content</tab>
     </tabset>
 </div>
