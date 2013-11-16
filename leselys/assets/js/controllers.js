@@ -50,13 +50,24 @@ leselysControllers.controller('readerCtrl', ['$scope', '$http', '$routeParams', 
 
 leselysControllers.controller('settingsCtrl', ['$scope', 'Reader', function($scope, Reader) {
 	$scope.addFolder = function(folderName) {
-		Reader.addFolder(folderName);
+		Reader.addFolder(folderName, function() {
+			$scope.folder.name = "";
+		});
+	};
+	$scope.renameFolder = function(folder, newName) {
+		Reader.renameFolder(folder, newName, function() {
+			folder.settingsOpen = false;
+			$scope.newName = "";
+		});
 	};
 	$scope.deleteFeed = function(feed) {
 		Reader.deleteFeed(feed.id);
 	};
 	$scope.deleteFolder = function(folder) {
 		Reader.deleteFolder(folder.id);
+	};
+	$scope.updateFeed = function(feed) {
+		Reader.updateFeed(feed);
 	};
 
 	Reader.getFolders(function(folders) {

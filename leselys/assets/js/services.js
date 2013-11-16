@@ -44,10 +44,8 @@ leselysServices.service('Reader', ['$http', function($http) {
     Reader.deleteFeed = function(feedId, callback) {
         $http.delete('api/feed/' + feedId).success(function(data) {
             angular.forEach(Reader.feeds, function(value, key) {
-            if (value.id == feedId) {
-                console.log(value.id, feedId)
-                Reader.feeds.splice(key, 1); return;
-            }
+                if (value.id == feedId)
+                    Reader.feeds.splice(key, 1); return;
             });
             if (callback) callback(data);
         });
@@ -55,10 +53,8 @@ leselysServices.service('Reader', ['$http', function($http) {
     Reader.deleteFolder = function(folderId, callback) {
        $http.delete('api/folder/' + folderId).success(function(data) {
             angular.forEach(Reader.folders, function(value, key) {
-            if (value.id == folderId) {
-                console.log(value.id, feedId)
-                Reader.folders.splice(key, 1); return;
-            }
+                if (value.id == folderId)
+                    Reader.folders.splice(key, 1); return;
             });
             if (callback) callback(data);
         });
@@ -89,6 +85,17 @@ leselysServices.service('Reader', ['$http', function($http) {
     		Reader.feeds.push(data);
             if (callback) callback(data);
     	});
+    };
+    Reader.renameFolder = function(folder, newName, callback) {
+        $http.put('api/folder/' + folder.id, {name:newName}).success(function(data) {
+            folder.name = newName;
+            if (callback) callback(data);
+        });
+    };
+    Reader.updateFeed = function(feed, callback) {
+        $http.put('api/feed/' + feed.id, feed).success(function(data) {
+            if (callback) callback(data);
+        });
     };
     return Reader;
 }]);
