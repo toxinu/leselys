@@ -3,45 +3,42 @@ var leselysServices = angular.module('leselysServices', []);
 
 leselysServices.service('Reader', ['$http', function($http) {
 	var Reader = {};
-    Reader.folders = null;
-    Reader.feeds = null;
-    Reader.stories = null;
+    Reader.folders = [];
+    Reader.feeds = [];
+    Reader.stories = [];
     Reader.getFolders = function(callback) {
-    	if (!Reader.folders) {
+    	if (!Reader.folders.length) {
     		$http.get('api/folder').success(function(data) {
     			Reader.folders = data;
-				callback(data);
+				if (callback) callback(data);
 			});
 		} else
-			callback(Reader.folders);
+			if (callback) callback(Reader.folders);
 	};
     Reader.getFeeds = function(callback) {
-    	if (!Reader.feeds) {
+    	if (!Reader.feeds.length) {
     		$http.get('api/feed').success(function(data) {
     			Reader.feeds = data;
-				callback(data);
+				if (callback) callback(data);
 			});
 		} else
-			callback(Reader.feeds);
+			if (callback) callback(Reader.feeds);
     };
     Reader.getStories = function (feed, callback) {
-        if (!Reader.stories) {
-        	$http.get('api/story?feed=' + feed.id).success(function(data) {
-        		Reader.stories = data;
-				callback(data);
-			});
-        } else
-        	callback(Reader.stories);
+        $http.get('api/story?feed=' + feed.id).success(function(data) {
+        	Reader.stories = data;
+	   	   if (callback) callback(data);
+    	});
     };
     Reader.getFeed = function(feedId, callback) {
     	angular.forEach(Reader.feeds, function(value) {
 			if (value.id == feedId)
-				callback(value); return;
+				if (callback) callback(value); return;
 		});
     };
     Reader.getStory = function(storyId, callback) {
       	$http.get('api/story/' + storyId, {cache:true}).success(function(data) {
-			callback(data);
+			if (callback) callback(data);
 		});
     };
     Reader.readStory = function(story, callback) {
@@ -56,15 +53,13 @@ leselysServices.service('Reader', ['$http', function($http) {
                     Reader.stories[key].readed = data.readed;
                 }
             });
-            callback();
+            if (callback) callback();
         });
     };
     Reader.addFeed = function(feedUrl, callback) {
     	$http.post('api/feed', {url:feedUrl, folder:1}).success(function(data) {
-            if (!Reader.stories)
-                Reader.stories = {};
-    		Reader.stories.push(data);
-    		callback(data);
+    		Reader.feeds.push(data);
+            if (callback) callback(data);
     	});
     };
     return Reader;

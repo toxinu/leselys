@@ -13,7 +13,7 @@
     </script>
 </head>
 <body>
-    <div class="navbar navbar-default navbar-static-top">
+    <div class="navbar navbar-default navbar-static-top" ng-controller="navbarCtrl">
       <div class="container">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -25,15 +25,15 @@
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li class="active"><a href="/#">Home</a></li>
-                <li><a href="#/settings">Settings</a></li>
-                <li><a href="#/about">About</a></li>
+                <li ng-class="getClass('home')"><a href="/#">Home</a></li>
+                <li ng-class="getClass('settings')"><a href="#/settings">Settings</a></li>
+                <li ng-class="getClass('about')"><a href="#/about">About</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Add feed <strong class="caret"></strong></a>
                     <ul class="dropdown-menu">
-                        <form class="form-inline add-feed" role="form" ng-controller="homeCtrl">
+                        <form class="form-inline add-feed" role="form">
                             {% csrf_token %}
                             <input ng-model="feedUrl" id="add-feed-input" class="form-control add-feed" onclick="if(event.stopPropagation){event.stopPropagation();}event.cancelBubble=true;" type="url">
                             <input class="btn btn-success add-feed" onclick="this.parentNode.parentNode.parentNode.className = 'dropdown';" ng-click="addFeed(feedUrl)" value="Add it!">

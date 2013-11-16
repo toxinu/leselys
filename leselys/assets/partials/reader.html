@@ -1,5 +1,5 @@
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-3">
         <h2>Feeds</h2>
         <ul class="list-unstyled">
             <li ng-repeat="folder in folders">
@@ -14,18 +14,27 @@
             </li>
         </ul>
     </div>
-    <div class="col-md-8">
-        <h2>{{ selectedFeed.title }}</h2>
-        <ul class="list-group">
-            <li class="list-group-item" ng-repeat="story in stories">
-                <a ng-class="getStoryClass(story)" href="#/read/{{story.feed}}/{{ story.id }}">
-                    {{ story.title }}
-                </a>
-                <div ng-show="selectedStory.id == story.id">
-                    <hr>
-                    <p ng-bind-html="selectedStory.description"></p>
+    <div class="col-md-9">
+        <div ng-show="selectedFeed">
+            <h2>{{ selectedFeed.title }}</h2>
+            <ul class="list-group">
+                <li class="list-group-item" ng-repeat="story in stories">
+                    <a ng-class="getStoryClass(story)" href="#/read/{{story.feed}}/{{ story.id }}">
+                        {{ story.title }}
+                    </a>
+                    <div ng-show="selectedStory.id == story.id">
+                        <hr>
+                        <p ng-bind-html="selectedStory.description"></p>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div ng-show="!selectedFeed.id">
+            <div class="jumbotron">
+                <div class="container">
+                    <h1>Hi,</h1>
+                    <p>I'm Leselys, your beautiful reader.</p>
                 </div>
-            </li>
-        </ul>
-    </div>
+            </div>
+        </div>
 </div>

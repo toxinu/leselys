@@ -1,12 +1,6 @@
 'use strict';
 var leselysControllers = angular.module('leselysControllers', []);
 
-leselysControllers.controller('homeCtrl', ['$scope', 'Reader', function($scope, Reader) {
-	$scope.addFeed = function(feedUrl) {
-		Reader.addFeed(feedUrl);
-	}
-}]);
-
 leselysControllers.controller('readerCtrl', ['$scope', '$http', '$routeParams', 'Reader', function($scope, $http, $routeParams, Reader) {
 	$scope.getStoryClass = function(story) {
 		if (story.id == $scope.selectedStory.id)
@@ -54,6 +48,25 @@ leselysControllers.controller('readerCtrl', ['$scope', '$http', '$routeParams', 
 }]);
 
 
-leselysControllers.controller('settingsCtrl', ['$scope', function($scope) {
+leselysControllers.controller('settingsCtrl', ['$scope', 'Reader', function($scope, Reader) {
+	Reader.getFolders(function(folders) {
+		$scope.folders = folders;
+		Reader.getFeeds(function(feeds) {
+			$scope.feeds = feeds;
+		});
+	});
+}]);
 
+leselysControllers.controller('navbarCtrl', ['$scope', '$location', 'Reader', function($scope, $location, Reader) {
+	$scope.addFeed = function(feedUrl) {
+		Reader.addFeed(feedUrl);
+	};
+	$scope.getClass = function(menuName) {
+		if ($location.path() == '/read' && menuName == 'home')
+			return 'active';
+		if ($location.path() == '/settings' && menuName == 'settings')
+			return 'active';
+		if ($location.path() == '/about' && menuName == 'about')
+			return 'active';
+	};
 }]);
