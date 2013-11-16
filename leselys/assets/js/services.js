@@ -44,5 +44,11 @@ leselysServices.service('Reader', ['$http', function($http) {
 			callback(data);
 		});
     }
+    Reader.addFeed = function(feedUrl, callback) {
+    	$http.post('api/feed', {url:feedUrl}).success(function(data) {
+    		Reader.stories.push(data);
+    		callback(data);
+    	});
+    }
     return Reader;
 }]);

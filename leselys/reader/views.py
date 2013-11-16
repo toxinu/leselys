@@ -12,7 +12,7 @@ from .models import Story
 from .models import Feed
 from .models import Folder
 from .serializers import FeedSerializer
-from .serializers import StorySerializer
+from .serializers import StoryListSerializer
 from .serializers import StoryDetailSerializer
 
 
@@ -38,7 +38,7 @@ class FeedDetailAPIView(CreateAPIView, RetrieveUpdateDestroyAPIView, CacheMixin)
 
 class StoryListAPIView(ListAPIView, CacheMixin):
     model = Story
-    serializer_class = StorySerializer
+    serializer_class = StoryListSerializer
     cache_timeout = 60 * 60
 
     def get_queryset(self):
