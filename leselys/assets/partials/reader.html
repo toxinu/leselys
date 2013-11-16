@@ -1,13 +1,14 @@
 <div class="row">
     <div class="col-md-3">
         <h2>Feeds</h2>
+        <hr>
         <ul class="list-unstyled">
             <li ng-repeat="folder in folders">
                 {{ folder.name }}
                 <ul>
                     <li ng-repeat="feed in feeds|filter: feed.folder = folder.id">
                         <a ng-class="{strong:selectedFeed.id == feed.id}" href="#/read/{{ feed.id }}"/>
-                            {{ feed.title }} <span class="badge">{{ feed.unread_counter }}</span>
+                            {{ feed.title }} <span ng-show="feed.unread_counter" class="badge">{{ feed.unread_counter }}</span>
                         </a>
                     </li>
                 </ul>
@@ -15,8 +16,9 @@
         </ul>
     </div>
     <div class="col-md-9">
-        <div ng-show="selectedFeed">
+        <div ng-show="selectedFeed.id">
             <h2>{{ selectedFeed.title }}</h2>
+            <hr>
             <ul class="list-group">
                 <li class="list-group-item" ng-repeat="story in stories">
                     <a ng-class="getStoryClass(story)" href="#/read/{{story.feed}}/{{ story.id }}">
