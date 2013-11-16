@@ -73,7 +73,7 @@ def fetch_feed(feed_id=None, raw_data=None, feed=None):
         feed.title = feed_data.feed.get('title')
     # Add website url if not setted
     if feed_data.feed.get('link') != feed.website_url:
-        feed.website_url = feed_data.feed.get('link')
+        feed.website_url = feed_data.feed.get('link', feed.website_url)
 
     # Update it
     if feed_data.feed.get('updated_parsed'):
