@@ -6,13 +6,13 @@
             <li ng-repeat="folder in folders">
                 <p class="text-center lead">{{ folder.name }}</p>
                 <ul class="nav nav-pills nav-stacked">
-                    <li ng-repeat="feed in feeds|filter: feed.folder = folder.id">
+                    <li ng-repeat="feed in feeds|filter:{folder:folder.id}">
                         <a ng-class="{strong:selectedFeed.id == feed.id}" href="#/read/{{ feed.id }}"/>
                             <img ng-src="{{ feed.favicon_url }}">
                             {{ feed.title }} <span ng-show="feed.unread_counter" class="badge pull-right">{{ feed.unread_counter }}</span>
                         </a>
                     </li>
-                    <span ng-show="(feeds|filter: feed.folder = folder.id).length == 0">
+                    <span ng-show="(feeds|filter:{folder:folder.id}).length == 0">
                         <em>Empty folder...</em>
                     </span>
                 </ul>
