@@ -7,6 +7,8 @@ from .models import Story
 
 class FeedSerializer(serializers.ModelSerializer):
     unread_counter = serializers.IntegerField(source='unread_counter', read_only=True)
+    ordering_text = serializers.CharField(source='get_ordering_display', read_only=True)
+    folder_text = serializers.CharField(source='folder.name', read_only=True)
 
     class Meta:
         model = Feed
