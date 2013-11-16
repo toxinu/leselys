@@ -2,13 +2,14 @@
     <div class="col-md-3">
         <h2>Feeds</h2>
         <hr>
-        <ul class="list-unstyled">
+        <ul class="nav">
             <li ng-repeat="folder in folders">
-                {{ folder.name }}
-                <ul>
+                <p class="text-center lead">{{ folder.name }}</p>
+                <ul class="nav nav-pills nav-stacked">
                     <li ng-repeat="feed in feeds|filter: feed.folder = folder.id">
                         <a ng-class="{strong:selectedFeed.id == feed.id}" href="#/read/{{ feed.id }}"/>
-                            {{ feed.title }} <span ng-show="feed.unread_counter" class="badge">{{ feed.unread_counter }}</span>
+                            <img ng-src="{{ feed.favicon_url }}">
+                            {{ feed.title }} <span ng-show="feed.unread_counter" class="badge pull-right">{{ feed.unread_counter }}</span>
                         </a>
                     </li>
                 </ul>
