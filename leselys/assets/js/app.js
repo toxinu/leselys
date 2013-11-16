@@ -5,18 +5,22 @@ leselysApp.config(['$routeProvider',
 		function($routeProvider) {
 			$routeProvider
 				.when('/read', {
+					state: 'read',
 					templateUrl: static_url + 'partials/reader.html',
 					controller: 'readerCtrl'
 				})
 				.when('/read/:feedId', {
+					state: 'read',
 					templateUrl: static_url + 'partials/reader.html',
 					controller: 'readerCtrl'
 				})
 				.when('/read/:feedId/:storyId', {
+					state: 'read',
 					templateUrl: static_url + 'partials/reader.html',
 					controller: 'readerCtrl'
 				})
 				.when('/settings', {
+					state: 'settings',
 					templateUrl: static_url + 'partials/settings.html',
 					controller: 'settingsCtrl'
 				})

@@ -57,16 +57,16 @@ leselysControllers.controller('settingsCtrl', ['$scope', 'Reader', function($sco
 	});
 }]);
 
-leselysControllers.controller('navbarCtrl', ['$scope', '$location', 'Reader', function($scope, $location, Reader) {
+leselysControllers.controller('navbarCtrl', ['$scope', '$route', 'Reader', function($scope, $route, Reader) {
 	$scope.addFeed = function(feedUrl) {
 		Reader.addFeed(feedUrl);
 	};
 	$scope.getClass = function(menuName) {
-		if ($location.path() == '/read' && menuName == 'home')
+		if ($route.current.state == 'read' && menuName == 'home')
 			return 'active';
-		if ($location.path() == '/settings' && menuName == 'settings')
+		if ($route.current.state == 'settings' && menuName == 'settings')
 			return 'active';
-		if ($location.path() == '/about' && menuName == 'about')
+		if ($route.current.state == 'about' && menuName == 'about')
 			return 'active';
 	};
 }]);
