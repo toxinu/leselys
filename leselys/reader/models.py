@@ -7,7 +7,7 @@ from .helpers import get_feed_urls
 
 
 class Folder(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
 
     def __unicode__(self):
         return self.name
