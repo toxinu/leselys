@@ -41,6 +41,17 @@ leselysServices.service('Reader', ['$http', function($http) {
 			if (callback) callback(data);
 		});
     };
+    Reader.deleteFeed = function(feedId, callback) {
+        $http.delete('api/feed/' + feedId).success(function(data) {
+            angular.forEach(Reader.feeds, function(value, key) {
+            if (value.id == feedId) {
+                console.log(value.id, feedId)
+                Reader.feeds.splice(key, 1); return;
+            }
+            });
+            if (callback) callback(data);
+        });
+    };
     Reader.readStory = function(story, callback) {
         $http.put('api/story/' + story.id, {readed:true}).success(function(data) {
             angular.forEach(Reader.stories, function(value, key){
