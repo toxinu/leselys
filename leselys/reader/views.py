@@ -46,7 +46,11 @@ class StoryListAPIView(ListAPIView, CacheMixin):
 
         feed = self.request.QUERY_PARAMS.get('feed')
         if feed:
-            qs = qs.filter(feed=feed)
+            try:
+                feed = int(feed)
+                qs = qs.filter(feed=feed)
+            except ValueError:
+                pass
 
         readed = self.request.QUERY_PARAMS.get('readed')
         if readed in ['', 'true', 'True', '1', 'yes']:
