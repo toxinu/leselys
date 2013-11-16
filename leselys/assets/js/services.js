@@ -6,6 +6,11 @@ leselysServices.service('Reader', ['$http', function($http) {
     Reader.folders = [];
     Reader.feeds = [];
     Reader.stories = [];
+    Reader.getOrdering = function(callback) {
+        $http.get('api/ordering', {cache:true}).success(function(data) {
+            if (callback) callback(data);
+        });
+    };
     Reader.getFolders = function(callback) {
     	if (!Reader.folders.length) {
     		$http.get('api/folder').success(function(data) {

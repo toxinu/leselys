@@ -76,6 +76,9 @@ leselysControllers.controller('settingsCtrl', ['$scope', 'Reader', function($sco
 			$scope.feeds = Reader.feeds;
 		});
 	});
+	Reader.getOrdering(function(ordering) {
+		$scope.ordering = ordering;
+	});
 }]);
 
 leselysControllers.controller('navbarCtrl', ['$scope', '$route', 'Reader', function($scope, $route, Reader) {
