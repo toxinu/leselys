@@ -15,14 +15,13 @@ leselysControllers.controller('readerCtrl', ['$scope', '$http', '$routeParams', 
 			return 'text-muted';
 	};
 	$scope.readStory = function(story) {
-		$http.put('api/story/' + story.id, {readed:true}).success(function(data) {
-			if (story.feed == $scope.selectedFeed.id) {
-				angular.forEach($scope.stories, function(value, key){
-					if (value.id == story.id) {
-						$scope.stories[key].readed = data.readed;
-					}
+		Reader.readStory(story, function() {
+			Reader.getFeeds(function(feeds) {
+				$scope.feeds = feeds;
+				Reader.getStories($scope.selectedFeed, function(stories) {
+					$scope.stories = stories;
 				});
-			};
+			});
 		});
 	};
 	// Get folders
