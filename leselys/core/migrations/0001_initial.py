@@ -8,43 +8,51 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding model 'Folder'
-        db.create_table(u'reader_folder', (
+        # Adding model 'UserProfile'
+        db.create_table(u'core_userprofile', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=100)),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
+            ('user', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['auth.User'], unique=True)),
         ))
-        db.send_create_signal(u'reader', ['Folder'])
+        db.send_create_signal(u'core', ['UserProfile'])
 
-        # Adding model 'Subscription'
-        db.create_table(u'reader_subscription', (
+        # Adding model 'Feed'
+        db.create_table(u'core_feed', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('feed', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['core.Feed'])),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
-            ('ordering', self.gf('django.db.models.fields.SmallIntegerField')(default=0, blank=True)),
-            ('folder', self.gf('django.db.models.fields.related.ForeignKey')(default=1, to=orm['reader.Folder'])),
+            ('title', self.gf('django.db.models.fields.CharField')(max_length=300, blank=True)),
+            ('custom_title', self.gf('django.db.models.fields.CharField')(max_length=300, blank=True)),
+            ('url', self.gf('django.db.models.fields.URLField')(unique=True, max_length=200)),
+            ('website_url', self.gf('django.db.models.fields.URLField')(max_length=200, blank=True)),
+            ('favicon_url', self.gf('django.db.models.fields.URLField')(max_length=200, blank=True)),
+            ('added', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, auto_now_add=True, blank=True)),
+            ('updated', self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True)),
+            ('in_error', self.gf('django.db.models.fields.BooleanField')(default=True)),
+            ('error', self.gf('django.db.models.fields.CharField')(default=u'This feed has never been fetched', max_length=1000, blank=True)),
         ))
-        db.send_create_signal(u'reader', ['Subscription'])
+        db.send_create_signal(u'core', ['Feed'])
 
-        # Adding model 'Story'
-        db.create_table(u'reader_story', (
+        # Adding model 'Entry'
+        db.create_table(u'core_entry', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('entry', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['core.Entry'])),
-            ('subscription', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['reader.Subscription'])),
+            ('guid', self.gf('django.db.models.fields.CharField')(max_length=300)),
+            ('title', self.gf('django.db.models.fields.CharField')(max_length=300)),
+            ('description', self.gf('django.db.models.fields.TextField')()),
+            ('published', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, auto_now_add=True, blank=True)),
+            ('updated', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, auto_now_add=True, blank=True)),
             ('readed', self.gf('django.db.models.fields.BooleanField')(default=False)),
+            ('feed', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['core.Feed'])),
         ))
-        db.send_create_signal(u'reader', ['Story'])
+        db.send_create_signal(u'core', ['Entry'])
 
 
     def backwards(self, orm):
-        # Deleting model 'Folder'
-        db.delete_table(u'reader_folder')
+        # Deleting model 'UserProfile'
+        db.delete_table(u'core_userprofile')
 
-        # Deleting model 'Subscription'
-        db.delete_table(u'reader_subscription')
+        # Deleting model 'Feed'
+        db.delete_table(u'core_feed')
 
-        # Deleting model 'Story'
-        db.delete_table(u'reader_story')
+        # Deleting model 'Entry'
+        db.delete_table(u'core_entry')
 
 
     models = {
@@ -108,27 +116,11 @@ class Migration(SchemaMigration):
             'url': ('django.db.models.fields.URLField', [], {'unique': 'True', 'max_length': '200'}),
             'website_url': ('django.db.models.fields.URLField', [], {'max_length': '200', 'blank': 'True'})
         },
-        u'reader.folder': {
-            'Meta': {'object_name': 'Folder'},
+        u'core.userprofile': {
+            'Meta': {'object_name': 'UserProfile'},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '100'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"})
-        },
-        u'reader.story': {
-            'Meta': {'object_name': 'Story'},
-            'entry': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['core.Entry']"}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'readed': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'subscription': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['reader.Subscription']"})
-        },
-        u'reader.subscription': {
-            'Meta': {'object_name': 'Subscription'},
-            'feed': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['core.Feed']"}),
-            'folder': ('django.db.models.fields.related.ForeignKey', [], {'default': '1', 'to': u"orm['reader.Folder']"}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'ordering': ('django.db.models.fields.SmallIntegerField', [], {'default': '0', 'blank': 'True'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"})
+            'user': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['auth.User']", 'unique': 'True'})
         }
     }
 
-    complete_apps = ['reader']
+    complete_apps = ['core']

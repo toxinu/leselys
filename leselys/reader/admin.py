@@ -1,20 +1,11 @@
 # -*- coding: utf-8 -*-
 from django.contrib import admin
 
-from leselys.reader.models import Folder
-from leselys.reader.models import Feed
-from leselys.reader.models import Story
+from .models import Story
+from .models import Folder
+from .models import Subscription
 
 
-admin.site.register(Folder)
-admin.site.register(Feed)
 admin.site.register(Story)
-
-from djcelery.models import TaskState, WorkerState
-from djcelery.models import PeriodicTask, IntervalSchedule, CrontabSchedule
-
-admin.site.unregister(TaskState)
-admin.site.unregister(WorkerState)
-admin.site.unregister(IntervalSchedule)
-admin.site.unregister(CrontabSchedule)
-admin.site.unregister(PeriodicTask)
+admin.site.register(Folder)
+admin.site.register(Subscription)

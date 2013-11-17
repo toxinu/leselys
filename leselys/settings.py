@@ -131,6 +131,7 @@ INSTALLED_APPS = (
     'south',
     'rest_framework',
     'djcelery',
+    'leselys.core',
     'leselys.reader',
 )
 

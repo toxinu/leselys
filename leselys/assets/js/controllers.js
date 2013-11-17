@@ -67,7 +67,12 @@ leselysControllers.controller('settingsCtrl', ['$scope', 'Reader', function($sco
 		Reader.deleteFolder(folder.id);
 	};
 	$scope.updateFeed = function(feed) {
-		Reader.updateFeed(feed);
+		Reader.updateFeed(feed, function(){
+			feed.settingsOpen = false;
+		});
+	};
+	$scope.addFeed = function(feedUrl) {
+		Reader.addFeed(feedUrl);
 	};
 
 	Reader.getFolders(function(folders) {

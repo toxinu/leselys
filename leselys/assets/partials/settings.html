@@ -4,13 +4,14 @@
     <tabset>
         <tab heading="Folders">
             <br />
-            <div class="input-group pull-right">
-                <input type="text" class="form-control" placeholder="New folder name" ng-model="folder.name">
-                <span class="input-group-btn">
-                    <button class="btn btn-success" type="button" ng-click="addFolder(folder.name)">Add</button>
-                </span>
-            </div>
-            <div class="clearfix"></div>
+            <form ng-submit="addFolder(folder.name)">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="New folder name" ng-model="folder.name">
+                    <span class="input-group-btn">
+                        <button type="submit" class="btn btn-success" type="button">Add</button>
+                    </span>
+                </div>
+            </form>
             <hr>
             <ul class="list-group">
                 <li class="list-group-item" ng-repeat="folder in folders">
@@ -38,6 +39,15 @@
         </tab>
         <tab heading="Feeds">
             <br />
+            <form ng-submit="addFeed(feedUrl)">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="New feed URL" ng-model="feedUrl">
+                    <span class="input-group-btn">
+                        <button type="submit" class="btn btn-success" type="button">Add</button>
+                    </span>
+                </div>
+            </form>
+            <hr>
             <ul class="list-group">
                 <li class="list-group-item" ng-repeat="feed in feeds">
                     <img ng-src="{{ feed.favicon_url }}"> {{ feed.title }}

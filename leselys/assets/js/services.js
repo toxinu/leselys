@@ -86,7 +86,7 @@ leselysServices.service('Reader', ['$http', function($http) {
         });
     };
     Reader.addFeed = function(feedUrl, callback) {
-    	$http.post('api/feed', {url:feedUrl, folder:1}).success(function(data) {
+    	$http.post('api/feed', {url:feedUrl}).success(function(data) {
     		Reader.feeds.push(data);
             if (callback) callback(data);
     	});

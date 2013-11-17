@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from leselys.reader.models import Feed
+# from ..reader.models import Feed
 #from leselys.reader.tasks import init_feed
 
 
