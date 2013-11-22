@@ -1,7 +1,7 @@
 'use strict';
 var leselysControllers = angular.module('leselysControllers', []);
 
-leselysControllers.controller('readerCtrl', ['$scope', '$http', '$routeParams', 'Reader', function($scope, $http, $routeParams, Reader) {
+leselysControllers.controller('readerCtrl', ['$scope', '$http', '$routeParams', '$timeout', 'Reader', function($scope, $http, $routeParams, $timeout, Reader) {
 	$scope.getStoryClass = function(story) {
 		if (story.id == $scope.selectedStory.id)
 			return 'strong';
@@ -45,6 +45,14 @@ leselysControllers.controller('readerCtrl', ['$scope', '$http', '$routeParams', 
 			});
 		}
 	});
+
+	// Polling
+	(function tick() {
+        Reader.polling(function(data){
+        	$scope.polls = data;
+        });
+        $timeout(tick, 10000);
+    })();
 }]);
 
 
@@ -88,7 +96,6 @@ leselysControllers.controller('settingsCtrl', ['$scope', 'Reader', function($sco
 
 leselysControllers.controller('navbarCtrl', ['$scope', '$route', 'Reader', function($scope, $route, Reader) {
 	$scope.addSubscription = function(feedUrl) {
-		console.log('!!')
 		Reader.addSubscription(feedUrl);
 	};
 	$scope.getClass = function(menuName) {

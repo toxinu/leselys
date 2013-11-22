@@ -106,5 +106,10 @@ leselysServices.service('Reader', ['$http', function($http) {
             if (callback) callback(data);
         });
     };
+    Reader.polling = function(callback) {
+        $http.get('api/polling').success(function(data) {
+            console.log('request set')
+        });
+    };
     return Reader;
 }]);
