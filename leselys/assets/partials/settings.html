@@ -39,7 +39,7 @@
         </tab>
         <tab heading="Feeds">
             <br />
-            <form ng-submit="addFeed(feedUrl)">
+            <form ng-submit="addSubscription(feedUrl)">
                 <div class="input-group">
                     <input type="text" class="form-control" placeholder="New feed URL" ng-model="feedUrl">
                     <span class="input-group-btn">
@@ -62,7 +62,7 @@
                         <div class="alert alert-warning" ng-show="feed.in_error">
                             {{ feed.error }} at {{ feed.updated | date:'medium' }}
                         </div>
-                        <form class="form-horizontal" role="form" ng-submit="updateFeed(feed)">
+                        <form class="form-horizontal" role="form" ng-submit="updateSubscription(feed)">
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">Title</label>
                                 <div class="col-sm-6">

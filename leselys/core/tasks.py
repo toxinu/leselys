@@ -80,13 +80,13 @@ def fetch_feed(feed_id=None, raw_data=None, feed=None):
 
     # Update it
     if feed_data.feed.get('updated_parsed'):
-        feed.updated = get_datetime(feed_data.feed.updated_parsed)
-    elif feed_data.feed.get('updated_parsed'):
-        feed.updated = get_datetime(feed_data.updated_parsed)
+        feed.updated = get_datetime(feed_data.feed.get('updated_parsed'))
+    elif feed_data.get('updated_parsed'):
+        feed.updated = get_datetime(feed_data.get('updated_parsed'))
     elif feed_data.feed.get('published_parsed'):
-        feed.updated = get_datetime(feed_data.feed.published_parsed)
+        feed.updated = get_datetime(feed_data.feed.get('published_parsed'))
     elif feed_data.get('published_parsed'):
-        feed.updated = get_datetime(feed_data.published_parsed)
+        feed.updated = get_datetime(feed_data.get('published_parsed'))
     else:
         feed.updated = datetime.datetime.utcnow().replace(tzinfo=utc)
 
@@ -99,7 +99,8 @@ def fetch_feed(feed_id=None, raw_data=None, feed=None):
         title = entry_data.get('guid') or entry_data.get('title')
         entry = Entry(guid=title,
                       title=entry_data.get('title'),
-                      feed=feed)
+                      feed=feed,
+                      url=entry_data.get('link'))
 
         try:
             entry.description = entry_data['content'][0]['value']
@@ -107,12 +108,12 @@ def fetch_feed(feed_id=None, raw_data=None, feed=None):
             entry.description = entry_data['summary']
 
         if entry_data.get('updated_parsed'):
-            entry.updated = get_datetime(entry_data.updated_parsed)
+            entry.updated = get_datetime(entry_data.get('updated_parsed'))
         else:
             entry.updated = datetime.datetime.utcnow().replace(tzinfo=utc)
 
         if entry_data.get('published_parsed', False):
-            entry.published = get_datetime(entry_data.published_parsed)
+            entry.published = get_datetime(entry_data.get('published_parsed'))
         else:
             entry.published = datetime.datetime.utcnow().replace(tzinfo=utc)
 

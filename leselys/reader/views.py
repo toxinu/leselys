@@ -3,6 +3,7 @@ import json
 
 from rest_framework.generics import ListAPIView
 from rest_framework.generics import ListCreateAPIView
+from rest_framework.generics import RetrieveUpdateAPIView
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 
 from django.http import HttpResponse
@@ -13,18 +14,15 @@ from .models import Story
 from .models import Folder
 from .models import Subscription
 
-from leselys.mixins import CacheMixin
+from .serializers import FolderListSerializer
+from .serializers import StoryListSerializer
+from .serializers import StoryDetailSerializer
+from .serializers import SubscriptionSerializer
+
+from ..mixins import OnlyOwnedMixin
 
 
-class SubscriptionAPIView(ListCreateAPIView, CacheMixin):
-    model = Subscription
-
-
-class StoryAPIView(ListAPIView):
-    model = Story
-
-
-class OrderingAPIView(View):
+class OrderingListAPIView(View):
     def get(self, request, *args, **kwargs):
         response_json = []
         for ordering in Subscription.ORDERING_CHOICES:
@@ -32,15 +30,32 @@ class OrderingAPIView(View):
         return HttpResponse(json.dumps(response_json))
 
 
-class FolderListAPIView(ListCreateAPIView, CacheMixin):
+class SubscriptionListAPIView(ListCreateAPIView, OnlyOwnedMixin):
+    model = Subscription
+    serializer_class = SubscriptionSerializer
+
+    def pre_save(self, obj):
+        obj.user = self.request.user
+
+
+class StoryListAPIView(ListAPIView, OnlyOwnedMixin):
+    model = Story
+    serializer_class = StoryListSerializer
+
+
+class StoryDetailAPIView(RetrieveUpdateAPIView, OnlyOwnedMixin):
+    model = Story
+    serializer_class = StoryDetailSerializer
+
+
+class FolderListAPIView(ListCreateAPIView, OnlyOwnedMixin):
     model = Folder
+    serializer_class = FolderListSerializer
     paginate_by = None
-    cache_timeout = 60 * 60
 
 
-class FolderDetailAPIView(RetrieveUpdateDestroyAPIView, CacheMixin):
+class FolderDetailAPIView(RetrieveUpdateDestroyAPIView, OnlyOwnedMixin):
     model = Folder
-    cache_timeout = 60 * 60
 
     def delete(self, request, *args, **kwargs):
         folder = self.get_object()

@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from leselys.core.models import Feed
 from leselys.core.models import Entry
 
-from .tasks import retrieve_entries
+from .tasks import create_stories
 
 
 class Folder(models.Model):
@@ -37,13 +37,23 @@ class Subscription(models.Model):
     ordering = models.SmallIntegerField(
         choices=ORDERING_CHOICES, default=DEFAULT_ORDERING, blank=True)
     folder = models.ForeignKey(Folder, default=DEFAULT_FOLDER)
+    title = models.CharField(max_length=300, blank=True)
 
     def __unicode__(self):
         return u"%s's feed subscription for %s" % (self.feed, self.user)
 
+    @property
+    def unread_counter(self):
+        return Story.objects.filter(subscription=self.id, readed=False).count()
+
+    def get_title(self):
+        if self.title:
+            return self.title
+        return self.feed.title
+
     def save(self, *args, **kwargs):
         super(Subscription, self).save(*args, **kwargs)
-        retrieve_entries(self)
+        create_stories(self)
 
 
 class Story(models.Model):

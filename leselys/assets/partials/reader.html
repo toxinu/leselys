@@ -6,10 +6,10 @@
             <li ng-repeat="folder in folders">
                 <h4>{{ folder.name }}</h4>
                 <ul class="nav nav-pills nav-stacked">
-                    <li ng-repeat="feed in feeds|filter:{folder:folder.id}">
-                        <a ng-class="{strong:selectedFeed.id == feed.id}" href="#/read/{{ feed.id }}"/>
-                            <img ng-src="{{ feed.favicon_url }}">
-                            {{ feed.title }} <span ng-show="feed.unread_counter" class="badge pull-right">{{ feed.unread_counter }}</span>
+                    <li ng-repeat="subscription in subscriptions|filter:{folder:folder.id}">
+                        <a ng-class="{strong:selectedSubscription.id == subscription.id}" href="#/read/{{ subscription.id }}"/>
+                            <img ng-src="{{ subscription.favicon_url }}">
+                            {{ subscription.title }} <span ng-show="subscription.unread_counter" class="badge pull-right">{{ subscription.unread_counter }}</span>
                         </a>
                     </li>
                     <span ng-show="(feeds|filter:{folder:folder.id}).length == 0">
@@ -20,12 +20,12 @@
         </ul>
     </div>
     <div class="col-md-9">
-        <div ng-show="selectedFeed.id">
-            <h2>{{ selectedFeed.title }}</h2>
+        <div ng-show="selectedSubscription.id">
+            <h2>{{ selectedSubscription.title }}</h2>
             <hr>
             <ul class="list-group">
                 <li class="list-group-item" ng-repeat="story in stories">
-                    <a ng-class="getStoryClass(story)" href="#/read/{{story.feed}}/{{ story.id }}">
+                    <a ng-class="getStoryClass(story)" href="#/read/{{story.subscription}}/{{ story.id }}">
                         {{ story.title }}
                     </a>
                     <div ng-show="selectedStory.id == story.id">
@@ -35,7 +35,7 @@
                 </li>
             </ul>
         </div>
-        <div ng-show="!selectedFeed.id">
+        <div ng-show="!selectedSubscription.id">
             <div class="jumbotron">
                 <div class="container">
                     <h1>Hi,</h1>

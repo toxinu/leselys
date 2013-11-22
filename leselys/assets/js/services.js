@@ -4,7 +4,7 @@ var leselysServices = angular.module('leselysServices', []);
 leselysServices.service('Reader', ['$http', function($http) {
 	var Reader = {};
     Reader.folders = [];
-    Reader.feeds = [];
+    Reader.subscriptions = [];
     Reader.stories = [];
     Reader.getOrdering = function(callback) {
         $http.get('api/ordering', {cache:true}).success(function(data) {
@@ -20,24 +20,24 @@ leselysServices.service('Reader', ['$http', function($http) {
 		} else
 			if (callback) callback(Reader.folders);
 	};
-    Reader.getFeeds = function(callback) {
-    	if (!Reader.feeds.length) {
-    		$http.get('api/feed').success(function(data) {
-    			Reader.feeds = data;
+    Reader.getSubscriptions = function(callback) {
+    	if (!Reader.subscriptions.length) {
+    		$http.get('api/subscription').success(function(data) {
+    			Reader.subscriptions = data;
 				if (callback) callback(data);
 			});
 		} else
-			if (callback) callback(Reader.feeds);
+			if (callback) callback(Reader.subscriptions);
     };
-    Reader.getStories = function (feed, callback) {
-        $http.get('api/story?feed=' + feed.id).success(function(data) {
+    Reader.getStories = function (subscription, callback) {
+        $http.get('api/story?subscription=' + subscription.id).success(function(data) {
         	Reader.stories = data;
 	   	   if (callback) callback(data);
     	});
     };
-    Reader.getFeed = function(feedId, callback) {
-    	angular.forEach(Reader.feeds, function(value) {
-			if (value.id == feedId)
+    Reader.getSubscription = function(subscriptionId, callback) {
+    	angular.forEach(Reader.subscriptions, function(value) {
+			if (value.id == subscriptionId)
 				if (callback) callback(value); return;
 		});
     };
@@ -46,11 +46,11 @@ leselysServices.service('Reader', ['$http', function($http) {
 			if (callback) callback(data);
 		});
     };
-    Reader.deleteFeed = function(feedId, callback) {
-        $http.delete('api/feed/' + feedId).success(function(data) {
-            angular.forEach(Reader.feeds, function(value, key) {
-                if (value.id == feedId)
-                    Reader.feeds.splice(key, 1); return;
+    Reader.deleteSubscription = function(subscriptionId, callback) {
+        $http.delete('api/subscription/' + subscriptionId).success(function(data) {
+            angular.forEach(Reader.subscriptions, function(value, key) {
+                if (value.id == subsscriptionId)
+                    Reader.subscriptions.splice(key, 1); return;
             });
             if (callback) callback(data);
         });
@@ -69,8 +69,8 @@ leselysServices.service('Reader', ['$http', function($http) {
             angular.forEach(Reader.stories, function(value, key){
                 if (value.id == data.id) {
                     if (!value.readed && data.readed){
-                        Reader.getFeed(value.feed, function(feed) {
-                            feed.unread_counter--;
+                        Reader.getSubscription(value.subscription, function(subscription) {
+                            subscription.unread_counter--;
                         });
                     };
                     Reader.stories[key].readed = data.readed;
@@ -80,16 +80,20 @@ leselysServices.service('Reader', ['$http', function($http) {
         });
     };
     Reader.addFolder = function(folderName, callback) {
-        $http.post('api/folder', {name:folderName}).success(function(data) {
+        $http.post('api/folder/', {name:folderName}).success(function(data) {
             Reader.folders.push(data);
             if (callback) callback(data);
         });
     };
-    Reader.addFeed = function(feedUrl, callback) {
-    	$http.post('api/feed', {url:feedUrl}).success(function(data) {
-    		Reader.feeds.push(data);
-            if (callback) callback(data);
-    	});
+    Reader.addSubscription = function(feedUrl, callback) {
+    	$http.post('api/feed', {url:feedUrl}).
+            success(function(data) {
+    		  Reader.subscriptions.push(data);
+                if (callback) callback(data);
+            }).
+            error(function(data) {
+                console.log('!!erorr');
+            });
     };
     Reader.renameFolder = function(folder, newName, callback) {
         $http.put('api/folder/' + folder.id, {name:newName}).success(function(data) {
@@ -97,8 +101,8 @@ leselysServices.service('Reader', ['$http', function($http) {
             if (callback) callback(data);
         });
     };
-    Reader.updateFeed = function(feed, callback) {
-        $http.put('api/feed/' + feed.id, feed).success(function(data) {
+    Reader.updateSubscription = function(subscription, callback) {
+        $http.put('api/feed/' + subscription.id, feed).success(function(data) {
             if (callback) callback(data);
         });
     };

@@ -10,9 +10,9 @@ leselysControllers.controller('readerCtrl', ['$scope', '$http', '$routeParams', 
 	};
 	$scope.readStory = function(story) {
 		Reader.readStory(story, function() {
-			Reader.getFeeds(function(feeds) {
-				$scope.feeds = feeds;
-				Reader.getStories($scope.selectedFeed, function(stories) {
+			Reader.getSubscriptions(function(subscriptions) {
+				$scope.subscriptions = subscriptions;
+				Reader.getStories($scope.selectedSubscription, function(stories) {
 					$scope.stories = stories;
 				});
 			});
@@ -23,17 +23,17 @@ leselysControllers.controller('readerCtrl', ['$scope', '$http', '$routeParams', 
 		$scope.folders = folders;
 	});
 	$scope.selectedStory = {};
-	$scope.selectedFeed = {};
-	// Get feeds
-	Reader.getFeeds(function(feeds) {
-		$scope.feeds = feeds;
-		// If feedId in url
-		if ($routeParams.feedId) {
-			Reader.getFeed($routeParams.feedId, function(feed) {
-				$scope.selectedFeed = feed;
+	$scope.selectedSubscription = {};
+	// Get subscriptions
+	Reader.getSubscriptions(function(subscriptions) {
+		$scope.subscriptions = subscriptions;
+		// If subscriptionId in url
+		if ($routeParams.subscriptionId) {
+			Reader.getSubscription($routeParams.subscriptionId, function(subscription) {
+				$scope.selectedSubscription = subscription;
 			});
 			// Get stories
-			Reader.getStories($scope.selectedFeed, function(stories) {
+			Reader.getStories($scope.selectedSubscription, function(stories) {
 				$scope.stories = stories;
 				// If storyId in url
 				if ($routeParams.storyId)
@@ -60,25 +60,25 @@ leselysControllers.controller('settingsCtrl', ['$scope', 'Reader', function($sco
 			$scope.newName = "";
 		});
 	};
-	$scope.deleteFeed = function(feed) {
-		Reader.deleteFeed(feed.id);
+	$scope.deleteSubscription = function(subscription) {
+		Reader.deleteSubscription(subscription.id);
 	};
 	$scope.deleteFolder = function(folder) {
 		Reader.deleteFolder(folder.id);
 	};
-	$scope.updateFeed = function(feed) {
-		Reader.updateFeed(feed, function(){
-			feed.settingsOpen = false;
+	$scope.updateSubscription = function(subscription) {
+		Reader.updateSubscription(subscription, function(){
+			subscription.settingsOpen = false;
 		});
 	};
-	$scope.addFeed = function(feedUrl) {
-		Reader.addFeed(feedUrl);
+	$scope.addSubscription = function(subscriptionUrl) {
+		Reader.addSubscription(subscriptionUrl);
 	};
 
 	Reader.getFolders(function(folders) {
 		$scope.folders = Reader.folders;
-		Reader.getFeeds(function(feeds) {
-			$scope.feeds = Reader.feeds;
+		Reader.getSubscriptions(function(subscriptions) {
+			$scope.subscriptions = Reader.subscriptions;
 		});
 	});
 	Reader.getOrdering(function(ordering) {
@@ -87,15 +87,19 @@ leselysControllers.controller('settingsCtrl', ['$scope', 'Reader', function($sco
 }]);
 
 leselysControllers.controller('navbarCtrl', ['$scope', '$route', 'Reader', function($scope, $route, Reader) {
-	$scope.addFeed = function(feedUrl) {
-		Reader.addFeed(feedUrl);
+	$scope.addSubscription = function(feedUrl) {
+		console.log('!!')
+		Reader.addSubscription(feedUrl);
 	};
 	$scope.getClass = function(menuName) {
-		if ($route.current.state == 'read' && menuName == 'home')
-			return 'active';
-		if ($route.current.state == 'settings' && menuName == 'settings')
-			return 'active';
-		if ($route.current.state == 'about' && menuName == 'about')
-			return 'active';
+		if ($route.current) {
+			if ($route.current.state == 'read' && menuName == 'home')
+				return 'active';
+			if ($route.current.state == 'settings' && menuName == 'settings')
+				return 'active';
+			if ($route.current.state == 'about' && menuName == 'about')
+				return 'active';
+		} else
+			return '';
 	};
 }]);

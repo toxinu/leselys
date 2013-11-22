@@ -133,6 +133,7 @@ INSTALLED_APPS = (
     'djcelery',
     'leselys.core',
     'leselys.reader',
+    'leselys.provider'
 )
 
 # A sample logging configuration. The only tangible logging

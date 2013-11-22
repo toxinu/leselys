@@ -9,12 +9,12 @@ leselysApp.config(['$routeProvider',
 					templateUrl: static_url + 'partials/reader.html',
 					controller: 'readerCtrl'
 				})
-				.when('/read/:feedId', {
+				.when('/read/:subscriptionId', {
 					state: 'read',
 					templateUrl: static_url + 'partials/reader.html',
 					controller: 'readerCtrl'
 				})
-				.when('/read/:feedId/:storyId', {
+				.when('/read/:subscriptionId/:storyId', {
 					state: 'read',
 					templateUrl: static_url + 'partials/reader.html',
 					controller: 'readerCtrl'
