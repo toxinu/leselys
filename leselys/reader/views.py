@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
 
+from rest_framework.generics import ListAPIView
 from rest_framework.generics import ListCreateAPIView
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 
@@ -8,10 +9,19 @@ from django.http import HttpResponse
 from django.http import HttpResponseBadRequest
 from django.views.generic import View
 
+from .models import Story
 from .models import Folder
 from .models import Subscription
 
 from leselys.mixins import CacheMixin
+
+
+class SubscriptionAPIView(ListCreateAPIView, CacheMixin):
+    model = Subscription
+
+
+class StoryAPIView(ListAPIView):
+    model = Story
 
 
 class OrderingAPIView(View):
