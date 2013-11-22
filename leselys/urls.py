@@ -9,6 +9,7 @@ admin.autodiscover()
 
 urlpatterns = patterns(
     '',
+    url(r'^', include('leselys.core.urls')),
     url(r'^', include('leselys.reader.urls')),
     url(r'^admin/', include(admin.site.urls)),
 )

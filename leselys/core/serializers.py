@@ -2,10 +2,10 @@
 from rest_framework import serializers
 
 from .models import Feed
-from .models import Story
+from .models import Entry
 
 
-class FeedSerializer(serializers.ModelSerializer):
+class FeedCreateSerializer(serializers.ModelSerializer):
     unread_counter = serializers.IntegerField(source='unread_counter', read_only=True)
     ordering_text = serializers.CharField(source='get_ordering_display', read_only=True)
     folder_text = serializers.CharField(source='folder.name', read_only=True)
@@ -15,14 +15,14 @@ class FeedSerializer(serializers.ModelSerializer):
         read_only_fields = ('updated', 'in_error', 'error')
 
 
-class StoryListSerializer(serializers.ModelSerializer):
+class EntryListSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Story
+        model = Entry
         fields = ('id', 'title', 'published', 'updated', 'readed', 'feed')
 
 
-class StoryDetailSerializer(serializers.ModelSerializer):
+class EntryDetailSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Story
+        model = Entry
         read_only_fields = (
             'title', 'guid', 'description', 'published', 'updated', 'feed')
