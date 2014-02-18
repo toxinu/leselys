@@ -330,11 +330,15 @@ function viewFeed(feedId, callback) {
         if (typeof callback != "undefined" )
           callback();
       });
+      // Make the stories visible, for devices with small screens.
+      var top = document.getElementById('content');
+      if (top && top.scrollIntoView) top.scrollIntoView();
     } else {
       if (data.callback == "/api/login")
         window.location = "login"
     }
   });
+
 }
 
 function updateCounter(feedId, number) {
