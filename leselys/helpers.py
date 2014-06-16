@@ -97,6 +97,11 @@ def login_required(f):
     return decorated_function
 
 
+def uncached(view):
+    cache = leselys.core.cache
+    cache.set('view/%s' % view, None)
+
+
 def cached(timeout=5 * 60, key='view/%s'):
     cache = leselys.core.cache
 
