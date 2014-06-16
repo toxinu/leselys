@@ -13,7 +13,6 @@ except ImportError:
     from urllib.parse import urlparse
     from urllib.parse import urljoin
 
-from leselys.helpers import u
 from leselys.helpers import get_datetime
 from leselys.helpers import get_dicttime
 from leselys.feed_finder import FeedFinder
@@ -279,7 +278,7 @@ class Reader(object):
         if not feed_id:
             if feed_type == "combined-feed":
                 if order_type == "user" or order_type not in ['unreaded', 'published']:
-                    order_type = storage.get_feed_setting('combined-feed' , 'ordering')
+                    order_type = storage.get_feed_setting('combined-feed', 'ordering')
                     if not order_type:
                         storage.set_feed_setting('combined-feed', 'ordering', 'unreaded')
                         order_type = 'unreaded'
