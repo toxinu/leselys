@@ -1,0 +1,25 @@
+leselysserver:
+  build: .
+  volume_driver: local
+  links:
+    - leselysdb:mongo
+  environment:
+    - VIRTUALHOST=reader.mills.io
+    - PORT=5000
+  volumes:
+    - leselysdata:/data
+  command: leselys serve /data/config.ini
+
+leselysdb:
+  image: mongo
+
+leselysworker:
+  build: .
+  volume_driver: local
+  links:
+    - leselysdb:mongo
+  environment:
+    - C_FORCE_ROOT=1
+  volumes:
+    - leselysdata:/data
+  command: leselys worker /data/config.ini

@@ -4,3 +4,4 @@ virtenv
 celerybeat-schedule
 venv
 *.sublime-*
+.DS_Store

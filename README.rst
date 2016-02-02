@@ -7,8 +7,8 @@ No `bullshit apps`_ for Android, iPhone, etc. Just a responsive design and for e
 
 Leselys is Heroku ready.
 
-.. image:: https://dl.dropboxusercontent.com/u/79447684/Github/Leselys/screenshot_01.png
-.. image:: https://dl.dropboxusercontent.com/u/79447684/Github/Leselys/screenshot_02.png
+.. image:: https://raw.github.com/prologic/leselys/dockerize/ScreenShot-20160202212811.png
+.. image:: https://raw.github.com/prologic/leselys/dockerize/ScreenShot-20160202212842.png
 
 Installation
 ------------
@@ -42,6 +42,26 @@ This is the right way, with ``virtualenv``:
   leselys worker leselys.ini
 
 Open your browser at ``http://localhost:5000``.
+
+
+Docker
+~~~~~~
+
+Setting up with `Docker <https://www.docker.com/>`_ is easy. There is no
+published images on the `Docker Hub <https://hub.docker.com/>`_ yet but
+here's how to build a set of images easily and quickly using
+`Docker Compose <https://docs.docker.com/compose/>`_::
+    
+    git clone https://github.com/prologic/leselys
+    cd leselys
+    git checkout dockerize
+    docker-compose up -d
+
+With the configuration in `docker-compose.yml` you can then visit:
+
+http://localhost:5000/ if you're on a native Linux Docker host or
+http://$(docker-machine ip dev):5000/ if you're on OS X via boot2docker
+or similar.
 
 
 Heroku
